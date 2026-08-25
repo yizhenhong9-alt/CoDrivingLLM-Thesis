@@ -48,3 +48,31 @@ No packages below have been installed yet. The planned minimal exact-version set
 - `matplotlib==3.7.5`
 
 The PyPI `highway-env` package, LLM packages, memory packages, and Ollama-related packages are intentionally excluded from the Phase 2A minimum until later evidence requires them.
+
+## Phase 2B Ollama inventory
+
+- Recorded at: `2026-08-25 09:50:29 +08:00` (`Asia/Taipei`)
+- Execution mode label: `Local Reproduction / Thesis Mode` (not an exact GPT-4o-mini reproduction)
+- Ollama executable: `C:\Users\yizhen0925\AppData\Local\Programs\Ollama\ollama.exe`
+- Ollama client/service version: `0.32.9`
+- Local endpoint: `http://127.0.0.1:11434`
+- Health evidence: `GET /api/version` returned `{"version":"0.32.9"}` and `GET /api/tags` returned an empty `models` array.
+- Available models: none.
+- Selected model: none; selection and inference are blocked until the user prepares or explicitly selects an existing local model.
+- GPU state: not queried because no model is available and no inference may proceed. `nvidia-smi` remains mandatory immediately before the first future inference.
+- Additional Python packages: none installed for Phase 2B. The standard library is sufficient for a minimal localhost JSON HTTP transport design.
+- Backend implementation status: not started because there is no model with which to validate transport or parser compatibility.
+
+### Selected session-local Ollama service
+
+- Recorded at: `2026-08-25 10:05:41 +08:00`
+- Model storage: `E:\YiZhen\ollama_models`
+- Configuration scope: environment inherited only by a separately launched current-user child process; no User/Machine persistent environment variable was changed.
+- Endpoint: `http://127.0.0.1:11435`
+- Service process at launch: PID `45296`
+- Selected generation model: `qwen2.5:7b`, 7.6B parameters, `Q4_K_M`, digest prefix `845dbda0ea48`, stored size about 4.7 GB.
+- Other visible models: `llama3:latest` and `nomic-embed-text:latest`.
+- Request contract: POST `/api/chat`, one unchanged system message, `stream=false`, timeout `120s`, no explicit sampling controls.
+- Additional Python dependencies: none; transport uses Python standard-library `urllib` and `json`.
+- Pre-inference GPU state: two RTX 4090 GPUs. GPU 0 was idle (`0 MiB`, `0%`); GPU 1 had about `2434 MiB`, `9%`, with desktop/graphics processes only.
+- Post-smoke state: Ollama loaded `qwen2.5:7b` on GPU 0 only, reported about `6.6 GB` and `100% GPU` processor placement; GPU utilization was idle after requests completed.

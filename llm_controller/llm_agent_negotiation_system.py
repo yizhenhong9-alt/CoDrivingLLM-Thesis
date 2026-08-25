@@ -1,6 +1,6 @@
 from llm_controller.prompt_llm import *
 from llm_controller.Scenario_description import Scenario
-from openai import OpenAI
+from llm_controller.llm_backend import ChatBackend
 import numpy as np
 import highway_env
 import json
@@ -8,10 +8,17 @@ import json
 api_key = "your key here"
 
 class LlmAgent_negotiation_module():
-    def __init__(self, env):
+    def __init__(self, env, backend="openai", model=None, endpoint=None, timeout=120):
         self.sce = Scenario(env.road, vehicleCount=len(env.controlled_vehicles))
         self.controlled_vehicles = env.controlled_vehicles
         self.pre_prompt = PRE_DEF_PROMPT()
+        self.chat_backend = ChatBackend(
+            backend=backend,
+            model=model,
+            endpoint=endpoint,
+            timeout=timeout,
+            openai_api_key=api_key,
+        )
         self.toolModels = [
             getAvailableActions(),
             getAvailableLanes(self.sce),
@@ -140,14 +147,6 @@ class LlmAgent_negotiation_module():
     def send_to_chatgpt(self, env, conflict):
         # Implement your LLM interaction here (similar to LlmAgent_action_module)
         # This method sends the scenario description to LLM and retrieves the suggested action
-        proxy_url = "http://127.0.0.1:7890"
-        import httpx
-        http_client = httpx.Client(proxies={"http://": proxy_url, "https://": proxy_url})
-
-        client = OpenAI(api_key=api_key,  # put your api key here
-                        base_url="https://api.openai.com/v1",
-                        http_client=http_client)
-
         conflicting_vehicles_info = []
         conflict = self.detect_conflicts(env)
         print(conflict)
@@ -196,12 +195,8 @@ class LlmAgent_negotiation_module():
             "```\n"
         )
 
-        completion = client.chat.completions.create(
-            model="gpt-4o-mini",
+        negotiation_content = self.chat_backend.complete(
             messages=[{"role": "system", "content": prompt}, ])
-
-        llm_response = completion.choices[0].message
-        negotiation_content = llm_response.content
         # print(prompt)
         # print(f"LLM decision: {negotiation_content}")
         return negotiation_content, conflicting_vehicles_info

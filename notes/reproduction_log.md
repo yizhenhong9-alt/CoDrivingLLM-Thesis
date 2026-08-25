@@ -115,3 +115,63 @@
 - Files affected: `highway_env/envs/common/observation.py`, `notes/reproduction_environment.md`, `notes/reproduction_log.md`, and `notes/reproduction_summary.md`.
 - Semantic impact: Compatibility Fix only. Records, columns, ordering, `ignore_index=True`, observation space, scenario, vehicles, actions, reward, and all other source logic were unchanged.
 - Test result: Phase 2A import, registration, reset, and one-step simulator smoke test passed. No LLM, Ollama, memory, rendering, full episode, or Phase 2B work was executed.
+
+## Attempt 7
+
+- Date/time: `2026-08-25 09:50:29 +08:00`
+- Goal: Inventory the existing Ollama installation and models before selecting a backend model or modifying source.
+- Commands:
+  - `where.exe ollama`
+  - `ollama --version`
+  - `ollama list`
+  - localhost `GET http://127.0.0.1:11434/api/tags`
+  - localhost `GET http://127.0.0.1:11434/api/version`
+- Environment: Repository HEAD `304b1ef555a9dcb181173428013a1faebb110d5d`; reproduction prefix `E:\YiZhen\conda_envs\codriving_repro`; execution mode `Local Reproduction / Thesis Mode`
+- Expected behavior: Verify the installed Ollama client/service and enumerate existing local models without installation, update, deletion, or model download.
+- Actual behavior:
+  - Executable was found at `C:\Users\yizhen0925\AppData\Local\Programs\Ollama\ollama.exe`.
+  - The first sandboxed CLI call could not connect and could not write its AppData log. The localhost API initially refused the connection.
+  - A user-approved non-sandboxed read-only inventory allowed the existing Ollama application/service to start. API version `0.32.9` was then reachable at `127.0.0.1:11434`.
+  - Both `ollama list` and `/api/tags` reported no installed models.
+  - The application reported that a newer installer exists, but no update was performed.
+- Error/output:
+  - Initial sandboxed call: `Error: timed out waiting for server to start` after `failed to create server log ... Access is denied.`
+  - Initial API call: connection refused at `127.0.0.1:11434`.
+  - Final model inventory: header only (`NAME ID SIZE MODIFIED`) and `{"models":[]}`.
+- Root cause: The initial startup failure was caused by sandbox restrictions on the Ollama AppData log path. After startup outside the sandbox, the blocking condition is an empty local model inventory.
+- Proposed fix: Do not pull automatically. The user must decide which model to prepare outside this controlled step; after a model exists, rerun inventory, record its exact tag/size/quantization where available, execute `nvidia-smi`, then implement and validate the minimal transport adaptation.
+- Files affected: Reproduction documentation only. No source or Conda environment package changes.
+- Semantic impact: None. No prompt, parser, simulator, decision, conflict, memory, or backend source logic changed.
+- Test result: Blocked by no suitable local model. No inference, GPU workload, backend modification, negotiation call, or per-CAV call was attempted.
+
+## Attempt 8
+
+- Date/time: `2026-08-25 10:05:41 +08:00`
+- Goal: Point a session-local Ollama service at the existing E: model store, implement the minimal dual backend, and run exactly one negotiation plus one per-CAV decision call.
+- Commands:
+  - Launch hidden child service with process-scoped `OLLAMA_MODELS=E:\YiZhen\ollama_models` and `OLLAMA_HOST=127.0.0.1:11435`.
+  - Verify `/api/version`, `/api/tags`, `ollama list`, and `nvidia-smi`.
+  - Syntax/import preflight with `E:\YiZhen\conda_envs\codriving_repro\python.exe`.
+  - Failed invocation: `python scripts/phase2b_llm_smoke.py`.
+  - Successful invocation: `python -m scripts.phase2b_llm_smoke`.
+- Environment: repository HEAD before changes `304b1ef555a9dcb181173428013a1faebb110d5d`; Python `3.8.20`; Ollama `0.32.9`; mode `Local Reproduction / Thesis Mode`.
+- Expected behavior: Preserve OpenAI and prompt/parser contracts while substituting only Ollama transport, then validate both original parsers with one call each.
+- Actual behavior:
+  - Session-local endpoint `127.0.0.1:11435` exposed all three existing models without moving or downloading data.
+  - GPU 0 was idle before inference; GPU 1 had only desktop/graphics activity. Ollama subsequently placed `qwen2.5:7b` entirely on GPU 0.
+  - Backend syntax/import preflight passed without installing `openai`, `httpx`, `langchain`, or `chromadb`.
+  - Direct script-file invocation failed before any LLM request because Python put `scripts/` rather than repository root on `sys.path`.
+  - Module invocation succeeded. Centralized negotiation made one call; its original regex parser found the single conflict decision for both involved CAV perspectives.
+  - Only after negotiation parser success, the first controlled CAV made one decision call. Original `extract_decision()` returned `IDLE`; original action mapping returned ID `1`.
+- Error/output:
+  - Invocation-only failure: `ModuleNotFoundError: No module named 'highway_env'` for `python scripts/phase2b_llm_smoke.py`. No request occurred. Correct command is module execution from repository root.
+  - Negotiation raw content included a Markdown JSON fence, the requested decision object, and extra prose. Parser succeeded without modification.
+  - Decision raw content included explanatory prose followed by `"decision": {"IDLE"}`. Parser and action mapping succeeded without modification.
+- Root cause: The only runtime failure was Python script-path import resolution, corrected solely by invocation form. No backend or research logic defect was involved.
+- Proposed fix: Use `python -m scripts.phase2b_llm_smoke` from repository root. No source compatibility fix was needed after backend implementation.
+- Files affected: `llm_controller/llm_backend.py`, `llm_controller/llm_agent_negotiation_system.py`, `llm_controller/llm_agent_action.py`, `scripts/phase2b_llm_smoke.py`, Phase 2B documentation, and two JSON result artifacts.
+- Semantic impact: Transport/interface adaptation only. Prompts, centralized/distributed architecture, conflict detection, parsers, action mapping, simulator, reward, observation, scenario, safety logic, and memory logic were not changed.
+- Test result:
+  - Negotiation: success; model `qwen2.5:7b`; latency about `35.537s`; original parser success.
+  - Decision: success; same model; latency about `0.761s`; semantic action `IDLE`; mapped action ID `1`; original parser success.
+  - No environment step, complete episode, Memory OFF/ON experiment, or additional LLM call was run.

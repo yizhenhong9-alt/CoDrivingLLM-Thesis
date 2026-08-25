@@ -1,7 +1,7 @@
 from .prompt_llm import *
 from .Scenario_description import Scenario
+from .llm_backend import ChatBackend
 import json
-from openai import OpenAI
 import numpy as np
 import gym
 import re
@@ -9,7 +9,7 @@ import re
 api_key = "your key here"
 
 class LlmAgent_action_module():
-    def __init__(self, env):
+    def __init__(self, env, backend="openai", model=None, endpoint=None, timeout=120):
         # self.env = env
         # self.action_space = self.env.action_space
         # self.observation_space = self.env.observation_space
@@ -27,6 +27,13 @@ class LlmAgent_action_module():
             isDecelerationSafe(self.sce),
         ]
         self.pre_prompt = PRE_DEF_PROMPT()
+        self.chat_backend = ChatBackend(
+            backend=backend,
+            model=model,
+            endpoint=endpoint,
+            timeout=timeout,
+            openai_api_key=api_key,
+        )
         self.get_actions(env)
 
 
@@ -138,14 +145,6 @@ class LlmAgent_action_module():
 
 
     def send_to_chatgpt(self, ego_veh, current_scenario, negotiation_results, memory):
-        proxy_url = "http://127.0.0.1:7890"
-        import httpx
-        http_client = httpx.Client(proxies={"http://": proxy_url, "https://": proxy_url})
-
-        client = OpenAI(api_key=api_key,  # put your api key here
-                        base_url="https://api.openai.com/v1",
-                        http_client=http_client)
-
         if self.is_intersection:
             message_prefix = self.pre_prompt.SYSTEM_MESSAGE_PREFIX_intersection
             traffic_rules = self.pre_prompt.get_traffic_rules(self.is_intersection)
@@ -177,12 +176,8 @@ class LlmAgent_action_module():
                   "Final Answer: \n"
                   "    \"decision\": {\"<ego car's decision, ONE of the available actions (decision have to be one of the following action!!!:  LANE_LEFT, IDLE, LANE_RIGHT, FASTER, SLOWER)>\"},\n"
                   "```\n")
-        completion = client.chat.completions.create(
-            model="gpt-4o-mini",  # "gpt-3.5-turbo-16k-0613" # "gpt-3.5-turbo-1106"(cheaper)
+        decision_content = self.chat_backend.complete(
             messages=[{"role": "system", "content": prompt},])
-
-        llm_response = completion.choices[0].message
-        decision_content = llm_response.content
         llm_suggested_action = self.extract_decision(decision_content)
         print(f"llm action: {llm_suggested_action}")
 
