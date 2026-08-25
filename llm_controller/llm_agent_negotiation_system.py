@@ -179,20 +179,36 @@ class LlmAgent_negotiation_module():
              for conflict_group in conflicting_vehicles_info]
         )
 
+        exact_vehicle_ids = sorted({
+            str(conflict_group[vehicle_key]).split(":")[0].strip()
+            for conflict_group in conflicting_vehicles_info
+            for vehicle_key in ("vehicle_i", "vehicle_j")
+        })
+        exact_id_format_options = "\n".join(
+            [
+                f'- For the conflict between "{str(conflict_group["vehicle_i"]).split(":")[0].strip()}" '
+                f'and "{str(conflict_group["vehicle_j"]).split(":")[0].strip()}", choose exactly one of:\n'
+                f'  {{"first_vehicle": "{str(conflict_group["vehicle_i"]).split(":")[0].strip()}", '
+                f'"second_vehicle": "{str(conflict_group["vehicle_j"]).split(":")[0].strip()}"}}\n'
+                f'  OR\n'
+                f'  {{"first_vehicle": "{str(conflict_group["vehicle_j"]).split(":")[0].strip()}", '
+                f'"second_vehicle": "{str(conflict_group["vehicle_i"]).split(":")[0].strip()}"}}'
+                for conflict_group in conflicting_vehicles_info
+            ]
+        )
+
         # print(conflicting_info)
         prompt = (
             "You are simulating as a traffic police officer overseeing traffic conflicts. Here are the current conflict scenarios:\n"
             f"{conflicting_info}\n\n"
             "For each conflict, decide which vehicle should pass first and which should pass later to ensure safety:\n"
-            "Output your answer in the following format:\n"
-            "```\n"
-            "Final Answer: \n"
-            "    \"decisions\": [\n"
-            "        {\"first_vehicle\": \"<vehicle_i>\", \"second_vehicle\": \"<vehicle_j>\"},\n"
-            "        {\"first_vehicle\": \"<vehicle_i>\", \"second_vehicle\": \"<vehicle_j>\"},\n"
-            "        ...\n"
-            "    ]\n"
-            "```\n"
+            "Use only the exact vehicle identifiers provided in the current conflicts.\n"
+            f"The only allowed vehicle identifiers are: {', '.join(exact_vehicle_ids)}.\n"
+            "Never use generic identifiers such as i, j, vehicle_i, or vehicle_j, and never output placeholders or angle brackets in the answer.\n"
+            "For each conflict below, choose exactly one of its two exact-identifier object forms based on your safety decision. "
+            "The displayed order alternatives are formatting options, not a suggested passing decision:\n"
+            f"{exact_id_format_options}\n\n"
+            "Place exactly one chosen object for each conflict inside a \"decisions\" list, and begin that final output with \"Final Answer:\".\n"
         )
 
         negotiation_content = self.chat_backend.complete(

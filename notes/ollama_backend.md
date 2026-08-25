@@ -92,3 +92,20 @@ OpenAI chat completion
 - Negotiation result: latency about `35.537s`; raw response used Markdown plus extra prose; original regex parser succeeded.
 - Decision result: latency about `0.761s`; raw response used explanatory prose plus `"decision": {"IDLE"}`; original parser returned `IDLE`, mapped to ID `1`.
 - Full artifacts: `notes/artifacts/phase2b/centralized_negotiation.json` and `notes/artifacts/phase2b/per_cav_decision.json`.
+
+## Phase 2C observed output variance
+
+- A later real-state integrated attempt produced `{"first_vehicle": "i", "second_vehicle": "j"}` instead of actual simulator vehicle IDs, even though the conflict description contained those IDs.
+- The original negotiation regex correctly returned no match; no guessing or fallback was introduced.
+- This demonstrates that the Phase 2B parser success does not guarantee output-format stability across provider-default Ollama calls.
+- Artifact: `notes/artifacts/phase2c/integrated_single_step.json`.
+- Any prompt clarification or parser mapping requires explicit approval before Phase 2C is retried.
+
+## Approved Qwen2.5 negotiation interface clarification
+
+- Classification: Ollama/Qwen2.5 interface compatibility adaptation; it is not original CoDrivingLLM implementation.
+- The prompt now derives the allowed exact vehicle identifiers from each current conflict at runtime.
+- Generic identifiers (`i`, `j`, `vehicle_i`, `vehicle_j`) and placeholders are explicitly prohibited in output.
+- Both exact-ID orderings are shown for each pair as neutral formatting alternatives, so the model still decides passing priority from the unchanged safety task.
+- The original negotiation regex parser was not modified.
+- Phase 2C retry confirmed actual-ID output and parser success, followed by four decision parser successes and one environment transition.

@@ -29,3 +29,18 @@
 - OpenAI path: preserved as the default backend and lazy-loaded only when selected.
 - Prompt/parser changes: none.
 - Remaining limitations: provider defaults differ and were not equalized; results are not GPT-4o-mini numerical reproduction; no full episode, memory path, repeated seed, or evaluation was run.
+
+## Phase 2C — Integrated Single-Step Test
+
+- Mode: `Local Reproduction / Thesis Mode`, Ollama `qwen2.5:7b`, Memory OFF.
+- Status: exactly one integrated policy step passed on `2026-08-25` after two preserved blocked attempts.
+- Environment: real reset state from `intersection-multi-agent-v0`, four controlled CAVs, configured seed field `0`.
+- Approved interface adaptation: negotiation prompt dynamically restricts output to current exact vehicle identifiers and presents both ordering forms neutrally. Parser remained unchanged.
+- Successful negotiation: actual identifiers parsed; latency about `1.019s`.
+- Four per-CAV decisions: `FASTER`, `IDLE`, `FASTER`, `IDLE`; all original parsers/action mappings succeeded.
+- Joint action: `(3, 1, 3, 1)`.
+- Environment transition: one step; reward `0.0`; terminal `False`; no CAV crash; all agent dones false.
+- Memory: database not instantiated, retrieval/update count `0`.
+- Complete episodes: `0`.
+- Known discrepancy: declared `Discrete(3)` space rejects IDs `3/4`, while executable original `ACTIONS_LONGI` and entry path use IDs `4/1/3`. This was documented, not repaired.
+- Research-semantic changes: none beyond the explicitly approved provider-interface prompt clarification.

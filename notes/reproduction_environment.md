@@ -76,3 +76,14 @@ The PyPI `highway-env` package, LLM packages, memory packages, and Ollama-relate
 - Additional Python dependencies: none; transport uses Python standard-library `urllib` and `json`.
 - Pre-inference GPU state: two RTX 4090 GPUs. GPU 0 was idle (`0 MiB`, `0%`); GPU 1 had about `2434 MiB`, `9%`, with desktop/graphics processes only.
 - Post-smoke state: Ollama loaded `qwen2.5:7b` on GPU 0 only, reported about `6.6 GB` and `100% GPU` processor placement; GPU utilization was idle after requests completed.
+
+### Phase 2C integrated-step configuration
+
+- Date: `2026-08-25`
+- Mode: `Local Reproduction / Thesis Mode`, Memory OFF.
+- Scenario/environment: intersection, `intersection-multi-agent-v0`.
+- Backend/model/endpoint: Ollama, `qwen2.5:7b`, `http://127.0.0.1:11435`.
+- Policy steps: exactly `1`; complete episodes: `0`.
+- Memory database: not instantiated; retrieval/update count: `0`.
+- Interface adaptation: centralized negotiation prompt dynamically lists only the current conflict's exact vehicle identifiers and two neutral ordering forms. This is an Ollama/Qwen2.5 interface compatibility adaptation, not original CoDrivingLLM behavior.
+- Known action-interface discrepancy: the intersection Gym space is declared as `Tuple(Discrete(3), ...)`, while executable `ACTIONS_LONGI` keys are `{4: SLOWER, 1: IDLE, 3: FASTER}` and the original entry path sends those keys directly.

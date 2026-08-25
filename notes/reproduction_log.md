@@ -175,3 +175,71 @@
   - Negotiation: success; model `qwen2.5:7b`; latency about `35.537s`; original parser success.
   - Decision: success; same model; latency about `0.761s`; semantic action `IDLE`; mapped action ID `1`; original parser success.
   - No environment step, complete episode, Memory OFF/ON experiment, or additional LLM call was run.
+
+## Attempt 9
+
+- Date/time: `2026-08-25 10:16:49 +08:00`
+- Goal: Execute exactly one integrated real-state policy step: intersection environment, centralized negotiation, four per-CAV decisions, joint action, and one environment transition.
+- Command: `E:\YiZhen\conda_envs\codriving_repro\python.exe -m scripts.phase2c_integrated_single_step`
+- Environment:
+  - Repository HEAD before changes: `dab161d6ea9a623ebb36bafeb90946e5c8b2c6bc`
+  - Environment ID: `intersection-multi-agent-v0`
+  - Backend/model: Ollama `qwen2.5:7b` at `http://127.0.0.1:11435`
+  - Mode: `Local Reproduction / Thesis Mode`
+  - Memory mode: `Memory OFF`; no database instantiated, retrieval count `0`, no update
+  - Configured simulator seed field: `0`
+- Expected behavior: Parse one centralized negotiation response, obtain four valid original semantic actions/action IDs, assemble the original joint action, and call `env.step()` exactly once.
+- Actual behavior:
+  - Environment creation/reset succeeded with four controlled vehicles.
+  - One centralized negotiation call completed in about `6.593s` for the real conflict pair `MDPVehicle #624` / `MDPVehicle #48`.
+  - Ollama returned literal generic identifiers `"i"` and `"j"` rather than the actual simulator vehicle identifiers.
+  - Original `extract_vehicle_conflicts()` returned no conflicts for all four CAVs.
+  - The runner stopped before any per-CAV request, joint action, or `env.step()`.
+- Error/output: `RuntimeError: Original negotiation parser did not parse the Ollama response`. Raw response and exact message/API response are stored in `notes/artifacts/phase2c/integrated_single_step.json` (SHA-256 `F67105207D3634395D2D925D598707EBFEDD6D71747364179DAE1CC01CDEEBBA`).
+- Root cause: Model output-format failure. Although the prompt included actual vehicle strings in the conflict description, `qwen2.5:7b` copied generic `i`/`j` labels into the requested output fields. The original parser intentionally accepts only exact `MDPVehicle #[0-9]+` or `IDMVehicle #[0-9]+` identifiers.
+- Proposed fix: Requires user decision. Options are an interface prompt clarification that inserts actual IDs into the format example, or a parser interpretation for generic labels. The latter risks guessing/mapping behavior and must not be implemented silently. No prompt or parser change was applied.
+- Files affected: Added `scripts/phase2c_integrated_single_step.py`, the blocked-run JSON artifact, and reproduction documentation. No existing prompt, parser, backend, or simulator source was modified.
+- Semantic impact: None in the attempted run. The proposed remedies may affect prompt or parser semantics and therefore require explicit approval.
+- Test result: Phase 2C blocked at centralized negotiation parsing. LLM call count `1`; per-CAV calls `0`; environment step count `0`; no complete episode was run.
+
+## Attempt 10
+
+- Date/time: `2026-08-25 10:22:32 +08:00`
+- Goal: Apply the approved dynamic exact-identifier prompt clarification and retry the integrated single-step test.
+- Command: `E:\YiZhen\conda_envs\codriving_repro\python.exe -m scripts.phase2c_integrated_single_step`
+- Environment: Same controlled Phase 2C configuration as Attempt 9; Memory OFF; artifact `integrated_single_step_retry1.json`.
+- Expected behavior: Require `qwen2.5:7b` to use current real vehicle identifiers, allow the unchanged regex parser to succeed, obtain four actions, and execute one step.
+- Actual behavior:
+  - The dynamically generated prompt listed only the actual conflict identifiers, prohibited generic identifiers/placeholders, and showed both possible exact-ID orderings without recommending one.
+  - Negotiation returned actual identifiers `MDPVehicle #616` and `MDPVehicle #776`; original parser succeeded.
+  - All four original decision parsers succeeded: `FASTER`, `IDLE`, `IDLE`, `IDLE`, mapped to `(3, 1, 1, 1)`.
+  - The test harness stopped before `env.step()` because `env.action_space.contains((3, 1, 1, 1))` was false.
+- Error/output: `RuntimeError: Joint action is outside the original action space`.
+- Root cause: Harness validation assumed Gym `Discrete(3)` nominal IDs `0..2`. Static inspection showed the original executable longitudinal map is `{4: SLOWER, 1: IDLE, 3: FASTER}`, and original `Run_multi_CAV_LLM.py` passes those IDs directly without the Gym-space gate.
+- Proposed fix: Test-harness Compatibility Fix only: preserve the declared-space result as discrepancy evidence, but validate execution against each agent action type's actual `actions` dictionary before following the original `env.step()` path.
+- Files affected: Dynamic negotiation prompt in `llm_agent_negotiation_system.py`, Phase 2C harness/artifact, and documentation.
+- Semantic impact: Prompt change is the explicitly approved Ollama/Qwen2.5 interface compatibility adaptation. No passing semantics, parser, action map, action space, or simulator logic changed.
+- Test result: Negotiation and four decision parser calls passed; environment step count remained `0`. Artifact SHA-256: `FD7838D676A992A087B0D5D8675AC33EBE3A2279BDE5BB549DC5E9B6B9461CC5`.
+
+## Attempt 11
+
+- Date/time: `2026-08-25 10:24:08 +08:00`
+- Goal: Correct only the harness validation assumption and complete exactly one original integrated policy step.
+- Command: `E:\YiZhen\conda_envs\codriving_repro\python.exe -m scripts.phase2c_integrated_single_step`
+- Environment: `intersection-multi-agent-v0`; configured seed field `0`; Ollama `qwen2.5:7b`; endpoint `127.0.0.1:11435`; Memory OFF; no database; no complete episode.
+- Expected behavior: Accept only action IDs supported by original executable action dictionaries, then call `env.step()` exactly once.
+- Actual behavior:
+  - Negotiation raw: `Final Answer: [{"first_vehicle": "MDPVehicle #32", "second_vehicle": "MDPVehicle #968"}]`; parser succeeded; latency about `1.019s`.
+  - CAV 0 (`MDPVehicle #32`): `FASTER`, ID `3`, latency about `0.669s`.
+  - CAV 1 (`MDPVehicle #968`): `IDLE`, ID `1`, latency about `1.279s`.
+  - CAV 2 (`MDPVehicle #168`): `FASTER`, ID `3`, latency about `2.158s`.
+  - CAV 3 (`MDPVehicle #176`): `IDLE`, ID `1`, latency about `0.685s`.
+  - Joint action `(3, 1, 3, 1)` was false under declared `action_space.contains()` but true for all original executable `ACTIONS_LONGI` maps.
+  - Exactly one `env.step((3, 1, 3, 1), env)` succeeded.
+  - Result: reward `0.0`, terminal `False`, observation shape `(4, 25)`, info `speed=6.488340192043896`, `cav_crashed=False`, `cost=0.0`, `agents_dones=(False, False, False, False)`.
+- Error/output: No runtime error. Declared-space/executable-map inconsistency retained as a warning; no source repair applied.
+- Root cause: Attempt 10's blocker was confined to the added harness check, not the original executable pipeline.
+- Proposed fix: Applied only to the harness. No further fix required for this single-step reproduction milestone.
+- Files affected: `scripts/phase2c_integrated_single_step.py`, retry2 artifact, and documentation. Existing action/simulator source unchanged.
+- Semantic impact: No additional research-semantic change. Prompt compatibility adaptation remained exactly within user approval; action execution followed the original repository mapping/path.
+- Test result: Success. LLM calls `5` (one negotiation and four decisions), original parser successes `5`, environment steps `1`, complete episodes `0`, Memory retrieval/update `0`. Artifact SHA-256: `54BAFC05526FB297A516C74F98C9CF3291A3CA33AA68D4B0DB3C7869F22F7F94`.
