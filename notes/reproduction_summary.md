@@ -44,3 +44,18 @@
 - Complete episodes: `0`.
 - Known discrepancy: declared `Discrete(3)` space rejects IDs `3/4`, while executable original `ACTIONS_LONGI` and entry path use IDs `4/1/3`. This was documented, not repaired.
 - Research-semantic changes: none beyond the explicitly approved provider-interface prompt clarification.
+
+## First Complete Ollama Episode
+
+- Mode: `Local Reproduction / Thesis Mode`; this is not an exact GPT-4o-mini numerical reproduction.
+- Status: one complete Memory OFF episode finished on `2026-08-25`; no batch or second episode was run.
+- Configuration: `intersection-multi-agent-v0`, configured seed field `0`, Ollama `qwen2.5:7b`, endpoint `http://127.0.0.1:11435`, provider-default sampling controls.
+- Pipeline: centralized negotiation, four distributed per-CAV decisions, unchanged parsers, original semantic action mapping, and `env.step()` ran for every policy step.
+- Episode result: 43 policy steps; cumulative reward `-2.5`; terminal reason `controlled_vehicle_crash`; controlled crash flags `[True, True, False, False]`; arrival flags `[False, False, False, False]`.
+- Calls/parsers: 43 negotiation calls and 172 decision calls; negotiation parser failures `0`; decision parser failures `0`; no fallback action.
+- Runtime/latency: episode runtime `313.427s`; recorded LLM latency `245.292s` (`66.817s` negotiation and `178.475s` decisions).
+- Action-interface discrepancy: declared Gym space rejected 30 of 43 original-mapped joint actions, but all 43 were present in the executable action dictionaries and executed successfully. No action-space modification was made.
+- Crash status: the Python experiment process completed normally; the terminal crash was a simulator outcome.
+- Artifact: `notes/artifacts/phase2d/full_episode_memory_off.json`, SHA-256 `83C1A91102761159CCA9E26B88572BDD9337C3CE10F386E2BAF12F396B79462D`.
+- Research-semantic changes: none during this episode milestone. The previously approved Ollama/Qwen2.5 exact-identifier interface prompt adaptation remained active.
+- Remaining limitations: this is one trajectory only and provides no statistical performance claim. Memory ON, repeatability, multi-seed evaluation, and paper-level metrics remain untested.

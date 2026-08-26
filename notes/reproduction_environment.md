@@ -87,3 +87,15 @@ The PyPI `highway-env` package, LLM packages, memory packages, and Ollama-relate
 - Memory database: not instantiated; retrieval/update count: `0`.
 - Interface adaptation: centralized negotiation prompt dynamically lists only the current conflict's exact vehicle identifiers and two neutral ordering forms. This is an Ollama/Qwen2.5 interface compatibility adaptation, not original CoDrivingLLM behavior.
 - Known action-interface discrepancy: the intersection Gym space is declared as `Tuple(Discrete(3), ...)`, while executable `ACTIONS_LONGI` keys are `{4: SLOWER, 1: IDLE, 3: FASTER}` and the original entry path sends those keys directly.
+
+### First complete Ollama episode configuration
+
+- Date: `2026-08-25`; repository HEAD before execution: `60cc9a3f4bd9f865aab3964e9b8c6d706b688e0a`.
+- Command: `E:\YiZhen\conda_envs\codriving_repro\python.exe -m scripts.phase2d_full_episode` from the repository root.
+- Mode: `Local Reproduction / Thesis Mode`; Memory OFF; database not instantiated; retrieval/update counts `0`.
+- Scenario/environment: intersection, `intersection-multi-agent-v0`; configured seed field `0`; exactly one episode.
+- Backend/model/endpoint: Ollama `qwen2.5:7b`, `http://127.0.0.1:11435`; request timeout `120s`; streaming off; no explicit sampling parameters.
+- Pre-run GPU state: two RTX 4090 GPUs; GPU 0 `0 MiB` and `0%`, GPU 1 about `2442 MiB` and `14%` with desktop/graphics processes only.
+- Result: 43 policy steps, 215 total LLM calls, terminal by controlled-vehicle crash, process completed without runtime/parser failure.
+- Output artifact: `notes/artifacts/phase2d/full_episode_memory_off.json` (SHA-256 `83C1A91102761159CCA9E26B88572BDD9337C3CE10F386E2BAF12F396B79462D`).
+- Additional dependencies: none. No environment package was installed or changed.

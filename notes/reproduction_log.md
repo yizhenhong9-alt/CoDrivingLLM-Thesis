@@ -243,3 +243,32 @@
 - Files affected: `scripts/phase2c_integrated_single_step.py`, retry2 artifact, and documentation. Existing action/simulator source unchanged.
 - Semantic impact: No additional research-semantic change. Prompt compatibility adaptation remained exactly within user approval; action execution followed the original repository mapping/path.
 - Test result: Success. LLM calls `5` (one negotiation and four decisions), original parser successes `5`, environment steps `1`, complete episodes `0`, Memory retrieval/update `0`. Artifact SHA-256: `54BAFC05526FB297A516C74F98C9CF3291A3CA33AA68D4B0DB3C7869F22F7F94`.
+
+## Attempt 12
+
+- Date/time: `2026-08-25 10:34:38 +08:00`
+- Goal: Run the first and only complete `intersection-multi-agent-v0` episode through the verified Ollama pipeline until the original environment terminal condition.
+- Command: `E:\YiZhen\conda_envs\codriving_repro\python.exe -m scripts.phase2d_full_episode`
+- Environment:
+  - Repository HEAD before the attempt: `60cc9a3f4bd9f865aab3964e9b8c6d706b688e0a`
+  - Reproduction prefix: `E:\YiZhen\conda_envs\codriving_repro`; Python `3.8.20`
+  - Environment ID/scenario: `intersection-multi-agent-v0` / intersection; configured seed field `0`
+  - Backend/model/endpoint: Ollama `qwen2.5:7b` at `http://127.0.0.1:11435`
+  - Mode: `Local Reproduction / Thesis Mode`; Memory OFF; no database instantiated, retrieval count `0`, update count `0`
+  - Episodes requested/executed: `1` / `1`; no rendering or video
+- Expected behavior: Reuse the approved centralized negotiation interface adaptation, unchanged parsers, four distributed decisions, original semantic action mapping, and simulator flow until the environment itself returns terminal.
+- Actual behavior:
+  - The episode completed 43 policy steps, with 43 centralized negotiation calls and 172 per-CAV decision calls.
+  - Every negotiation and decision response was saved with its exact messages, raw Ollama API response/content, parsed result, selected semantic action/action ID, and latency.
+  - Negotiation parser failures: `0`; decision parser failures: `0`; no fallback or guessed action was used.
+  - All 43 joint actions were accepted by the original executable action dictionaries and advanced the simulator.
+  - The declared Gym action space returned `False` for 30 of 43 joint actions; all 43 remained executable through the original `{4: SLOWER, 1: IDLE, 3: FASTER}` maps.
+  - Cumulative reward was `-2.5`. The final step returned terminal with `cav_crashed=True`, `cost=1.0`, and `agents_dones=[True, True, False, False]`.
+  - Terminal reason: `controlled_vehicle_crash`; final controlled crash flags `[True, True, False, False]`; none of the four controlled vehicles had arrived.
+  - Episode runtime was `313.4270612s`. Negotiation latency total/mean/min/max was `66.8172500s` / `1.5538895s` / `1.0246777s` / `5.1736241s`. Decision latency total/mean/min/max was `178.4752184s` / `1.0376466s` / `0.3987061s` / `2.3678683s`. Total recorded LLM latency was `245.2924684s`.
+- Error/output: No Python runtime crash, transport error, parser error, or compatibility exception. Important warning retained: declared `Tuple(Discrete(3), ...)` does not describe all original executable action IDs. Pre-run GPU state showed GPU 0 idle and GPU 1 carrying desktop/graphics load only; no process was changed or terminated.
+- Root cause: The episode's terminal event was the original simulator's controlled-vehicle crash condition, not a program failure. The action-space discrepancy is the already documented repository interface inconsistency and was not repaired.
+- Proposed fix: None for this controlled milestone. Do not alter the action space or action mapping based on this single episode. Analyze the recorded trajectory before designing any later experiment.
+- Files affected: Added `scripts/phase2d_full_episode.py`, `notes/artifacts/phase2d/full_episode_memory_off.json`, and updated reproduction documentation. No existing LLM, parser, simulator, reward, observation, action-space, scenario, or memory source was changed.
+- Semantic impact: None. The runner is experiment instrumentation only and follows the currently approved pipeline. The prior Ollama/Qwen2.5 exact-identifier prompt clarification remains in effect and is not original CoDrivingLLM implementation.
+- Test result: Success: exactly one complete episode reached the original terminal condition. Artifact size `1,960,030` bytes; SHA-256 `83C1A91102761159CCA9E26B88572BDD9337C3CE10F386E2BAF12F396B79462D`. No second episode or batch experiment was started.
