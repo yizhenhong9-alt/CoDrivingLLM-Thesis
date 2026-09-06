@@ -1,24 +1,38 @@
 import random
 from langchain.vectorstores import Chroma
-from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.docstore.document import Document
-import os
 
-api_key = 'your key here'
-os.environ["OPENAI_API_KEY"] = api_key
-# os.environ["http_proxy"] = 'http://127.0.0.1:7890'  # region gpt is not directly available
-# os.environ["https_proxy"] = 'http://127.0.0.1:7890'
+from .embedding_backend import OllamaEmbeddingsAdapter
 
 class DrivingMemory:
-    def __init__(self, env) -> None:
-        self.embedding = OpenAIEmbeddings()
-        db_path = './db/' + str(env.spec.id)
+    def __init__(self, env, embedding_backend="openai", embedding_config=None,
+                 persist_directory=None) -> None:
+        self.embedding_backend = embedding_backend.lower()
+        self.embedding_config = dict(embedding_config or {})
+        self.embedding = self._create_embedding()
+        self.last_retrieval_query = None
+        self.last_retrieval_top_k = None
+        self.last_retrieval_results = None
+        self.last_retrieval_scores = None
+        self.last_added_page_content = None
+        self.last_added_metadata = None
+        db_path = persist_directory or './db/' + str(env.spec.id)
+        self.db_path = str(db_path)
         self.scenario_memory = Chroma(
             embedding_function=self.embedding,
-            persist_directory=db_path
+            persist_directory=self.db_path
         )
 
-        print("==========Loaded ", db_path, " Memory, Now the database has ", len(self.scenario_memory._collection.get(include=['embeddings'])['embeddings']), " items.==========")
+        print("==========Loaded ", self.db_path, " Memory, Now the database has ", len(self.scenario_memory._collection.get(include=['embeddings'])['embeddings']), " items.==========")
+
+    def _create_embedding(self):
+        if self.embedding_backend == "openai":
+            from langchain.embeddings.openai import OpenAIEmbeddings
+            return OpenAIEmbeddings(**self.embedding_config)
+        if self.embedding_backend == "ollama":
+            return OllamaEmbeddingsAdapter(**self.embedding_config)
+        raise ValueError("Unsupported memory embedding backend: {}".format(
+            self.embedding_backend))
 
 
     def retrieveMemory(self, query_scenario, top_k=5):
@@ -27,6 +41,10 @@ class DrivingMemory:
         fewshot_results = []
         for idx in range(0, len(similarity_results)):
             fewshot_results.append(similarity_results[idx][0].metadata)
+        self.last_retrieval_query = query_scenario
+        self.last_retrieval_top_k = top_k
+        self.last_retrieval_results = fewshot_results
+        self.last_retrieval_scores = [result[1] for result in similarity_results]
         return fewshot_results
 
     # def retrieveMemory(self, query_scenario, top_k=5):
@@ -62,8 +80,12 @@ class DrivingMemory:
     def addMemory(self, sce_descrip, human_question, negotiation, action, comments):
         """Add a new scenario to memory."""
         try:
-            doc = Document(page_content=sce_descrip, metadata={"human_question": human_question,
-                          'negotiation_result': negotiation, 'final_action': action, 'comments': comments})
+            metadata = {"human_question": human_question,
+                        'negotiation_result': negotiation, 'final_action': action,
+                        'comments': comments}
+            self.last_added_page_content = sce_descrip
+            self.last_added_metadata = metadata
+            doc = Document(page_content=sce_descrip, metadata=metadata)
             self.scenario_memory.add_documents([doc])
             # print(f"Added scenario to memory: {sce_descrip}")
         except Exception as e:

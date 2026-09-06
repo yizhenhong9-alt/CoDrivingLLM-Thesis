@@ -272,3 +272,36 @@
 - Files affected: Added `scripts/phase2d_full_episode.py`, `notes/artifacts/phase2d/full_episode_memory_off.json`, and updated reproduction documentation. No existing LLM, parser, simulator, reward, observation, action-space, scenario, or memory source was changed.
 - Semantic impact: None. The runner is experiment instrumentation only and follows the currently approved pipeline. The prior Ollama/Qwen2.5 exact-identifier prompt clarification remains in effect and is not original CoDrivingLLM implementation.
 - Test result: Success: exactly one complete episode reached the original terminal condition. Artifact size `1,960,030` bytes; SHA-256 `83C1A91102761159CCA9E26B88572BDD9337C3CE10F386E2BAF12F396B79462D`. No second episode or batch experiment was started.
+
+## Attempt 13
+
+- Date/time: `2026-09-01` (`Asia/Taipei`)
+- Goal: Implement the approved Phase 3A Local Memory ON preflight source path without installing dependencies or performing runtime experiments.
+- Commands: Read-only Git status/diff inspection; local patch application; Python source compilation using `compile()`; a mocked `urllib` adapter contract test; AST/static invariant checks; `git diff --check`.
+- Environment: local analysis workspace `C:\Thesis\CoDrivingLLM-Thesis`; branch `master`; starting HEAD `c3def41b0e629ae1d5d27b52276b3e8c1c6a2336`. No Lab server, Ollama, GPU, simulator step, database, or external network was used.
+- Expected behavior: Preserve the original OpenAI embedding path as default/reference; add explicit opt-in Ollama embeddings; keep original Memory query, retrieval, prompt, storage, feedback, and update timing semantics; provide an isolated fail-closed mechanics runner.
+- Actual behavior:
+  - Added a standard-library `/api/embed` adapter with `embed_query()` and `embed_documents()`, response shape/type/dimension validation, and no fallback.
+  - `DrivingMemory` now accepts explicit embedding backend/config and persistence path. The default remains `openai`; `OpenAIEmbeddings` is lazy-imported only for that branch.
+  - Added explicit default-OFF `memory_mode`; ON restores `relative_memory()` before the decision and `memory_update()` immediately after it in the original pre-`env.step()` location.
+  - Added retrieval trace fields without changing `retrieveMemory()` return data or similarity-search behavior.
+  - Added a dedicated Phase 3A runner requiring new absolute database/artifact paths, model digest resolution, one decision/update, count verification, reopen, and second retrieval. The runner contains no `env.step()` call.
+  - Removed the source-level placeholder assignment that overwrote `OPENAI_API_KEY`; no credential was added.
+- Error/output: Two optional one-line shell checks had quoting-only `SyntaxError` failures before their assertions ran. Corrected simplified checks passed. Source syntax itself passed on every actual source compilation test.
+- Root cause: The failed check was caused only by command-string quoting, not source syntax or implementation behavior.
+- Files affected: `llm_controller/embedding_backend.py`, `llm_controller/memory.py`, `llm_controller/llm_agent_action.py`, `scripts/phase3a_memory_on_preflight.py`, `notes/reproduction_summary.md`, and `notes/reproduction_log.md`.
+- Semantic impact: Ollama embedding is explicitly classified as a `Local Reproduction / Thesis Memory Mode adaptation` because it changes embedding space and potential retrieval ranking. Backend selection, isolated database paths, traces, and the runner are Compatibility/Instrumentation. Original Memory feedback semantics and update timing were not changed.
+- Test result: Static implementation checks passed. Runtime status remains untested: no dependency import preflight, embedding request, Chroma creation, LLM decision, persistence test, simulator step, or episode was executed.
+
+### Attempt 13 pre-commit review fixes
+
+- Date/time: `2026-09-06` (`Asia/Taipei`)
+- Goal: Apply the four approved Phase 3A pre-commit review fixes without changing Memory research semantics.
+- Actual behavior:
+  - Added mandatory `--preflight-root`; the target database must be a new strict descendant of that existing root. Repository `db` and `llm_controller/chroma` roots and overlaps are rejected. Database and artifact paths remain absolute/new-only, and the artifact cannot be inside the Chroma directory.
+  - Added original parser semantic-action and executable-ID validation before the sole `memory_update()` call. Invalid output stops without update or fallback.
+  - Added checkpoint/stage tracking, failed artifact status/type/message, exception re-raise, and `finally` environment close. A Git commit that cannot be resolved now fails closed.
+  - Added exact Memory-section extraction/equality, required first/second query and `top_k=2` assertions, and reopened metadata equality against the actual payload passed to `addMemory()`.
+- Files affected: `scripts/phase3a_memory_on_preflight.py`, `llm_controller/memory.py`, `notes/reproduction_summary.md`, and `notes/reproduction_log.md` only within the already approved Phase 3A change set.
+- Semantic impact: Compatibility/Instrumentation only. Query construction, similarity search, `top_k=2`, stored `page_content`, metadata schema, prompt text, `generate_comment()`, and pre-`env.step()` update timing remain unchanged.
+- Test result: Python syntax compilation passed; runner call-count/order/static assertions passed; path-isolation and exact-prompt extraction mocks passed; no-network embedding adapter mock passed; status lifecycle checks passed; and `git diff --check` passed. Two optional one-line assertions initially hit shell quoting-only `SyntaxError`s and were rerun successfully with simplified checks. No package, Ollama, GPU, network, Chroma database, simulator runtime, or episode was used.

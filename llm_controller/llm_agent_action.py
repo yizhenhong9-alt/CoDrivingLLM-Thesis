@@ -9,7 +9,8 @@ import re
 api_key = "your key here"
 
 class LlmAgent_action_module():
-    def __init__(self, env, backend="openai", model=None, endpoint=None, timeout=120):
+    def __init__(self, env, backend="openai", model=None, endpoint=None, timeout=120,
+                 memory_mode="off"):
         # self.env = env
         # self.action_space = self.env.action_space
         # self.observation_space = self.env.observation_space
@@ -27,6 +28,9 @@ class LlmAgent_action_module():
             isDecelerationSafe(self.sce),
         ]
         self.pre_prompt = PRE_DEF_PROMPT()
+        self.memory_mode = memory_mode.lower()
+        if self.memory_mode not in {"off", "on"}:
+            raise ValueError("Unsupported memory mode: {}".format(memory_mode))
         self.chat_backend = ChatBackend(
             backend=backend,
             model=model,
@@ -50,7 +54,9 @@ class LlmAgent_action_module():
             prompt_info = self.prompt_engineer(ego_veh, env.road, env, negotiation_results, conflicting_info)  # prompt engineer
             # print("prompt_info:", prompt_info)
             llm_action = self.send_to_chatgpt(ego_veh, prompt_info, negotiation_results, memory)
-            # self.memory_update(memory, prompt_info, llm_action)  # active this line to restore new memory during interaction
+            if self.memory_mode == "on":
+                self._require_memory(memory)
+                self.memory_update(memory, prompt_info, llm_action)
             llm_actions.append(llm_action)
             print("llm_action:", llm_action, ego_veh, 'speed now:', ego_veh.speed)
         return llm_actions
@@ -120,14 +126,21 @@ class LlmAgent_action_module():
         return negotiation_results
 
     def relative_memory(self, memory, prompt_info):
-        experience = ""
         extract_prompt = prompt_info.strip().split('\n')
         query_scenario = '\n'.join(extract_prompt[-2:])  # only save the last two line of prompt_info which store the most dangerous conflict as memory page_content
         past_decisions = memory.retrieveMemory(query_scenario, top_k=2)
+        return self.format_relative_memory(past_decisions)
+
+    def format_relative_memory(self, past_decisions):
+        experience = ""
         for past_decision in past_decisions:
             experience += f"- Last time {past_decision['negotiation_result']}, you choose to {past_decision['final_action']}, it is {past_decision['comments']}\n"
         experience += f"Above messages are some examples of how you make a decision in the past. Those scenarios are similar to the current scenario. You should refer to those examples to make a decision for the current scenario."
         return experience
+
+    def _require_memory(self, memory):
+        if memory is None:
+            raise ValueError("Memory mode is ON but no DrivingMemory instance was provided")
 
     def memory_update(self, memory, prompt_info, llm_action):
         human_question = str(None)
@@ -155,8 +168,11 @@ class LlmAgent_action_module():
             decision_cautions = self.pre_prompt.get_decision_cautions()
         # action_name = ACTIONS_ALL.get(action_id, "Unknown Action")
         # action_description = ACTIONS_DESCRIPTION.get(action_id, "No description available")
-        # past_memory = self.relative_memory(memory, current_scenario)  # with this line to active memory retrivel, active line46 to build your own database before you output past memory
-        past_memory = ''
+        if self.memory_mode == "on":
+            self._require_memory(memory)
+            past_memory = self.relative_memory(memory, current_scenario)
+        else:
+            past_memory = ''
 
         prompt = (f"{message_prefix}"
                   f"You, the 'ego' car, are now driving. You have already driven for some seconds.\n"
