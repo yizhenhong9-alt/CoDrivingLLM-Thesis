@@ -62,13 +62,22 @@
 
 ## Phase 3A — Local Memory ON Preflight Implementation
 
-- Status: source implementation completed on `2026-09-01`; Lab server dependency/runtime verification has not started.
+- Status: source implementation and isolated Lab server runtime verification passed before Phase 3B preparation.
 - Classification: Ollama local embedding is a `Local Reproduction / Thesis Memory Mode adaptation`, not original OpenAI embedding behavior.
 - Original/reference path: `DrivingMemory(env)` still defaults to `OpenAIEmbeddings`; the OpenAI import is lazy and there is no automatic backend fallback.
 - Local path: an explicit Ollama embedding adapter implements the synchronous `embed_query()` / `embed_documents()` interface and targets `/api/embed` using Python standard-library HTTP/JSON support.
 - Memory semantics preserved: original query construction, `top_k=2`, Chroma similarity search, stored `page_content`, metadata schema, prompt injection format, `generate_comment()`, and pre-`env.step()` update timing were not changed.
 - Preflight runner: requires an unused absolute database path, resolves and records the model digest, performs one empty-store retrieval through the decision prompt, one decision, one original memory update, a `0 -> 1` count check, same-process reopen, and a second retrieval. It never calls `env.step()` and refuses database reuse.
-- Dependencies: no package was installed during implementation. The planned local runtime additions remain `langchain==0.0.335` and `chromadb==0.4.15`; `openai` and `tiktoken` are not required for the explicit local branch.
+- Dependencies: the Lab server validated `langchain==0.0.335`, `chromadb==0.4.15`, `tokenizers==0.13.3`, and `posthog==3.8.4`; `openai` and `tiktoken` are not required for the explicit local branch. `posthog==4.2.0` failed during Chroma initialization on Python 3.8, while `posthog==3.8.4` passed with no broken requirements.
 - Static verification: Python syntax compilation, a mocked no-network Ollama adapter contract test, static invariant checks, and `git diff --check` passed. No Ollama, GPU, network, database, simulator step, or episode was executed.
 - Pre-commit review fixes: the runner now requires an explicit existing preflight root and enforces strict database containment while rejecting repository `db`/`llm_controller/chroma` roots; validates semantic action and executable ID before update; records failed runtime stage/type/message/checkpoints and re-raises; closes the environment in `finally`; and requires exact Memory-section, query, `top_k`, reopen-count, and metadata assertions before success.
-- Remaining limitation: Memory ON retrieval/update/persistence is not runtime-verified; the known original feedback-timing discrepancy remains unchanged.
+- Runtime result: `nomic-embed-text:latest` returned `768`-dimensional embeddings; the isolated database changed `0 -> 1`, reopened with count `1`, and successfully retrieved the written experience. Artifact status was `success`.
+- Remaining limitation: this validates Memory mechanics only, not a full Memory ON trajectory or performance improvement; the known original feedback-timing discrepancy remains unchanged.
+
+## Phase 3B — First Controlled Full Memory ON Episode Preparation
+
+- Status: runner prepared locally; the full episode has not been executed.
+- Intended difference from Phase 2D: Memory ON retrieval, exact prompt injection, and original pre-`env.step()` update are enabled with a fresh isolated Chroma database. Negotiation, parser, action mapping, simulator, reward, observation, scenario, and terminal semantics remain aligned with Phase 2D.
+- Configuration: `intersection-multi-agent-v0`; Ollama `qwen2.5:7b`; Ollama `nomic-embed-text:latest`; endpoint supplied explicitly at runtime; provider-default sampling.
+- Instrumentation: records model digests, initial/final memory counts, every retrieval and retrieved count, exact prompt insertion, every update and verified count increment, actions, parser failures, fallback count, rewards, terminal outcome, crash/arrival flags, LLM and embedding calls/latencies, and total runtime.
+- Scope: exactly one functional-validation/trajectory-observation episode. It must not be interpreted as evidence that Memory ON improves performance.

@@ -99,3 +99,16 @@ The PyPI `highway-env` package, LLM packages, memory packages, and Ollama-relate
 - Result: 43 policy steps, 215 total LLM calls, terminal by controlled-vehicle crash, process completed without runtime/parser failure.
 - Output artifact: `notes/artifacts/phase2d/full_episode_memory_off.json` (SHA-256 `83C1A91102761159CCA9E26B88572BDD9337C3CE10F386E2BAF12F396B79462D`).
 - Additional dependencies: none. No environment package was installed or changed.
+
+### Phase 3A Local Memory ON server validation
+
+- Validation status: passed on the Lab server before Phase 3B preparation.
+- Python: `3.8.20` in `E:\YiZhen\conda_envs\codriving_repro`.
+- Memory packages: `langchain==0.0.335`, `chromadb==0.4.15`.
+- Python 3.8 compatibility pins discovered during validation: `tokenizers==0.13.3` and `posthog==3.8.4`.
+- `posthog==4.2.0` failed during Chroma initialization under Python 3.8; pinning `posthog==3.8.4` restored initialization. `pip check` then reported no broken requirements.
+- Ollama: `0.32.9`; session-local endpoint `http://127.0.0.1:11435`.
+- Chat model: `qwen2.5:7b`; embedding model: `nomic-embed-text:latest`.
+- Verified embedding dimension: `768`.
+- Phase 3A isolated database result: initial count `0`; one retrieval/decision/update; count `0 -> 1`; reopen count `1`; retrieval after reopen succeeded; artifact status `success`.
+- The Phase 3A database remains an isolated preflight artifact and must not be reused by Phase 3B.
