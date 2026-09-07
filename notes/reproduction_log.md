@@ -318,3 +318,15 @@
 - Files affected: `scripts/phase3b_full_episode_memory_on.py`, `notes/reproduction_environment.md`, `notes/reproduction_summary.md`, and `notes/reproduction_log.md`.
 - Semantic impact: no new research-semantic change. The local embedding remains the approved `Local Reproduction / Thesis Memory Mode adaptation`; the runner activates the repository-provided Memory flow and adds experiment instrumentation without changing query, top-k, storage, feedback, update timing, simulator, action, reward, observation, scenario, or terminal semantics.
 - Test result: Python syntax compilation and AST/source invariants passed; control-flow order confirms semantic/action validation before the original memory update and the update before `env.step()`; `git diff --check` passed. Static checking found and corrected a missing closing parenthesis/indentation defect in the new runner before completion. No package installation, Ollama/GPU/network call, database creation, simulator runtime, or episode was performed during preparation.
+
+## Attempt 15
+
+- Date/time: `2026-09-07` (`Asia/Taipei`)
+- Goal: Diagnose Phase 3B server Attempt 1, which stopped during negotiation at policy step `0`, and apply the smallest Ollama/Qwen output-format compatibility clarification.
+- Environment/result evidence supplied from the Lab server: negotiation calls `1`; decision, embedding, retrieval, update, and completed policy-step counts all `0`. One real conflict existed between `MDPVehicle #744` and `MDPVehicle #896`.
+- Actual behavior: the prompt supplied the correct exact identifiers, but `qwen2.5:7b` returned the JSON object as an escaped quoted string inside the list rather than as a list element object. The unchanged exact-ID negotiation parser therefore returned no pair.
+- Root cause: Ollama/Qwen serialization-format drift at the negotiation interface. This occurred before Memory retrieval, embedding, update, or `env.step()` and is not a Memory failure.
+- Compatibility fix: `LlmAgent_negotiation_module.send_to_chatgpt()` now explicitly requires every list element to be an actual JSON object, prohibits quoted/escaped JSON strings, and adds dynamically generated Correct/Incorrect serialization examples using the current conflict identifiers. The example order is explicitly marked as format-only and not a passing recommendation.
+- Files affected: `llm_controller/llm_agent_negotiation_system.py`, `notes/reproduction_log.md`, and `notes/reproduction_summary.md`. The failed server artifact/database were not modified or deleted.
+- Semantic impact: Compatibility Fix only. The Phase 2C exact-identifier rules and original parser remain unchanged. Conflict detection, passing semantics, action mapping, simulator, reward, observation, Memory retrieval/update, and environment configuration are unchanged.
+- Test result: syntax compilation passed; dependency-free AST execution of the actual prompt method confirmed dynamic exact-ID Correct/Incorrect examples; the actual unchanged parser method accepted the object-list form and rejected the escaped quoted-string form. Full local runtime was not executed.

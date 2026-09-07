@@ -196,6 +196,15 @@ class LlmAgent_negotiation_module():
                 for conflict_group in conflicting_vehicles_info
             ]
         )
+        correct_example_objects = [
+            (f'{{"first_vehicle": "{str(conflict_group["vehicle_i"]).split(":")[0].strip()}", '
+             f'"second_vehicle": "{str(conflict_group["vehicle_j"]).split(":")[0].strip()}"}}')
+            for conflict_group in conflicting_vehicles_info
+        ]
+        correct_format_example = "[{}]".format(
+            ", ".join(correct_example_objects))
+        incorrect_format_example = "[{}]".format(
+            ", ".join(json.dumps(example) for example in correct_example_objects))
 
         # print(conflicting_info)
         prompt = (
@@ -208,7 +217,11 @@ class LlmAgent_negotiation_module():
             "For each conflict below, choose exactly one of its two exact-identifier object forms based on your safety decision. "
             "The displayed order alternatives are formatting options, not a suggested passing decision:\n"
             f"{exact_id_format_options}\n\n"
-            "Place exactly one chosen object for each conflict inside a \"decisions\" list, and begin that final output with \"Final Answer:\".\n"
+            "Place exactly one chosen object for each conflict directly inside the JSON list, and begin that final output with \"Final Answer:\".\n"
+            "Every list element must be an actual JSON object. Never wrap an object in quotes and never emit an escaped JSON string as a list element.\n"
+            "The following examples demonstrate serialization format only; their displayed passing order is not a suggested safety decision.\n"
+            f"Correct: Final Answer: {correct_format_example}\n"
+            f"Incorrect: Final Answer: {incorrect_format_example}\n"
         )
 
         negotiation_content = self.chat_backend.complete(
