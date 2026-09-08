@@ -1,0 +1,29 @@
+{
+  "schema_version": "phase4c.seed-manifest.v1",
+  "protocol_version": "phase4c-intersection-v1",
+  "name": "reproduction_seed_set",
+  "seeds": [
+    104729,
+    130363,
+    155921,
+    181081,
+    205759,
+    230431,
+    256019,
+    281117,
+    306491,
+    331777,
+    357059,
+    382457,
+    407893,
+    433291,
+    458789,
+    484181,
+    509687,
+    535123,
+    560617,
+    586009
+  ],
+  "creation_rationale": "Twenty fixed, unique positive integers were selected before the Phase 4C experiment so every supported scenario and Memory mode can reuse identical simulator seeds without outcome-dependent replacement.",
+  "paper_seed_status": "The IEEE paper states that 20 different random seeds were used but does not publish the exact seed list. These are local reproduction seeds, not published paper seeds."
+}
