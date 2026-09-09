@@ -90,4 +90,14 @@
 - First smoke failure: `TypeError: inference() missing 1 required positional argument: 'env'` occurred before the first environment transition in the current-lane acceleration safety path. The failed artifact is retained and must not be overwritten.
 - Root cause/classification: original released-code signature/call-site mismatch plus a previously unexercised latent path. This is a `Compatibility / Runtime Repair`, not a Phase 4C-only regression or Research-Semantic Change.
 - Minimal repair: thread the existing `prompt_engineer()` `env` argument through `check_safety_in_current_lane()` and into the already declared `isAccelerationConflictWithCar.inference(..., env)` argument. No other safety-tool call or safety computation was changed.
-- Runtime status: Lab RDP revalidation remains pending and must use a new run ID. No local runtime validation was performed.
+- Matched smoke status: Lab RDP revalidation subsequently completed for both Memory OFF and independent-episode Memory ON using seed `104729`. Both artifacts recorded the same `initial_state_sha256`; both episodes completed and terminated with a controlled-vehicle crash. This is functional/trajectory evidence only, not a Memory performance claim.
+- Memory ON evidence: `34` policy steps, `4` controlled CAVs, `136` decisions, `136` retrievals, `136` updates, `136` successful writes, and `final_count=136` in a fresh isolated database. The `34 × 4` storage count follows activated released-code behavior and is not proven to be the paper's exact experience frequency.
+
+## Phase 4D — Memory Semantics Documentation Freeze
+
+- IEEE conceptual order: `decision → environment transition → impact evaluation → memory augmentation`. The paper emphasizes negative feedback for actions that intensify conflict but does not publish an exclusive failure-only rule or an executable outcome evaluator.
+- Released/current code order: per-CAV retrieval using the final two `prompt_info` lines with `top_k=2`; prompt injection; decision; heuristic `generate_comment()` feedback; unconditional per-decision Chroma append; then `env.step()`. Feedback does not observe the post-action state, reward, collision, arrival, or episode outcome, and there is no failure-only filter.
+- Phase 3B/4C fidelity: independent-episode Memory ON preserves the activated released-code semantics while using a fresh isolated database for each case. The known Algorithm 1 versus released-code update-timing mismatch remains unchanged.
+- Frozen decision: `INSUFFICIENT EVIDENCE — DO NOT CHANGE YET`. Do not introduce failure-only storage without a separately approved research-semantic reconstruction.
+- Protocols: A = Memory OFF; B = independent-episode Memory ON; C = `Reconstructed Continuous-Interaction Infrastructure` with one initially empty scenario-specific database carried through a declared ordered sequence.
+- Fig. 7 limitation: Protocol C is conceptually closer to continuous learning, but cannot be called the exact paper protocol because interaction order, seed order, database checkpoints, reset policy, and evaluation-write policy are unpublished.

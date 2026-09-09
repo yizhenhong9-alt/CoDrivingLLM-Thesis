@@ -354,3 +354,16 @@
 - Classification: `Compatibility / Runtime Repair`; not a Research-Semantic Change. Current-lane vehicle selection, acceleration/TTC/distance calculation, safety classes, prompts, LLM/parser/action ordering, Memory timing, simulator transition, success evaluation, and Phase 4C artifact semantics were intentionally left unchanged.
 - Static verification: textual call-site/signature audit only. No Python project execution, import, simulator, environment reset/step, Ollama, Memory, Chroma, embedding, episode, or experiment was run locally.
 - Runtime status: revalidation is pending on the Lab RDP server using a new run ID. Do not reuse `phase4c_smoke_off_seed104729`.
+
+## Attempt 18
+
+- Date/time: `2026-09-09` (`Asia/Taipei`)
+- Goal: Freeze the Phase 4D paper-versus-code Memory semantics audit in the reproduction documentation after the matched Phase 4C Lab RDP smoke validation.
+- Matched smoke evidence: scenario `intersection`; seed `104729`; Memory OFF and Memory ON recorded the same `initial_state_sha256`; both completed and terminated with a controlled-vehicle crash. The Memory ON case completed `34` policy steps and `136` decisions, retrievals, updates, and successful writes; its fresh database ended at `final_count=136`.
+- Interpretation: `34 × 4 = 136` writes follows the activated released-code per-CAV loop. It is not proven to be the paper's exact storage frequency because the paper does not define the unit of an interaction or stored experience.
+- IEEE conceptual semantics: Algorithm 1 orders decision, environment transition, impact evaluation, and Memory augmentation. Its text emphasizes negative feedback when an action intensifies danger.
+- Released/current semantics: per-CAV retrieval with the final two `prompt_info` lines and `top_k=2`; formatted metadata prompt injection; heuristic feedback from current relation/action; unconditional per-decision append; no failure-only filter; Memory update before `env.step()`.
+- Fidelity decision: `INSUFFICIENT EVIDENCE — DO NOT CHANGE YET`. Failure-only storage must not be introduced without separately approved research-semantic reconstruction and a defined post-action evaluator.
+- Protocol freeze: Protocol A is Memory OFF; Protocol B is independent-episode Memory ON with a fresh database per case; Protocol C is reconstructed cumulative-interaction Memory ON with a declared ordered sequence and persistent scenario-specific database. Protocol C is conceptually closer to Fig. 7 but is not the exact paper protocol because interaction/seed order, database checkpoints, reset policy, and evaluation-write policy are unpublished.
+- Files affected: documentation only — `notes/reproduction_protocol.md`, `notes/reproduction_log.md`, and `notes/reproduction_summary.md`.
+- Runtime/semantic impact: none. No runtime code or Memory behavior was modified; no project code, simulator, Ollama, Chroma, embedding, Memory, seed, episode, or experiment was executed.

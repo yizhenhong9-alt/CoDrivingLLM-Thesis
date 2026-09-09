@@ -467,6 +467,94 @@ The smoke-test hash was computed by the validation command over positions, speed
 
 ## 20. Phase 4C limitations and next gate
 
-No integrated Ollama case has been run with the Phase 4C runner. Therefore its complete artifact lifecycle, fail-closed backend/parser paths, Memory OFF zero-call contract, Memory ON fresh-database lifecycle, and aggregator behavior over real artifacts still require a separately approved Lab-server smoke test.
+The matched Phase 4C Lab RDP smoke pair has now completed with seed `104729`. Memory OFF and Memory ON recorded the same `initial_state_sha256`, so both cases began from the same simulator state. Both episodes completed through the runner and terminated with a controlled-vehicle crash; these two trajectories are functional validation evidence, not evidence of Memory performance improvement. The Memory ON case completed `34` policy steps and `136` per-CAV decisions, retrievals, updates, and successful writes, ending with `final_count=136` in its fresh isolated database.
 
 Roundabout remains blocked because the released repository has no corresponding environment. Highway and merge remain blocked for paper-scale reproduction by the scenario/configuration, multi-CAV, and success/arrival issues documented above. Resolving those items is outside Phase 4C and may require separately reviewed Reconstructed Evaluation Infrastructure or research-semantic decisions. The 20-seed batch remains unapproved and unexecuted.
+
+## 21. Phase 4D Memory semantics freeze
+
+### 21.1 IEEE conceptual Memory behavior
+
+The IEEE paper describes Memory augmentation as outcome-aware: a CAV makes a decision, the environment transitions to the next state, the impact of the decision is evaluated, and the resulting experience is added to Memory. Algorithm 1 therefore gives the conceptual order:
+
+```text
+decision
+→ environment transition
+→ impact evaluation
+→ memory augmentation
+```
+
+The surrounding text emphasizes actions that intensify conflicts, negative feedback, and avoiding repeated mistakes. However, the paper does not publish an executable failure-only storage rule, exact experience schema, exact `top_k`, interaction order, seed order, database checkpoint procedure, reset policy, or evaluation-write policy. The emphasis on failed experiences must not be converted into an undocumented exclusive storage condition.
+
+### 21.2 Released-code Memory behavior
+
+The released entry path constructs `DrivingMemory` with the persistent scenario path `./db/<environment-id>`, but retrieval and update are commented out by default. When the repository-provided Memory calls are restored, the operational behavior is:
+
+```text
+for each controlled CAV in order:
+    construct current prompt information
+    retrieve with the last two prompt_info lines and top_k=2
+    inject formatted retrieved metadata into the per-CAV prompt
+    obtain and parse the LLM decision
+    generate heuristic feedback from the current relation and action ID
+    append one Chroma record unconditionally
+after all CAVs:
+    env.step(joint_action, env)
+```
+
+The feedback does not compare pre-action and post-action states and does not observe reward, collision, arrival, or episode success. There is no explicit failure-only filter, success label, or negative-experience label. A record is appended for every activated per-CAV decision, including the `Conflict info is empty` branch. This released-code update-before-`env.step()` behavior conflicts with the ordering shown in IEEE Algorithm 1 and is intentionally preserved and documented rather than silently repaired.
+
+### 21.3 Phase 3B/4C independent-episode behavior
+
+Phase 3B and Phase 4C preserve the activated released-code query, `top_k=2`, Chroma similarity-search flow, prompt injection format, heuristic `generate_comment()` feedback, unconditional per-decision append, same-step sequential visibility, and update-before-`env.step()` timing. Their experimental isolation policy differs from the released persistent default: every case uses a fresh independent database and never reuses another case's Memory.
+
+In the matched Phase 4C Memory ON smoke, `34` policy steps with `4` controlled CAVs produced:
+
+```text
+34 × 4 = 136 decisions
+136 retrievals
+136 update calls
+136 successful writes
+final_count = 136
+```
+
+This multiplication is the behavior of the activated released-code per-CAV loop. It is not proven to be the exact storage frequency used for the paper because the paper does not define whether one interaction or one stored experience corresponds to a policy step, a CAV decision, an episode, or another unit.
+
+### 21.4 Frozen storage decision
+
+The Phase 4D decision is:
+
+```text
+INSUFFICIENT EVIDENCE — DO NOT CHANGE YET
+```
+
+The current unconditional per-CAV storage behavior must remain unchanged for released-code reproduction. Failure-only storage must not be introduced without a separately proposed and approved research-semantic reconstruction defining the failure level, post-action evaluator, attribution window, positive-experience policy, and validation procedure.
+
+## 22. Frozen Memory experiment protocols
+
+### Protocol A — Memory OFF
+
+- No `DrivingMemory` construction, retrieval, update, write, or database path.
+- Answers the performance and trajectory question for CoDrivingLLM without Memory augmentation.
+- Provides the matched baseline for identical scenario seeds and initial-state hashes.
+
+### Protocol B — Independent-episode Memory ON
+
+- Every seed/episode starts from its own fresh isolated database.
+- Preserves released-code within-episode and same-step Memory behavior.
+- Answers whether the activated released mechanism changes behavior within a matched episode without contamination from earlier seeds.
+- Suitable for matched Memory OFF/ON comparison, but not sufficient to reproduce the cross-interaction learning claim in Fig. 7.
+- Each case must log its database path, initial/final counts, model and embedding digests, ordered retrieval/write events, seed, and initial-state hash.
+
+### Protocol C — Reconstructed cumulative-interaction Memory ON
+
+- One initially empty, scenario-specific database persists across a predeclared ordered seed/interaction sequence.
+- Conceptually closer to the continuous accumulation shown in Fig. 7 than Protocol B.
+- Must be classified as `Reconstructed Continuous-Interaction Infrastructure`, not the exact paper protocol.
+- Exact reproduction is not justified because the paper does not publish interaction order, seed order, database checkpoints, reset/clear policy, or whether evaluation interactions write back into Memory.
+- Results are order-dependent because each retrieval depends on all earlier stored records and same-step CAV writes may be visible to later CAVs.
+- Before implementation, the interaction unit, accumulation/evaluation split, evaluation-write policy, checkpoint schedule, scenario/model/database identity, and failure preservation policy require separate approval.
+
+## 23. Phase 4D scope boundary
+
+The IEEE conceptual outcome-aware evaluator and the activated released-code heuristic evaluator are distinct behaviors. Protocols A and B reproduce and isolate released/current code behavior. Protocol C may reconstruct the paper's continuous-learning concept, but it does not resolve the Algorithm 1 timing mismatch or the unpublished failure-only question. No protocol may be called the exact paper Memory protocol without additional evidence.
