@@ -83,3 +83,11 @@
 - Scope: exactly one functional-validation/trajectory-observation episode. It must not be interpreted as evidence that Memory ON improves performance.
 - Server Attempt 1: stopped at policy step `0` after one negotiation call because `qwen2.5:7b` serialized the otherwise correct exact-ID object as a quoted/escaped JSON string inside the output list. Decision, embedding, retrieval, update, and `env.step()` counts remained `0`; this is an Ollama/Qwen negotiation output-format issue, not a Memory failure.
 - Attempt 1 compatibility clarification: the negotiation prompt now requires actual JSON object list elements, explicitly forbids quoted/escaped object strings, and shows dynamic Correct/Incorrect examples built from the current real conflict identifiers. The original exact-ID parser and all research semantics remain unchanged.
+
+## Phase 4C — Intersection Reproduction Runner and First RDP Blocker
+
+- Phase 4C runner status: the intersection-only one-case runner and read-only aggregator are implemented. The first Lab RDP Memory-OFF smoke used run ID `phase4c_smoke_off_seed104729`, seed `104729`, and initial-state SHA-256 `c482bbb24668d5171f409c574ae66e6821f0d7a214ba161328daaba3352a5851`.
+- First smoke failure: `TypeError: inference() missing 1 required positional argument: 'env'` occurred before the first environment transition in the current-lane acceleration safety path. The failed artifact is retained and must not be overwritten.
+- Root cause/classification: original released-code signature/call-site mismatch plus a previously unexercised latent path. This is a `Compatibility / Runtime Repair`, not a Phase 4C-only regression or Research-Semantic Change.
+- Minimal repair: thread the existing `prompt_engineer()` `env` argument through `check_safety_in_current_lane()` and into the already declared `isAccelerationConflictWithCar.inference(..., env)` argument. No other safety-tool call or safety computation was changed.
+- Runtime status: Lab RDP revalidation remains pending and must use a new run ID. No local runtime validation was performed.

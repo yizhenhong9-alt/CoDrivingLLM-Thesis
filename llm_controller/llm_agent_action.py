@@ -259,7 +259,7 @@ class LlmAgent_action_module():
             safety_assessment = assess_lane_change_safety(self.toolModels, lane_cars_id, availabel_lane, ego_veh) #{'left_lane_change_safe': True, 'right_lane_change_safe': True}
         else:
             safety_assessment = "There is no need to assess lane change safety."
-        safety_msg = check_safety_in_current_lane(self.toolModels, lane_cars_id, availabel_lane, ego_veh) #{'acceleration_conflict': 'acceleration may be conflict with `veh1`, which is unacceptable.', 'keep_speed_conflict': 'keep lane with current speed may be conflict with veh1, you need consider decelerate', 'deceleration_conflict': 'deceleration with current speed is safe with veh1'}
+        safety_msg = check_safety_in_current_lane(self.toolModels, lane_cars_id, availabel_lane, ego_veh, env) #{'acceleration_conflict': 'acceleration may be conflict with `veh1`, which is unacceptable.', 'keep_speed_conflict': 'keep lane with current speed may be conflict with veh1, you need consider decelerate', 'deceleration_conflict': 'deceleration with current speed is safe with veh1'}
         safety_msg2, most_dangerous_info = check_safety_with_conflict_vehicles(ego_veh, negotiation_results, conflicting_info, env)
         prompt_info = format_training_info(msg0, msg1, msg2, availabel_lane, lane_cars_id, safety_assessment, safety_msg, safety_msg2, most_dangerous_info)  # msg0, msg2, availabel_lane, safety_assessment, safety_msg
         return prompt_info
