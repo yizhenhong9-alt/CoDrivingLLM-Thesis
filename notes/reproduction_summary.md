@@ -112,3 +112,13 @@
 - Interpretation boundary: Phase 4E validates multi-seed execution, matched initial states, success classification, artifact preservation, Memory accounting, and aggregation. Three seeds are insufficient to claim that Memory ON improves performance; the observed `66.7%` versus `33.3%` is not a formal result, and Ollama sampling is not deterministic.
 - Semantic impact: none. Released-code Memory behavior and the Phase 4D fidelity decision remain unchanged; paper/code differences remain documentation-only.
 - Next gate: audit original GitHub experiment parameters, freeze all parameters, use a clean formal output root, and obtain explicit approval before the 20-seed intersection batch.
+
+## Phase 4F/4G — Parameter Audit and Formal Intersection Batch Freeze
+
+- Phase 4F audited the effective intersection config, seeded initialization, policy/simulator step relationship, action-space discrepancy, success/termination/reward separation, Ollama/Memory parameters, seed scope, and Phase 4 artifact contract. Paper/code mismatches remain documented and unchanged.
+- Phase 4G preparation status: conditional `GO`. The formal protocol is exactly 20 frozen seeds × Protocol A Memory OFF and Protocol B independent-episode Memory ON, ordered as all OFF then all ON in manifest order. Protocol C/cumulative Memory is excluded.
+- Formal root: `E:\YiZhen\codriving_formal_runs\intersection`, initially containing no case artifacts. It does not reuse Phase 4C smoke/debug or Phase 4E mini-aggregation roots.
+- Added thin `Reproduction Infrastructure`: `phase4g_run_intersection_batch.ps1` sequences the existing one-case runner without retries; `phase4g_validate_intersection_batch.ps1` verifies exact completeness and all 20 matched OFF/ON initial-state hashes.
+- Failure policy: completed unsuccessful simulator cases remain in the denominator; runtime failures are preserved and stop execution pending review. Seeds are never replaced or cherry-picked.
+- Frozen semantics: original/current intersection initialization, action mapping, simulator, reward, observation, terminal behavior, strict parser/no-fallback policy, released-code Memory `top_k=2`, unconditional per-CAV update before `env.step()`, and fresh per-case ON database.
+- Execution boundary: Phase 4G only prepares commands and documentation. No formal case has been run, and launch still requires the Lab RDP pre-batch gate plus explicit user approval.

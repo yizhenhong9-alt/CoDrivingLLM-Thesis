@@ -382,3 +382,16 @@
 - Next gate: complete the original GitHub experiment-parameter audit, freeze all parameters, prepare a clean formal output root without smoke/debug retries, and obtain explicit approval before any 20-seed intersection batch.
 - Files affected: documentation only — `notes/reproduction_protocol.md`, `notes/reproduction_log.md`, and `notes/reproduction_summary.md`.
 - Local activity: documentation editing and textual/Git inspection only. No Python/project code, simulator, Ollama, Chroma, Memory, embedding, seed, episode, or experiment was executed; no commit or push was performed.
+
+## Attempt 20
+
+- Date/time: `2026-09-10` (`Asia/Taipei`)
+- Goal: Freeze Phase 4G formal Intersection 20-seed × Memory OFF/ON preparation without launching any case.
+- Protocol: exactly the 20 seeds in `notes/phase4_seed_manifest.json`; all OFF cases in manifest order followed by all independent-episode ON cases in the same order; every ON case starts with a fresh isolated database; every matched OFF/ON pair must have identical `initial_state_sha256`; Protocol C is excluded.
+- Frozen runtime contract: repository-local simulator, Python `3.8.20`, recorded dependency inventory, complete effective config, original action/reward/termination semantics, Ollama `qwen2.5:7b`, local `nomic-embed-text:latest`, endpoint `127.0.0.1:11435`, resolved model digests, timeout `120 s`, provider-default sampling, strict parsers, no fallback, no automatic retry, Memory `top_k=2`, and update before `env.step()`.
+- Formal root: `E:\YiZhen\codriving_formal_runs\intersection`; it must begin without any `case.json` and must not reuse Phase 4C/4E evidence roots. Canonical run IDs and paths are deterministic and immutable.
+- Reproduction Infrastructure: added `scripts/phase4g_run_intersection_batch.ps1`, which only sequences the existing one-case runner and stops on the first runtime failure; added `scripts/phase4g_validate_intersection_batch.ps1`, which only reads artifacts and validates exactly 40 canonical cases, exact seeds, required files, completed status, and 20 matched initial-state hashes.
+- Failure policy: completed simulator failures remain denominator cases; runtime/infrastructure failures remain preserved, stop the batch, receive no automatic retry, and cannot be replaced by another seed.
+- Semantic impact: none. No simulator, prompt, parser, action, Memory, success, termination, reward, or aggregation semantics were changed. All known non-blocking paper/code discrepancies remain documentation-only.
+- Local verification: textual/static diff and PowerShell source inspection only. No project Python, environment, simulator, reset/step, Ollama, embedding, Chroma, Memory, seed, episode, batch, commit, or push was executed.
+- Execution status: preparation only. Formal RDP execution still requires the documented mandatory gate and explicit approval.

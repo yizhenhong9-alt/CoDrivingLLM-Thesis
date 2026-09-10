@@ -652,3 +652,190 @@ The next step is not automatically the full 20-seed execution. Before a formal i
 2. freeze every experiment parameter and its evidence/classification;
 3. use a clean formal output root containing no smoke/debug retries or staging artifacts;
 4. review the frozen protocol and obtain explicit approval for the 20-seed intersection batch.
+
+## 25. Phase 4G formal Intersection batch freeze
+
+### 25.1 Formal protocol and scope
+
+Phase 4G freezes a formal `intersection-multi-agent-v0` batch using the released/current reproduction semantics already validated by Phases 2D, 3B, 4C, and 4E. It contains exactly `20 seeds × 2 modes = 40` canonical cases:
+
+- Protocol A: Memory OFF.
+- Protocol B: independent-episode Memory ON; every case starts with a new isolated empty `chroma/` database.
+
+The seed list is exactly `notes/phase4_seed_manifest.json` in manifest order. OFF and ON use the same seeds, and each matched pair must have identical `initial_state_sha256`. Protocol C/cumulative Memory is excluded. This batch does not reconstruct Fig. 7, failure-only Memory, or any unpublished paper behavior.
+
+### 25.2 Frozen outcome-affecting contract
+
+| Parameter | Frozen value/policy |
+|---|---|
+| Git | Clean working tree; exact commit recorded at batch start and in every case |
+| Simulator import | Repository-local `highway_env` under `E:\YiZhen\Thesis\CoDrivingLLM-Reproduction\highway_env` |
+| Python | `E:\YiZhen\conda_envs\codriving_repro\python.exe`; Python `3.8.20` |
+| Compatibility pins | Include `langchain==0.0.335`, `chromadb==0.4.15`, `tokenizers==0.13.3`, `posthog==3.8.4`; record all runner-relevant versions |
+| Scenario | `intersection`; environment `intersection-multi-agent-v0`; complete effective config recorded per case |
+| Initialization | Released `_make_vehicles()` behavior unchanged; `controlled_vehicles=4`, `initial_vehicle_count=10`, `spawn_probability=0.6`, random positions/routes/destinations, fixed controlled initial speed `5 m/s` |
+| Timing | `simulation_frequency=15`, `policy_frequency=5`, `duration=50`; up to three simulator substeps per policy step |
+| Actions | Intersection semantic/executable map `{1: IDLE, 3: FASTER, 4: SLOWER}` unchanged |
+| Declared-space discrepancy | Record `declared_action_space_mismatch_steps`; validate against executable maps; do not remap or repair |
+| Success | Every controlled CAV non-crashed and every CAV satisfies original `IntersectionEnv.has_arrived()` |
+| Termination | Original controlled collision, all-arrived, duration threshold, and configured off-road semantics |
+| Reward | Original intersection cooperative reward unchanged, including known first-CAV speed-reference discrepancy |
+| Chat | Ollama, `qwen2.5:7b`, endpoint `http://127.0.0.1:11435`; exact Ollama version and resolved digest required |
+| Sampling | Provider defaults; `temperature`, `top_p`, and LLM seed are not explicitly set; nondeterminism declared |
+| Timeout/retry | `120 s`; no automatic retry; no replacement attempt inside the formal batch |
+| Parser/fallback | Strict fail closed; zero fallback actions; parser failure is a runtime failure |
+| Embedding | Memory ON only: Ollama `nomic-embed-text:latest`; resolved digest required; no automatic fallback |
+| Memory | Released query/injection/update semantics; `top_k=2`; sequential per-CAV update before `env.step()` |
+| Database | A new case-local `chroma/` for each ON seed; initial count must be zero; no sharing across cases |
+| Seeds | Exact 20 unique seeds in `phase4c.seed-manifest.v1`; no substitution or outcome-dependent replacement |
+| Artifact contract | `phase4c.case.v1`, protocol `phase4c-intersection-v1`; immutable unique run directories |
+| Output root | Formal scenario root `E:\YiZhen\codriving_formal_runs\intersection`; no smoke/debug/mini artifacts |
+| Aggregation denominator | Every canonical case is retained; completed unsuccessful cases count in the denominator; runtime failures are preserved and cannot be silently omitted |
+
+The exact Git commit, resolved model digests, Ollama version, full Python/package inventory, and effective environment config are runtime provenance: their values must be captured at the RDP pre-batch gate and then remain unchanged for all 40 cases.
+
+### 25.3 Ordering, orchestration, and failure policy
+
+The frozen order is all 20 Memory OFF cases in manifest order, followed by all 20 independent-episode Memory ON cases in the same order. Although Protocol B carries no Memory across episodes, ordering remains fixed for auditability and temporal/model-server provenance.
+
+`scripts/phase4g_run_intersection_batch.ps1` is thin `Reproduction Infrastructure`. It reads the frozen manifest and invokes `scripts/phase4_reproduction_experiment.py` once per seed. It does not duplicate simulator, prompt, parser, action, Memory, success, or artifact logic. It creates mode-specific batch manifest and append-only execution-log files, refuses existing canonical targets, never replaces a seed, performs no automatic retry, and stops visibly on the first nonzero case exit.
+
+Failure classification is frozen as follows:
+
+- Completed unsuccessful experiment: controlled-CAV crash, duration/non-arrival, or another valid simulator terminal failure. The case is valid and remains in the denominator; batch execution continues because the runner exits successfully after preserving it.
+- Infrastructure/runtime failure: unavailable backend, parser failure, Memory failure, simulator exception, artifact error, or other nonzero runner exit. Preserve the partial/failed artifact and execution-log record, stop the batch, and review before any continuation. Do not automatically retry or replace the seed.
+
+### 25.4 Formal output layout and overwrite policy
+
+`E:\YiZhen\codriving_formal_runs\intersection` must contain no `case.json` before the OFF batch starts and must not reuse `E:\YiZhen\phase4c_runs` or `E:\YiZhen\phase4e_mini_aggregate`. The helper treats this as the scenario root and passes its parent to the existing runner, whose immutable layout appends `intersection`:
+
+```text
+E:\YiZhen\codriving_formal_runs\intersection\
+  batch_manifest_off.json
+  batch_execution_off.jsonl
+  batch_manifest_on.json
+  batch_execution_on.jsonl
+  memory_off\seed_<seed>\phase4g_formal_off_seed<seed>\
+    case.json
+    trajectory.jsonl
+    llm_calls.jsonl
+  memory_on\seed_<seed>\phase4g_formal_on_seed<seed>\
+    case.json
+    trajectory.jsonl
+    llm_calls.jsonl
+    memory_events.jsonl
+    chroma\
+```
+
+No canonical run directory, artifact, batch manifest, or execution log may be overwritten.
+
+### 25.5 Mandatory Lab RDP pre-batch gate
+
+Run manually in PowerShell; these commands are instructions and were not executed locally during Phase 4G:
+
+```powershell
+$Repo = 'E:\YiZhen\Thesis\CoDrivingLLM-Reproduction'
+$Python = 'E:\YiZhen\conda_envs\codriving_repro\python.exe'
+$FormalRoot = 'E:\YiZhen\codriving_formal_runs\intersection'
+$SeedManifest = Join-Path $Repo 'notes\phase4_seed_manifest.json'
+Set-Location $Repo
+
+git pull --ff-only
+if ($LASTEXITCODE -ne 0) { throw 'git pull failed' }
+if (git status --porcelain) { throw 'Git working tree is not clean' }
+git rev-parse HEAD
+
+& $Python --version
+& $Python -m pip check
+& $Python -m pip show gym numpy pandas langchain chromadb tokenizers posthog
+& $Python -c "import importlib.metadata as m; expected={'gym':'0.15.3','numpy':'1.24.4','pandas':'1.3.5','langchain':'0.0.335','chromadb':'0.4.15','tokenizers':'0.13.3','posthog':'3.8.4'}; actual={k:m.version(k) for k in expected}; print(actual); assert actual==expected"
+& $Python -c "import highway_env, pathlib; p=pathlib.Path(highway_env.__file__).resolve(); print(p); assert str(p).lower().startswith(str(pathlib.Path(r'E:\YiZhen\Thesis\CoDrivingLLM-Reproduction\highway_env').resolve()).lower())"
+
+nvidia-smi
+Invoke-RestMethod 'http://127.0.0.1:11435/api/version' | ConvertTo-Json -Depth 10
+$Tags = Invoke-RestMethod 'http://127.0.0.1:11435/api/tags'
+$Tags.models | Where-Object { $_.name -in @('qwen2.5:7b','nomic-embed-text:latest') } | Select-Object name,model,digest | Format-Table -AutoSize
+if (@($Tags.models | Where-Object { $_.name -eq 'qwen2.5:7b' }).Count -ne 1) { throw 'qwen2.5:7b missing or ambiguous' }
+if (@($Tags.models | Where-Object { $_.name -eq 'nomic-embed-text:latest' }).Count -ne 1) { throw 'nomic-embed-text:latest missing or ambiguous' }
+
+Get-Content -LiteralPath $SeedManifest -Raw
+Get-FileHash -Algorithm SHA256 -LiteralPath $SeedManifest
+if (Test-Path -LiteralPath $FormalRoot) {
+    if (Get-ChildItem -LiteralPath $FormalRoot -Filter case.json -File -Recurse) { throw 'Formal root already contains case artifacts' }
+}
+
+& $Python -m py_compile scripts\phase4_reproduction_experiment.py scripts\phase4_aggregate_results.py
+& $Python -m scripts.phase4_reproduction_experiment --help
+Get-Help .\scripts\phase4g_run_intersection_batch.ps1 -Full
+Get-Help .\scripts\phase4g_validate_intersection_batch.ps1 -Full
+```
+
+The gate is GO only if Git is clean, the commit and manifest hash are recorded, Python is `3.8.20`, dependency checks pass with the frozen compatibility pins, local `highway_env` is active, GPU use is reviewed, Ollama is responsive, both exact model tags resolve to nonempty digests, and the formal root has no case artifacts.
+
+### 25.6 Exact formal execution and validation commands
+
+Memory OFF batch:
+
+```powershell
+Set-Location 'E:\YiZhen\Thesis\CoDrivingLLM-Reproduction'
+& .\scripts\phase4g_run_intersection_batch.ps1 `
+  -MemoryMode off `
+  -Repository 'E:\YiZhen\Thesis\CoDrivingLLM-Reproduction' `
+  -Python 'E:\YiZhen\conda_envs\codriving_repro\python.exe' `
+  -FormalRoot 'E:\YiZhen\codriving_formal_runs\intersection' `
+  -OllamaEndpoint 'http://127.0.0.1:11435' `
+  -ChatModel 'qwen2.5:7b' `
+  -EmbeddingModel 'nomic-embed-text:latest' `
+  -TimeoutSeconds 120
+```
+
+After reviewing the complete OFF batch, Memory ON batch:
+
+```powershell
+Set-Location 'E:\YiZhen\Thesis\CoDrivingLLM-Reproduction'
+& .\scripts\phase4g_run_intersection_batch.ps1 `
+  -MemoryMode on `
+  -Repository 'E:\YiZhen\Thesis\CoDrivingLLM-Reproduction' `
+  -Python 'E:\YiZhen\conda_envs\codriving_repro\python.exe' `
+  -FormalRoot 'E:\YiZhen\codriving_formal_runs\intersection' `
+  -OllamaEndpoint 'http://127.0.0.1:11435' `
+  -ChatModel 'qwen2.5:7b' `
+  -EmbeddingModel 'nomic-embed-text:latest' `
+  -TimeoutSeconds 120
+```
+
+Final exact-seed, duplicate, artifact-completeness, and 20-pair hash validation:
+
+```powershell
+Set-Location 'E:\YiZhen\Thesis\CoDrivingLLM-Reproduction'
+& .\scripts\phase4g_validate_intersection_batch.ps1 `
+  -Repository 'E:\YiZhen\Thesis\CoDrivingLLM-Reproduction' `
+  -FormalRoot 'E:\YiZhen\codriving_formal_runs\intersection' `
+  -SeedManifest 'notes\phase4_seed_manifest.json' |
+  Tee-Object -FilePath 'E:\YiZhen\codriving_formal_runs\intersection\completeness_and_hash_validation.json'
+```
+
+Read-only aggregation:
+
+```powershell
+Set-Location 'E:\YiZhen\Thesis\CoDrivingLLM-Reproduction'
+& 'E:\YiZhen\conda_envs\codriving_repro\python.exe' -m scripts.phase4_aggregate_results `
+  --input-root 'E:\YiZhen\codriving_formal_runs\intersection\memory_off' `
+  --memory-mode off |
+  Tee-Object -FilePath 'E:\YiZhen\codriving_formal_runs\intersection\aggregate_off.json'
+
+& 'E:\YiZhen\conda_envs\codriving_repro\python.exe' -m scripts.phase4_aggregate_results `
+  --input-root 'E:\YiZhen\codriving_formal_runs\intersection\memory_on' `
+  --memory-mode on |
+  Tee-Object -FilePath 'E:\YiZhen\codriving_formal_runs\intersection\aggregate_on.json'
+```
+
+Validation and aggregation are run only after all 40 cases complete. Their output files are derived infrastructure artifacts, not experimental trajectories.
+
+### 25.7 Intentionally unchanged discrepancies
+
+Phase 4G does not change controlled-CAV fixed initial speed, destination sampling range, variable realized HDV count, effective nested Kinematics defaults, action-space declaration mismatch, inactive action mask/safety supervisor, first-CAV reward-speed reference, duration threshold, update-before-`env.step()` Memory timing, unconditional per-decision Memory writes, provider-default LLM sampling, unavailable paper seed list, or OpenAI-to-Ollama/embedding adaptations. They remain documented evidence and are not repaired unless a separately reviewed runtime blocker arises.
+
+### 25.8 Preparation verdict
+
+The formal Intersection batch preparation is `GO`, conditional on the Lab RDP pre-batch gate passing and explicit user approval to launch. Phase 4G preparation itself does not authorize or execute the 40-case batch.
