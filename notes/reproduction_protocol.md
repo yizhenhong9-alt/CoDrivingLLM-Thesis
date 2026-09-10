@@ -875,3 +875,15 @@ Phase 4 uses structured `case.json`, `trajectory.jsonl`, `llm_calls.jsonl`, `mem
 During formal execution, the TTC calculation in `prompt_llm.py` could emit the non-fatal released/current warning `RuntimeWarning: divide by zero encountered in scalar divide` at `ttc = distance / relativeSpeed`. Affected cases still completed. Phase 4H records but does not repair this warning; no evidence currently establishes it as a formal execution blocker.
 
 All known released-code discrepancies remain unchanged, including action-space declarations, reward quirks, provider-default sampling, and released-code Memory timing/storage behavior. No formal seed is to be rerun or replaced.
+
+## 27. Phase 5B minimal Merge enablement
+
+Phase 5B extends the existing one-case runner to select either `intersection` or `merge` without changing the completed Intersection branch. Merge maps to `merge-multi-agent-v0` and protocol `phase5b-merge-smoke-v1`. It applies the released entry path's intended Merge override exactly: `simulation_frequency=20`, `policy_frequency=5`, and `duration=40`.
+
+The runner expects the released effective population of three controlled `MDPVehicle` CAVs and three background `IDMVehicle` HDVs. It preserves seed-randomized spawn points, position noise, and speeds, fixed destination `d`, early-collision cleanup quirks, the environment's five-action capability, and the released LLM restriction to `IDLE`, `FASTER`, and `SLOWER`. The per-CAV pre-decision speed limit is scenario-specific: Intersection remains `5 m/s`; Merge follows the released `llm_controller_run()` maximum of `20 m/s`, which does not alter the released initial `[15,17) m/s` values.
+
+Merge termination remains controlled-CAV crash or `duration * policy_frequency`; no arrival, all-arrived, route-completion, or off-road termination was added. Because the released source has `has_arrived()` but no explicit case-level Merge success definition, a completed Phase 5B Merge case retains `success=null`. A separate `evaluation` object records `formal_success_evaluated=false`, per-CAV crash flags, and diagnostic `has_arrived()` values. These fields are `Reproduction Infrastructure`, not released success semantics. Functional completion, not `success=true`, is the smoke criterion; formal Merge success-rate evaluation remains deferred.
+
+Merge negotiation includes every road vehicle, including HDVs. The runner's parser-coverage instrumentation therefore checks parsed pairs through the same scenario participant set (`env.road.vehicles`) instead of only controlled CAVs. This prevents a correctly returned HDV–HDV pair from being falsely classified as missing; conflict detection, prompt content, passing order, and parser semantics are unchanged.
+
+Memory behavior is unchanged: OFF never constructs `DrivingMemory`; ON uses a fresh case-local database with released query, `top_k=2`, prompt injection, sequential same-step visibility, and update before `env.step()`. Merge artifacts are isolated below `<output-root>/merge/memory_<off|on>/...`. Phase 5B authorizes only a future matched seed-`104729` OFF/ON smoke on Lab RDP; no Merge formal batch or aggregator is introduced.

@@ -410,3 +410,16 @@
 - Non-fatal warning: formal cases could emit `RuntimeWarning: divide by zero encountered in scalar divide` from `prompt_llm.py` at `ttc = distance / relativeSpeed` and still complete. Classified as an observed non-fatal released/current runtime warning; no repair was made.
 - Semantic impact: none. No formal seed was rerun or replaced; all known released-code discrepancies remain unchanged.
 - Local activity: documentation editing and static Merge/Git inspection only. No Python project execution, environment instantiation/reset/step, simulator, Ollama, embedding, Chroma, Memory, seed, episode, or batch was run; no commit or push was performed.
+
+## Attempt 22
+
+- Date/time: `2026-09-10` (`Asia/Taipei`)
+- Goal: Implement the minimum scenario-aware runner support required for a future Lab RDP Phase 5B matched Merge smoke; do not execute Merge locally.
+- Scenario contract: `merge` → `merge-multi-agent-v0`, protocol `phase5b-merge-smoke-v1`, explicit `20/5/40` simulation/policy/duration config, effective three controlled CAVs, fixed destination `d`, and released three-action LLM restriction.
+- Runner changes: scenario-specific environment/config/protocol/output mapping; scenario-specific CAV-count assertion and decision speed limit (`5` Intersection, `20` Merge); released Merge crash/duration terminal classification; no formal Merge success boolean; diagnostic-only arrival metadata; Merge parser-coverage validation across all negotiation participants.
+- Parser classification: `Compatibility / instrumentation repair`. Merge negotiation detects conflicts across all road vehicles, so validation now visits all Merge participants and cannot falsely omit a real HDV–HDV pair. Conflict detection, prompt meaning, passing decision, and parser matching logic were not changed.
+- Evaluation policy: completed Merge smoke retains `success=null` and records `evaluation.formal_success_evaluated=false`. Functional completion is the smoke target. Formal Merge success-rate semantics remain deferred and require separate approval.
+- Preserved quirks: effective 3 CAV + 3 HDV, fixed `d`, spawn/cleanup behavior, LLM longitudinal-only action restriction despite five-action environment support, nominal action masking, reward/headway/merge-lane behavior, and absence of arrival termination.
+- Memory/backend policy: unchanged Ollama backend; OFF has no Memory construction; ON has a fresh isolated case-local Chroma database and preserves released retrieval/update timing.
+- Local verification: `py_compile` for `scripts/phase4_reproduction_experiment.py`, textual source invariants, `git diff --check`, and Git inspection only. No environment import/instantiation, reset/step, simulator, Ollama, embedding, DrivingMemory, Chroma, seed, episode, smoke, or batch was run.
+- Execution status: source preparation only; future Lab RDP target is seed `104729`, OFF then ON, with matched `initial_state_sha256`. No 20-seed Merge batch or aggregator was created; no commit or push was performed.

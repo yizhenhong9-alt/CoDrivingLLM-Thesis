@@ -15,8 +15,26 @@ from urllib import request
 
 
 SCHEMA_VERSION = "phase4c.case.v1"
-PROTOCOL_VERSION = "phase4c-intersection-v1"
-ENVIRONMENT_ID = "intersection-multi-agent-v0"
+SCENARIOS = {
+    "intersection": {
+        "environment_id": "intersection-multi-agent-v0",
+        "protocol_version": "phase4c-intersection-v1",
+        "config": None,
+        "controlled_vehicle_count": 4,
+        "decision_speed_limit": 5,
+    },
+    "merge": {
+        "environment_id": "merge-multi-agent-v0",
+        "protocol_version": "phase5b-merge-smoke-v1",
+        "config": {
+            "simulation_frequency": 20,
+            "policy_frequency": 5,
+            "duration": 40,
+        },
+        "controlled_vehicle_count": 3,
+        "decision_speed_limit": 20,
+    },
+}
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 MEMORY_SECTION_PREFIX = (
     "Here is your action when scenarios are similar to the current scenario in the past, "
@@ -36,8 +54,8 @@ RELEVANT_PACKAGES = (
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(
-        description="Run exactly one Phase 4C intersection reproduction case")
-    parser.add_argument("--scenario", required=True, choices=["intersection"])
+        description="Run exactly one controlled reproduction case")
+    parser.add_argument("--scenario", required=True, choices=sorted(SCENARIOS))
     parser.add_argument("--seed", required=True, type=int)
     parser.add_argument("--memory-mode", required=True, choices=["off", "on"])
     parser.add_argument("--output-root", required=True)
@@ -103,7 +121,7 @@ def build_paths(args):
     validate_run_id(args.run_id)
     mode_directory = "memory_{}".format(args.memory_mode)
     run_directory = (
-        output_root / "intersection" / mode_directory /
+        output_root / args.scenario / mode_directory /
         "seed_{}".format(args.seed) / args.run_id
     ).resolve(strict=False)
     if not is_within(run_directory, output_root) or run_directory == output_root:
@@ -376,9 +394,13 @@ def backend_record(backend, phase, success, parsed=None, identity=None,
     }
 
 
-def terminal_reason(env):
+def terminal_reason(env, scenario):
     if any(vehicle.crashed for vehicle in env.controlled_vehicles):
         return "controlled_vehicle_crash"
+    if scenario == "merge":
+        if env.steps >= env.config["duration"] * env.config["policy_frequency"]:
+            return "duration_limit"
+        return "unknown_terminal_condition"
     arrivals = [arrival_value(env, vehicle) for vehicle in env.controlled_vehicles]
     if arrivals and all(value is True for value in arrivals):
         return "all_controlled_vehicles_arrived"
@@ -470,15 +492,20 @@ def run_case(args, paths, case, state):
         case["memory"]["resolved_embedding_model"] = inventory["embedding_model"]
     atomic_write_json(paths["case"], case)
 
+    scenario_contract = SCENARIOS[args.scenario]
+    environment_id = scenario_contract["environment_id"]
     case["failure_stage"] = "environment initialization and explicit seed reset"
-    env = gym.make(ENVIRONMENT_ID)
+    if scenario_contract["config"] is None:
+        env = gym.make(environment_id)
+    else:
+        env = gym.make(environment_id, config=dict(scenario_contract["config"]))
     state["env"] = env
     observation = env.reset(is_training=False, testing_seeds=args.seed)
     initial_states = environment_snapshot(env)
     stable_states = stable_initial_state(initial_states)
     initial_hash = sha256_json({
         "scenario": args.scenario,
-        "environment_id": ENVIRONMENT_ID,
+        "environment_id": environment_id,
         "effective_config": json_safe(env.config),
         "vehicles": stable_states,
     })
@@ -504,8 +531,11 @@ def run_case(args, paths, case, state):
         "initial_state_sha256": initial_hash,
     }
     case["initial_state_sha256"] = initial_hash
-    if len(env.controlled_vehicles) != 4:
-        raise RuntimeError("Intersection reproduction requires exactly four controlled CAVs")
+    expected_controlled = scenario_contract["controlled_vehicle_count"]
+    if len(env.controlled_vehicles) != expected_controlled:
+        raise RuntimeError(
+            "{} reproduction requires exactly {} controlled CAVs".format(
+                args.scenario.capitalize(), expected_controlled))
     log_policy_snapshot(paths["trajectory"], env, "initial", 0)
     atomic_write_json(paths["case"], case)
 
@@ -554,7 +584,11 @@ def run_case(args, paths, case, state):
 
         parsed_by_vehicle = {}
         parsed_pairs = set()
-        for vehicle in env.controlled_vehicles:
+        negotiation_participants = (
+            env.controlled_vehicles
+            if args.scenario == "intersection" else env.road.vehicles
+        )
+        for vehicle in negotiation_participants:
             identifier = vehicle_identifier(vehicle)
             parsed = action_agent.extract_vehicle_conflicts(
                 negotiation_content, identifier)
@@ -596,7 +630,9 @@ def run_case(args, paths, case, state):
         action_ids = []
         action_records = {}
         for cav_index, ego_vehicle in enumerate(env.controlled_vehicles):
-            ego_vehicle.speed = 5 if ego_vehicle.speed > 5 else ego_vehicle.speed
+            speed_limit = scenario_contract["decision_speed_limit"]
+            ego_vehicle.speed = (
+                speed_limit if ego_vehicle.speed > speed_limit else ego_vehicle.speed)
             negotiation_results = (
                 action_agent.transfer_negotiation_prompts_to_results(
                     ego_vehicle, negotiation_content))
@@ -752,9 +788,20 @@ def run_case(args, paths, case, state):
             gc.collect()
 
     case["failure_stage"] = "success evaluation"
-    result = evaluate_intersection_success(env)
-    case.update(result)
-    case["terminal_reason"] = terminal_reason(env)
+    if args.scenario == "intersection":
+        result = evaluate_intersection_success(env)
+        case.update(result)
+    else:
+        case["evaluation"] = {
+            "formal_success_evaluated": False,
+            "classification": "reproduction diagnostic only",
+            "reason": "Released Merge has no explicit case-level success rule; Phase 5B validates functional completion only",
+            "per_cav_crashed": [
+                bool(vehicle.crashed) for vehicle in env.controlled_vehicles],
+            "per_cav_arrived_diagnostic": [
+                arrival_value(env, vehicle) for vehicle in env.controlled_vehicles],
+        }
+    case["terminal_reason"] = terminal_reason(env, args.scenario)
     if case["terminal_reason"] == "unknown_terminal_condition":
         raise RuntimeError("Terminal reason could not be classified")
 
@@ -778,15 +825,16 @@ def run_case(args, paths, case, state):
 
 
 def initial_case(args, paths):
+    scenario_contract = SCENARIOS[args.scenario]
     return {
         "schema_version": SCHEMA_VERSION,
-        "protocol_version": PROTOCOL_VERSION,
+        "protocol_version": scenario_contract["protocol_version"],
         "artifact_complete": False,
         "status": "started",
         "failure_stage": "argument and path validation",
         "failure": None,
         "scenario": args.scenario,
-        "environment_id": ENVIRONMENT_ID,
+        "environment_id": scenario_contract["environment_id"],
         "memory_mode": args.memory_mode,
         "success": None,
         "terminal_reason": None,

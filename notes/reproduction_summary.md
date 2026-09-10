@@ -134,3 +134,12 @@
 - Artifact policy: structured Phase 4 JSON/JSONL and case-local Chroma records are sufficient for numerical/provenance analysis; MP4/XLSX are not required for the formal result.
 - Runtime warning: `prompt_llm.py` may emit a non-fatal divide-by-zero warning while calculating `ttc = distance / relativeSpeed`; formal cases still completed. The released/current warning is documented and not repaired.
 - Fidelity boundary: no released behavior or known discrepancy was changed, and no formal seed may be rerun or replaced.
+
+## Phase 5B — Minimal Merge Enablement
+
+- Status: source preparation complete; Lab RDP smoke pending. The existing one-case runner now supports `merge` → `merge-multi-agent-v0` under protocol `phase5b-merge-smoke-v1` while retaining the Intersection path.
+- Frozen Merge interpretation: entry-path config `simulation_frequency=20`, `policy_frequency=5`, `duration=40`; effective 3 CAV + 3 HDV; fixed destination `d`; seed-randomized spawn points/position noise/speeds; LLM actions remain `IDLE`, `FASTER`, and `SLOWER`.
+- Runtime fidelity: Merge uses the released 20 m/s pre-decision cap rather than the Intersection 5 m/s cap. Termination remains controlled-CAV crash or duration only; no arrival/route/off-road termination was introduced.
+- Evaluation boundary: released code has no explicit case-level Merge success. Phase 5B therefore leaves `success=null` and records diagnostic-only arrival/crash metadata with `formal_success_evaluated=false`. A completed crash remains valid functional smoke evidence.
+- Negotiation compatibility: Merge parser-coverage instrumentation follows all road-vehicle negotiation participants, including HDVs, so valid HDV–HDV pairs are not falsely omitted. Negotiation and parser semantics are unchanged.
+- Memory/artifacts: OFF has zero Memory activity; ON uses a fresh independent case-local DB and unchanged released retrieval/update behavior. Output is isolated under `<output-root>/merge/`. No Merge formal batch or aggregation workflow was added.
