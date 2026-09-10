@@ -558,3 +558,97 @@ The current unconditional per-CAV storage behavior must remain unchanged for rel
 ## 23. Phase 4D scope boundary
 
 The IEEE conceptual outcome-aware evaluator and the activated released-code heuristic evaluator are distinct behaviors. Protocols A and B reproduce and isolate released/current code behavior. Protocol C may reconstruct the paper's continuous-learning concept, but it does not resolve the Algorithm 1 timing mismatch or the unpublished failure-only question. No protocol may be called the exact paper Memory protocol without additional evidence.
+
+## 24. Phase 4E intersection three-seed mini validation
+
+### 24.1 Scope and matched initial states
+
+Phase 4E completed a three-seed Lab RDP mini validation for `intersection` using Protocol A (Memory OFF) and Protocol B (independent-episode Memory ON). The reproduction seeds and matched runner-generated initial-state hashes were:
+
+| Seed | Memory OFF/ON `initial_state_sha256` |
+|---:|---|
+| `104729` | `c482bbb24668d5171f409c574ae66e6821f0d7a214ba161328daaba3352a5851` |
+| `130363` | `f3df5aa82c40d5fd21f1a9b8ae2d5b837731470b3c435e57e0b8923d90147215` |
+| `155921` | `e3a580f43600d217d8afd9d119c180ab3671cb65fe1bb30b9afa52a996ca3212` |
+
+For every seed, the OFF and ON cases had the same initial-state hash. Different seeds produced different hashes. This validates matched initial simulator state construction for the mini set; it does not make Ollama/LLM sampling deterministic.
+
+### 24.2 Memory OFF evidence
+
+| Seed | Runner status | Success | Terminal reason |
+|---:|---|---:|---|
+| `104729` | `completed` | `false` | `controlled_vehicle_crash` |
+| `130363` | `completed` | `false` | `controlled_vehicle_crash` |
+| `155921` | `completed` | `true` | `all_controlled_vehicles_arrived` |
+
+The canonical OFF aggregate was:
+
+| Metric | Value |
+|---|---:|
+| Total discovered cases | `3` |
+| Successful cases | `1` |
+| Failed/unsuccessful cases | `2` |
+| Success rate | `0.3333333333333333` |
+| Mean episode steps | `57` |
+| Median episode steps | `41` |
+| Mean simulation time | `11.355555555555554 s` |
+| Median simulation time | `8.2 s` |
+| Mean wall-clock runtime | `235.54091813333335 s` |
+| Median wall-clock runtime | `197.3143661 s` |
+| Mean LLM calls per case | `285` |
+| Median LLM calls per case | `205` |
+
+All canonical OFF cases recorded zero parser failures, zero fallback actions, and zero Memory retrieval/update/write activity.
+
+Seed `104729` has an earlier failed smoke artifact caused by the released-code `env` argument mismatch documented in Attempt 17. That artifact remains preserved as historical debugging evidence. The canonical completed OFF case is `phase4c_smoke_off_seed104729_retry1`; the earlier failed attempt must not be overwritten or treated as the canonical completed case.
+
+For OFF aggregation, a staging directory containing only the canonical `case.json` artifacts was used because the smoke/debug root contains both the original failed `104729` attempt and its canonical completed retry. This staging directory is aggregation-only infrastructure: it selects preserved canonical artifact records for the read-only aggregator and is not experimental data, a rerun, or a replacement for the source artifacts.
+
+### 24.3 Independent-episode Memory ON evidence
+
+| Seed | Runner status | Success | Terminal reason |
+|---:|---|---:|---|
+| `104729` | `completed` | `false` | `controlled_vehicle_crash` |
+| `130363` | `completed` | `true` | `all_controlled_vehicles_arrived` |
+| `155921` | `completed` | `true` | `all_controlled_vehicles_arrived` |
+
+The Memory ON aggregate was:
+
+| Metric | Value |
+|---|---:|
+| Total discovered cases | `3` |
+| Successful cases | `2` |
+| Failed/unsuccessful cases | `1` |
+| Success rate | `0.6666666666666666` |
+| Mean episode steps | `73.33333333333333` |
+| Median episode steps | `89` |
+| Mean simulation time | `14.577777777777778 s` |
+| Median simulation time | `17.733333333333334 s` |
+| Mean wall-clock runtime | `363.7404639 s` |
+| Median wall-clock runtime | `452.9575356 s` |
+| Mean LLM calls per case | `366.6666666666667` |
+| Median LLM calls per case | `445` |
+
+Memory accounting examples were:
+
+| Seed | Decisions | Retrievals | Updates | Successful writes | Final count |
+|---:|---:|---:|---:|---:|---:|
+| `130363` | `388` | `388` | `388` | `388` | `388` |
+| `155921` | `356` | `356` | `356` | `356` | `356` |
+
+All ON cases used independent-episode Memory, started with an empty database, recorded zero parser failures and zero fallback actions, and ended with a final database count equal to successful writes. No new Memory semantics were introduced: the released-code retrieval, heuristic feedback, unconditional per-decision write, same-step visibility, and update-before-`env.step()` behavior remained preserved.
+
+### 24.4 Interpretation boundary
+
+Phase 4E is a mini pipeline and stability validation. Its purpose is to validate multi-seed execution, matched OFF/ON initial simulator states, explicit success classification, artifact preservation, Memory accounting, and multi-case aggregation.
+
+Three seeds are insufficient for paper-level or thesis-level performance conclusions. In particular, the observed `66.7%` Memory ON versus `33.3%` Memory OFF success rates must not be reported as evidence that Memory improves performance. Ollama sampling is not guaranteed deterministic, and the sample is too small for an effect estimate. Paper/code Memory fidelity differences remain documentation-only; Phase 4E does not resolve or modify them.
+
+### 24.5 Next gate
+
+The next step is not automatically the full 20-seed execution. Before a formal intersection batch:
+
+1. complete the original GitHub experiment-parameter audit;
+2. freeze every experiment parameter and its evidence/classification;
+3. use a clean formal output root containing no smoke/debug retries or staging artifacts;
+4. review the frozen protocol and obtain explicit approval for the 20-seed intersection batch.

@@ -101,3 +101,14 @@
 - Frozen decision: `INSUFFICIENT EVIDENCE — DO NOT CHANGE YET`. Do not introduce failure-only storage without a separately approved research-semantic reconstruction.
 - Protocols: A = Memory OFF; B = independent-episode Memory ON; C = `Reconstructed Continuous-Interaction Infrastructure` with one initially empty scenario-specific database carried through a declared ordered sequence.
 - Fig. 7 limitation: Protocol C is conceptually closer to continuous learning, but cannot be called the exact paper protocol because interaction order, seed order, database checkpoints, reset policy, and evaluation-write policy are unpublished.
+
+## Phase 4E — Intersection Three-Seed Mini Validation
+
+- Status: completed on the Lab RDP server for seeds `104729`, `130363`, and `155921`, using matched Memory OFF and independent-episode Memory ON cases. OFF/ON `initial_state_sha256` matched within each seed, while the three seeds produced different hashes.
+- Memory OFF: one of three cases succeeded (`155921`); seeds `104729` and `130363` completed with controlled-vehicle crashes. Aggregate success rate was `1/3 = 0.3333333333333333`. All canonical cases had zero parser failures, zero fallback actions, and zero Memory activity.
+- Canonical artifact note: `phase4c_smoke_off_seed104729_retry1` is the canonical completed OFF case for seed `104729`; the earlier failed artifact remains preserved. OFF aggregation used a directory containing only canonical `case.json` records. This is aggregation-only infrastructure, not experimental data.
+- Memory ON: two of three cases succeeded (`130363`, `155921`); seed `104729` completed with a controlled-vehicle crash. Aggregate success rate was `2/3 = 0.6666666666666666`. All cases used fresh databases with initial count `0`, zero parser failures/fallbacks, and final counts matching successful writes.
+- Memory accounting examples: seed `130363` recorded `388` decisions/retrievals/updates/writes and `final_count=388`; seed `155921` recorded `356` and `final_count=356`.
+- Interpretation boundary: Phase 4E validates multi-seed execution, matched initial states, success classification, artifact preservation, Memory accounting, and aggregation. Three seeds are insufficient to claim that Memory ON improves performance; the observed `66.7%` versus `33.3%` is not a formal result, and Ollama sampling is not deterministic.
+- Semantic impact: none. Released-code Memory behavior and the Phase 4D fidelity decision remain unchanged; paper/code differences remain documentation-only.
+- Next gate: audit original GitHub experiment parameters, freeze all parameters, use a clean formal output root, and obtain explicit approval before the 20-seed intersection batch.
