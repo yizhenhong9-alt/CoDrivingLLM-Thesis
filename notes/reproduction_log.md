@@ -395,3 +395,18 @@
 - Semantic impact: none. No simulator, prompt, parser, action, Memory, success, termination, reward, or aggregation semantics were changed. All known non-blocking paper/code discrepancies remain documentation-only.
 - Local verification: textual/static diff and PowerShell source inspection only. No project Python, environment, simulator, reset/step, Ollama, embedding, Chroma, Memory, seed, episode, batch, commit, or push was executed.
 - Execution status: preparation only. Formal RDP execution still requires the documented mandatory gate and explicit approval.
+
+## Attempt 21
+
+- Date/time: `2026-09-10` (`Asia/Taipei`)
+- Goal: Record the completed Phase 4G formal Intersection result as Phase 4H documentation; perform a separate read-only Phase 5A Merge source audit without implementing or executing Merge.
+- Formal provenance: Git `2c8e01d7011d5caab5dac215b5c1a81a674d2114`; Python `3.8.20`; Ollama `0.32.9`; chat `qwen2.5:7b` digest `845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e`; embedding `nomic-embed-text:latest` digest `0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f`.
+- Completeness: all 20 frozen seeds completed in both modes; validator `status=complete`; 20 OFF, 20 ON, and `20/20` matched initial-state pairs.
+- Memory OFF result: `7/20` successes, `13` completed unsuccessful controlled-vehicle crashes, observed success rate `0.35`; mean/median steps `61.3/45.5`; simulation time `12.2/9.066666666666666 s`; wall time `257.276676745/228.82761075 s`; LLM calls `306.5/227.5`.
+- Memory ON result: `6/20` successes, `14` completed unsuccessful controlled-vehicle crashes, observed success rate `0.30`; mean/median steps `54.5/41.0`; simulation time `10.826666666666666/8.166666666666666 s`; wall time `294.988538925/253.5811094 s`; LLM calls `272.5/205.0`.
+- Pair transitions: success→success `3`, failure→failure `9`, success→failure `4`, failure→success `4` (OFF→ON).
+- Interpretation: descriptive local-reproduction evidence only. Do not infer a positive or negative Memory effect: Qwen/Ollama generation used provider-default sampling without frozen `temperature`, `top_p`, or LLM seed, and the local models differ from the paper's OpenAI path.
+- Artifact policy: Phase 4 structured JSON/JSONL plus case-local Chroma artifacts preserve the numerical/provenance evidence required for analysis; original MP4/XLSX outputs are not required for this formal result.
+- Non-fatal warning: formal cases could emit `RuntimeWarning: divide by zero encountered in scalar divide` from `prompt_llm.py` at `ttc = distance / relativeSpeed` and still complete. Classified as an observed non-fatal released/current runtime warning; no repair was made.
+- Semantic impact: none. No formal seed was rerun or replaced; all known released-code discrepancies remain unchanged.
+- Local activity: documentation editing and static Merge/Git inspection only. No Python project execution, environment instantiation/reset/step, simulator, Ollama, embedding, Chroma, Memory, seed, episode, or batch was run; no commit or push was performed.

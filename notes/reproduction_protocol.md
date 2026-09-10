@@ -839,3 +839,39 @@ Phase 4G does not change controlled-CAV fixed initial speed, destination samplin
 ### 25.8 Preparation verdict
 
 The formal Intersection batch preparation is `GO`, conditional on the Lab RDP pre-batch gate passing and explicit user approval to launch. Phase 4G preparation itself does not authorize or execute the 40-case batch.
+
+## 26. Phase 4H formal Intersection result
+
+The Phase 4G formal `intersection-multi-agent-v0` batch completed on the Lab RDP server at Git commit `2c8e01d7011d5caab5dac215b5c1a81a674d2114`. All 20 frozen reproduction seeds completed in both Protocol A Memory OFF and Protocol B independent-episode Memory ON. The formal validator reported `status=complete`, exactly 20 OFF and 20 ON cases, and matched `initial_state_sha256` for all 20 OFF/ON pairs.
+
+| Metric | Memory OFF | Independent-episode Memory ON |
+|---|---:|---:|
+| Completed cases | `20` | `20` |
+| Successful cases | `7` | `6` |
+| Completed unsuccessful controlled-vehicle crashes | `13` | `14` |
+| Observed success rate | `0.35` | `0.30` |
+| Mean episode steps | `61.3` | `54.5` |
+| Median episode steps | `45.5` | `41.0` |
+| Mean simulation time | `12.2 s` | `10.826666666666666 s` |
+| Median simulation time | `9.066666666666666 s` | `8.166666666666666 s` |
+| Mean wall-clock runtime | `257.276676745 s` | `294.988538925 s` |
+| Median wall-clock runtime | `228.82761075 s` | `253.5811094 s` |
+| Mean LLM calls | `306.5` | `272.5` |
+| Median LLM calls | `227.5` | `205.0` |
+
+Matched-pair success transitions were: OFF success → ON success `3`; OFF failure → ON failure `9`; OFF success → ON failure `4`; OFF failure → ON success `4`.
+
+Frozen runtime/model provenance:
+
+- Python `3.8.20`; Ollama `0.32.9`.
+- Chat model `qwen2.5:7b`, digest `845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e`.
+- Embedding model `nomic-embed-text:latest`, digest `0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f`.
+- Formal artifacts: `E:\YiZhen\codriving_formal_runs\intersection`.
+
+The observed `35%` OFF and `30%` ON success rates are descriptive results from this local reproduction, not statistical proof that Memory improves or harms performance. The simulator initial states were matched, but Ollama/Qwen sampling remained provider-default: `temperature`, `top_p`, and an LLM seed were not explicitly frozen. Pair transitions occur in both directions and show no consistent directional improvement in this 20-seed run. These values are not exact numerical reproduction of the IEEE results because the paper's `gpt-4o-mini`/OpenAI embedding path was replaced by `qwen2.5:7b`/`nomic-embed-text`.
+
+Phase 4 uses structured `case.json`, `trajectory.jsonl`, `llm_calls.jsonl`, `memory_events.jsonl`, and case-local Chroma artifacts rather than requiring the released entry script's MP4/XLSX outputs. MP4/XLSX are not required for this formal evaluation because the structured artifacts preserve the numerical trajectory, result, LLM, provenance, and Memory evidence needed for analysis. This is output/instrumentation infrastructure and does not change simulator or research semantics.
+
+During formal execution, the TTC calculation in `prompt_llm.py` could emit the non-fatal released/current warning `RuntimeWarning: divide by zero encountered in scalar divide` at `ttc = distance / relativeSpeed`. Affected cases still completed. Phase 4H records but does not repair this warning; no evidence currently establishes it as a formal execution blocker.
+
+All known released-code discrepancies remain unchanged, including action-space declarations, reward quirks, provider-default sampling, and released-code Memory timing/storage behavior. No formal seed is to be rerun or replaced.

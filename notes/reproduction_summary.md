@@ -122,3 +122,15 @@
 - Failure policy: completed unsuccessful simulator cases remain in the denominator; runtime failures are preserved and stop execution pending review. Seeds are never replaced or cherry-picked.
 - Frozen semantics: original/current intersection initialization, action mapping, simulator, reward, observation, terminal behavior, strict parser/no-fallback policy, released-code Memory `top_k=2`, unconditional per-CAV update before `env.step()`, and fresh per-case ON database.
 - Execution boundary: Phase 4G only prepares commands and documentation. No formal case has been run, and launch still requires the Lab RDP pre-batch gate plus explicit user approval.
+
+## Phase 4H — Formal Intersection Result
+
+- Status: complete on Lab RDP at Git commit `2c8e01d7011d5caab5dac215b5c1a81a674d2114`. The validator confirmed exactly 20 OFF and 20 independent-episode ON cases, all completed, with `20/20` matched initial-state hashes.
+- Memory OFF: `7` successes and `13` controlled-vehicle-crash outcomes; observed success rate `0.35`. Mean/median steps `61.3/45.5`, simulation time `12.2/9.066666666666666 s`, wall time `257.276676745/228.82761075 s`, and LLM calls `306.5/227.5`.
+- Memory ON: `6` successes and `14` controlled-vehicle-crash outcomes; observed success rate `0.30`. Mean/median steps `54.5/41.0`, simulation time `10.826666666666666/8.166666666666666 s`, wall time `294.988538925/253.5811094 s`, and LLM calls `272.5/205.0`.
+- Matched pairs: OFF→ON success transitions were success→success `3`, failure→failure `9`, success→failure `4`, and failure→success `4`.
+- Provenance: Python `3.8.20`; Ollama `0.32.9`; `qwen2.5:7b` digest `845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e`; `nomic-embed-text:latest` digest `0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f`.
+- Interpretation: the observed `35%` versus `30%` does not prove that Memory helps or harms performance. Initial simulator states are matched, but provider-default Qwen/Ollama sampling is not deterministic, and the backend/embedding models differ from the IEEE experiment.
+- Artifact policy: structured Phase 4 JSON/JSONL and case-local Chroma records are sufficient for numerical/provenance analysis; MP4/XLSX are not required for the formal result.
+- Runtime warning: `prompt_llm.py` may emit a non-fatal divide-by-zero warning while calculating `ttc = distance / relativeSpeed`; formal cases still completed. The released/current warning is documented and not repaired.
+- Fidelity boundary: no released behavior or known discrepancy was changed, and no formal seed may be rerun or replaced.
