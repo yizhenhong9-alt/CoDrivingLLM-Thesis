@@ -887,3 +887,62 @@ Merge termination remains controlled-CAV crash or `duration * policy_frequency`;
 Merge negotiation includes every road vehicle, including HDVs. The runner's parser-coverage instrumentation therefore checks parsed pairs through the same scenario participant set (`env.road.vehicles`) instead of only controlled CAVs. This prevents a correctly returned HDV–HDV pair from being falsely classified as missing; conflict detection, prompt content, passing order, and parser semantics are unchanged.
 
 Memory behavior is unchanged: OFF never constructs `DrivingMemory`; ON uses a fresh case-local database with released query, `top_k=2`, prompt injection, sequential same-step visibility, and update before `env.step()`. Merge artifacts are isolated below `<output-root>/merge/memory_<off|on>/...`. Phase 5B authorizes only a future matched seed-`104729` OFF/ON smoke on Lab RDP; no Merge formal batch or aggregator is introduced.
+
+## 28. Phase 5B Merge functional reproduction closure
+
+The Lab RDP experiment output supplied by the user was reviewed as the Phase 5B runtime closure; this Local session did not execute either case. Seed `104729` completed once with Memory OFF and once with independent-episode Memory ON. Both artifacts recorded `initial_state_sha256=183f3c3009113988f45b67e917216faa2004b3eb32301ee84be8755ab0818030`, and both reached normal environment termination through `controlled_vehicle_crash`. The formal `success` field intentionally remained `null`, consistent with the frozen rule that released Merge has no evidenced case-level success predicate.
+
+The supplied result confirms functional traversal of both the OFF path and the enabled ON retrieval/update path; it does not supply a new formal success metric and is not a Memory-performance comparison. Phase 5B is therefore functionally complete. No Merge 20-seed batch is required, and the two completed artifacts remain historical evidence.
+
+## 29. Phase 6A Highway released-source static audit
+
+### 29.1 Overall finding
+
+Highway is `BLOCKED` as a faithful released-source CoDrivingLLM cooperative scenario. A conventional single-agent `highway-v0` environment is registered and is likely runnable, but released source does not expose the four configured controlled vehicles through a joint observation/action interface. Converting that environment to genuine multi-agent control, adding destinations, or defining all-CAV completion would be a `Research-Semantic Reconstruction`, not minimum reproduction infrastructure.
+
+Roundabout is `RELEASED-SOURCE BLOCKED`: no Roundabout environment implementation, registration, or runnable entry path is present.
+
+### 29.2 Highway source map
+
+| Area | Released-source evidence | Fidelity consequence |
+|---|---|---|
+| Environment IDs | `highway-v0` → `HighwayEnv`; `highway-fast-v0` → `HighwayEnvFast`. No `highway-multi-agent-v0` or equivalent cooperative ID is registered | The comment in `Run_multi_CAV_LLM.py` points specifically to `gym.make('highway-v0')` |
+| Road | Four straight adjacent lanes from `RoadNetwork.straight_road_network(lanes_count=4)` | This is an ordinary straight multilane highway; it is not source evidence for the paper's “four-way highway” wording |
+| Controlled vehicles | Configured count `4`; each begins as `Vehicle.create_random(..., speed=25, lane_id=None, spacing=2)` and is converted to the action type's `MDPVehicle` class | Four controlled objects exist in the road, but object count alone does not establish multi-agent control |
+| Background traffic | `vehicles_count=20` is split across the four creation groups, producing 20 `IDMVehicle` background vehicles in addition to four controlled vehicles; lane, position, and default speed use `road.np_random`, then `randomize_behavior()` | Seeded simulator randomness affects traffic initialization/behavior; controlled speed is fixed at creation while lane and position vary |
+| Routes/destinations | No controlled route planning, explicit destination, `has_arrived()`, or task-completion predicate in `HighwayEnv` | Paper-style destination completion cannot be evaluated from released Highway semantics |
+| Observation | Single `Kinematics` observation, `vehicles_count=15`, features `presence,x,y,vx,vy,cos_h,sin_h`, `absolute=True`; inherited defaults make it sorted, unnormalized, unclipped, and able to see behind | It observes from `env.vehicle`, the first controlled vehicle; it is not `MultiAgentObservation` |
+| Action | Single `DiscreteMetaAction`, IDs `0 LANE_LEFT`, `1 IDLE`, `2 LANE_RIGHT`, `3 FASTER`, `4 SLOWER`; both lateral and longitudinal controls are enabled | It is not `MultiAgentAction`. For a tuple, `DiscreteMetaAction.act()` executes only `action[0]` on its single `controlled_vehicle` |
+| Action availability | LLM-side Highway logic exposes all five actions and queries lane/speed availability; environment config has `action_masking=True` | The released environment does not enforce a joint per-CAV mask at the action interface; declared availability and actual single-agent execution remain distinct |
+| LLM path | `scene_name == 'highway'` selects the generic Highway prompt/rules, all five action labels, non-intersection parser branch, and a 20 m/s pre-decision speed cap | Prompt/parser coverage exists for Highway, but it does not repair the environment's single-agent interface |
+| Cooperation | Negotiation scans Highway road vehicles, detects candidate conflicts, assigns passing order, and the entry loop asks for one decision per configured CAV | The loop appears cooperative at LLM level, but only the first tuple element reaches environment control; the other three decisions are not executed |
+| Timing | Inherited `simulation_frequency=15`, `policy_frequency=5`; no active entry override; `_simulate()` therefore advances three simulator substeps per policy action. Config `duration=40`, and Highway terminal checks `steps >= duration` directly | Released threshold is 40 policy steps (about 8 simulated seconds at 5 Hz), despite the comment labeling duration in seconds |
+| Reward | First `env.vehicle` only: collision `-1`, right-lane `0.1`, high-speed `0.4` over `[20,30]`, mapped from `[-1,0.5]` to `[0,1]`, then zeroed off-road. Configured lane-change reward is not used; no arrival reward or multi-CAV aggregation | Numerical reward is returned by the simulator; the decision prompt path does not feed that reward back to the LLM |
+| Termination/success | Terminal when first `env.vehicle` crashes, `steps >= 40`, or optional first-vehicle off-road (`False` by default). No all-CAV crash/arrival/task completion and no explicit case success | Intersection success must not be reused; no faithful Highway success-rate denominator can be defined without new convention |
+| Seeding | Applicable released reset path seeds NumPy and Python `random` with `testing_seeds`, while road generation uses the seeded NumPy source | Simulator initialization is controlled by the supplied seed; Ollama provider-default generation remains nondeterministic |
+
+### 29.3 Paper-to-code boundary
+
+- `PAPER-REPORTED`: a “four-way highway” scenario, repeated under different random seeds; success requires all CAVs to safely finish their tasks and reach destinations.
+- `RELEASED-CODE`: a four-lane straight `highway-v0`, four controlled `MDPVehicle` objects plus 20 IDM background vehicles, a single observation/action interface, first-vehicle reward/termination, and no destination or arrival semantics.
+- `UNKNOWN`: the paper's exact Highway geometry, cooperative action wrapper, routes/destinations, task completion, success implementation, configuration, and whether an unreleased environment was used. Released source does not justify equating its ordinary `highway-v0` with the reported “four-way highway”.
+
+### 29.4 Current runner compatibility and change classification
+
+| Needed change | Classification | Audit result |
+|---|---|---|
+| Add `highway` → `highway-v0`, protocol metadata, CAV count `4`, and 20 m/s decision cap | 1. Scenario-enablement infrastructure | Mechanically small but insufficient by itself |
+| Handle single `DiscreteMetaAction` where the current runner expects `agents_action_types` | 2. Compatibility/runtime repair | Could make a limited released-environment smoke run, but would still execute only the first CAV action |
+| Add Highway-specific terminal labeling and retain structured diagnostics | 1. Scenario-enablement infrastructure | Can mirror released first-vehicle crash/direct-step-duration rules without inventing success |
+| Assign any case-level `success` interpretation | 3. Evaluation convention | Released Highway provides no all-CAV task/arrival predicate; must remain unresolved unless separately approved |
+| Replace with `MultiAgentAction`/`MultiAgentObservation`, execute all four actions, add destinations/all-arrived termination, or construct the paper geometry | 4. Research-semantic reconstruction | Required for a genuine cooperative paper-like scenario; therefore it is the fidelity blocker |
+
+The current runner's joint-action assumptions cannot be treated as neutral plumbing for `highway-v0`. In particular, an ON run following the released entry loop could retrieve/write Memory for four decisions while only the first decision is executed. That would produce structurally misleading Memory evidence for the three discarded actions.
+
+### 29.5 Runtime recommendation
+
+Do not run a matched Highway OFF/ON smoke for the Codex-versus-Antigravity reproduction comparison. Such a run could demonstrate only that the ordinary released `highway-v0` can be transported through an adapted runner; it would not establish the paper's cooperative four-way Highway scenario, and its non-executed per-CAV decisions would contaminate the interpretation of both actions and Memory. A separately labeled single-agent environment compatibility smoke could be considered later only if it serves a distinct engineering question and receives explicit approval.
+
+### 29.6 Roundabout confirmation
+
+Repository-wide static search found no Roundabout environment implementation, no registered Roundabout ID, and no runnable Roundabout activation in `Run_multi_CAV_LLM.py`. The lone Roundabout occurrence is a commented Memory example. Reproducing the paper Roundabout therefore requires author-supplied missing source or separately approved `Reconstructed Evaluation Infrastructure`; neither belongs in Phase 6A.

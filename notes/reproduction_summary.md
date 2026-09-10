@@ -143,3 +143,20 @@
 - Evaluation boundary: released code has no explicit case-level Merge success. Phase 5B therefore leaves `success=null` and records diagnostic-only arrival/crash metadata with `formal_success_evaluated=false`. A completed crash remains valid functional smoke evidence.
 - Negotiation compatibility: Merge parser-coverage instrumentation follows all road-vehicle negotiation participants, including HDVs, so valid HDV–HDV pairs are not falsely omitted. Negotiation and parser semantics are unchanged.
 - Memory/artifacts: OFF has zero Memory activity; ON uses a fresh independent case-local DB and unchanged released retrieval/update behavior. Output is isolated under `<output-root>/merge/`. No Merge formal batch or aggregation workflow was added.
+
+## Phase 5B — Merge Functional Runtime Closure
+
+- Status: functionally complete from user-supplied Lab RDP experiment output; this Local session did not execute the cases.
+- Seed `104729` completed once with Memory OFF and once with independent-episode Memory ON. Both recorded `initial_state_sha256=183f3c3009113988f45b67e917216faa2004b3eb32301ee84be8755ab0818030` and terminated normally through `controlled_vehicle_crash`.
+- `success` correctly remained `null`; the evidence closes functional OFF/ON traversal, including the enabled ON retrieval/update path, but does not create a formal Merge success metric or support a Memory-performance claim.
+- No Merge 20-seed batch is required. Existing runtime artifacts remain preserved.
+
+## Phase 6A — Highway and Roundabout Released-Source Audit
+
+- Highway verdict: `BLOCKED` for faithful cooperative reproduction. Released source registers `highway-v0` and `highway-fast-v0`, but no `highway-multi-agent-v0` or equivalent cooperative environment.
+- Released `HighwayEnv` constructs four controlled `MDPVehicle` objects and 20 IDM background vehicles on a straight four-lane road. Its effective observation/action interfaces remain single-agent `Kinematics` and `DiscreteMetaAction`.
+- Critical mismatch: the CoDrivingLLM entry loop can negotiate and generate four per-CAV decisions, but `DiscreteMetaAction.act(tuple)` executes only the first action on the first controlled vehicle. Reward and terminal state also depend on that first vehicle. No routes/destinations, `has_arrived()`, all-CAV completion, or explicit Highway success predicate exist.
+- Paper boundary: the reported “four-way highway” is not evidenced as equivalent to the released ordinary four-lane `highway-v0`. Exact paper geometry, multi-CAV action interface, destinations, and success implementation remain unknown.
+- Recommendation: do not run a Highway OFF/ON smoke for the Codex-versus-Antigravity reproduction comparison. Making Highway genuinely cooperative would require `Research-Semantic Reconstruction`; a limited single-agent smoke would add only engineering compatibility evidence and could create misleading Memory records for non-executed decisions.
+- Roundabout verdict: `RELEASED-SOURCE BLOCKED`. No environment implementation, registered ID, or runnable original entry path exists; reproduction requires missing external source or separately approved reconstructed infrastructure.
+- Semantic impact: none. Phase 6A changed documentation only and did not alter Intersection, Merge, Highway, Memory, prompts, simulator, evaluation, or runner behavior.
