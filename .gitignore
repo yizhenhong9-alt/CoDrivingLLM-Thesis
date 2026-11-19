@@ -23,3 +23,26 @@ _build
 **/out/*
 .iml
 .xml
+# Thesis local environments and generated outputs
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.log
+
+# Model weights and caches
+*.safetensors
+*.gguf
+/hf-cache/
+/models/
+
+# Generated experiment outputs and vector stores
+/db/
+/logs/
+/results/
+/qwen-tests/
+/llm_controller/video/
+/llm_controller/excel/
+/llm_controller/chroma/
