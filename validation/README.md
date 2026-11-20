@@ -1,0 +1,65 @@
+# Incremental validation
+
+Keep verification scripts here. The author's `Run_multi_CAV_LLM.py` and
+controller modules remain unchanged in this first validation step.
+
+## Environment-only smoke test
+
+Run in the laboratory RDP's Windows PowerShell, from the repository root,
+using a confirmed simulator environment (not conda base or the WSL vLLM venv).
+The Qwen server can remain stopped.
+
+```powershell
+python validation/smoke_intersection.py --help
+python validation/smoke_intersection.py --seed 0 --max-steps 1 --action IDLE --output-dir 'E:\YiZhen\qwen-tests\phase4\environment-smoke'
+```
+
+Current options:
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `--seed` | `0` | Explicit `testing_seeds` passed to the author's reset |
+| `--max-steps` | `1` | Maximum decision steps in one episode |
+| `--action` | `IDLE` | Same fixed action for all CAVs; also FASTER or SLOWER |
+| `--output-dir` | `results/intersection-smoke` | One uniquely named JSON per invocation |
+
+This script only supports intersection and does not import LLM/memory modules.
+It never writes XLSX or MP4. Scene selection, memory on, and XLSX/MP4 switches
+are not implemented yet; do not pass hypothetical flags for them.
+
+The test deliberately uses the execution action mapping, not `Discrete(3)`
+sampling/contains. It does not apply the LLM action module's speed clamp.
+Consequently it validates the environment, not the full driving algorithm or
+decision safety. The original controller, routes, rewards and physics remain
+unchanged.
+
+## Report and acceptance
+
+Return the complete console, exit code and the JSON path printed as `Result:`.
+Attach that JSON, including failed reports, for inspection.
+
+For the first run expect exit code 0, `status=completed`, one entry in `steps`,
+four initial controlled vehicles and four actions `[1, 1, 1, 1]`. Normally
+`stop_reason=max_steps`, three physics ticks and 0.2 simulated seconds are
+expected. An early environment termination must be reviewed, not silently
+counted as a normal full step. Inspect `environment_source` to confirm the
+repository's highway_env was imported.
+
+JSON includes seed, Python executable, versions, commit, scene config, route,
+vehicle speed/target speed/index, low-level steering (radians), acceleration,
+reward and termination info. A recorded commit identifies HEAD, not uncommitted
+edits: always return `git status --short --branch` alongside results.
+
+Only after review, repeat the same seed to compare initial states (excluding
+wall time and timestamps), then increase to 3--5 steps. LLM/negotiation and
+memory-on validation are later steps. Never run the author's main script merely
+to check dependencies, and do not install all requirements into a shared base.
+
+## Planned separation
+
+Model-specific modules such as `qwen3_agent_negotiation_system.py` can coexist
+with the original GPT modules. Share model-independent validation/parsing where
+appropriate rather than copying every helper. A later experiment CLI can select
+model, scene, memory, seed, steps and output formats. Unsupported memory-on must
+raise a clear error until local embeddings and a compatible vector store are
+implemented.
