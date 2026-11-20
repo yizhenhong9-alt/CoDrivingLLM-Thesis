@@ -125,6 +125,23 @@ whole JSON and console, including failures. The report preserves original raw
 vehicle labels alongside simulation IDs: original labels use object identity
 and can vary across processes. Token lengths still need the Qwen tokenizer.
 
+## Safety helper parameter regression
+
+```powershell
+python validation/check_safety_dispatch.py
+Write-Output "dispatch_exit=$LASTEXITCODE"
+```
+
+Expected: four tests, OK, exit code 0. Uses the actual helper body with strict
+tool doubles and checks the action caller AST; needs only the standard library.
+It verifies argument dispatch, not the correctness of safety formulas.
+
+At `3e7bf3a`, offline capture recorded negotiation but failed before the first
+action prompt: acceleration inference requires env, while its caller omitted it.
+Pass the existing env from the action builder through the current-lane helper.
+Keep the tool signature and safety formulas unchanged; do not bypass the check.
+Other safety branches and other scenes still need separate runtime validation.
+
 ## Planned separation
 
 Model-specific modules such as `qwen3_agent_negotiation_system.py` can coexist

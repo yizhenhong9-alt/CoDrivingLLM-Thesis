@@ -565,7 +565,7 @@ def assess_lane_change_safety(toolModels, lane_car_ids, availabel_lane, ego_veh)
     return safety_assessment
 
 
-def check_safety_in_current_lane(toolModels, lane_cars_id, availabel_lane, ego_veh):
+def check_safety_in_current_lane(toolModels, lane_cars_id, availabel_lane, ego_veh, env):
     # lane_cars_id -- {'lane_0': {'leadingCar': None, 'rearingCar': IDMVehicle #224: [173.94198546   0.        ]}}
     # availabel_lane -- {'currentLaneID': 'lane_0', 'leftLane': '', 'rightLane': ''}
     safety_analysis = {
@@ -591,7 +591,7 @@ def check_safety_in_current_lane(toolModels, lane_cars_id, availabel_lane, ego_v
     if current_lane_car_id:
         # Check for conflicts if there is a car in the current lane
         if leading_or_rearing == "leadingCar":  # if there is leading vehicle for ego
-            safety_analysis['acceleration_conflict'] = acceleration_tool.inference(current_lane_car_id, ego_veh)
+            safety_analysis['acceleration_conflict'] = acceleration_tool.inference(current_lane_car_id, ego_veh, env)
         if leading_or_rearing == "rearingCar" or leading_or_rearing == "leadingCar":
             safety_analysis['keep_speed_conflict'] = keep_speed_tool.inference(current_lane_car_id, ego_veh)
         if leading_or_rearing == "rearingCar":  # if there is rearing vehicle for ego
