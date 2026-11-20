@@ -65,6 +65,27 @@ wall time and timestamps), then increase to 3--5 steps. LLM/negotiation and
 memory-on validation are later steps. Never run the author's main script merely
 to check dependencies, and do not install all requirements into a shared base.
 
+## Append/concat equivalence (pandas 1.3.5)
+
+```powershell
+python validation/check_observation_concat.py --seeds 0 1 42 --max-steps 3 --output-dir 'E:\YiZhen\qwen-tests\phase4\concat-equivalence'
+Write-Output "test_exit=$LASTEXITCODE"
+```
+
+Requires the confirmed codriving_repro environment, without package changes.
+The baseline is the hypothesis that public `DataFrame.append` was intended;
+it is not an execution of the unavailable `_append`. Five synthetic cases
+cover 0--4 neighbours and zero padding. Live comparisons use the current
+observation method body and a copy with just the two concat expressions
+replaced by append. Both expose the intermediate DataFrame for comparison;
+neither replaces the installed observation method or changes simulator policy.
+Frames (values, columns, order, index, dtype) and returned NumPy arrays must
+match exactly. Default expected counts: 5 synthetic cases and 48 live cases
+(3 seeds x 4 checkpoints x 4 CAVs), status passed and exit code 0.
+Return full console, Git status and the unique JSON report, even on failure.
+Passing these cases does not prove equivalence for every pandas version or
+arbitrary DataFrame input, nor driving decision safety.
+
 ## Planned separation
 
 Model-specific modules such as `qwen3_agent_negotiation_system.py` can coexist
