@@ -94,6 +94,33 @@ Return full console, Git status and the unique JSON report, even on failure.
 Passing these cases does not prove equivalence for every pandas version or
 arbitrary DataFrame input, nor driving decision safety.
 
+## Offline original prompt capture
+
+```powershell
+python validation/capture_intersection_prompts.py --seed 0 --output-dir 'E:\YiZhen\qwen-tests\phase4\prompt-capture'
+Write-Output "capture_exit=$LASTEXITCODE"
+```
+
+Use the confirmed Windows codriving_repro environment. Leave Qwen stopped.
+The original negotiation/action classes build their prompts with SDK calls
+intercepted by record-only replacements. HTTP client construction is replaced,
+and socket connections are blocked during the agent calls. No key or endpoint
+is used. Original production modules are unchanged.
+
+An arbitrary negotiation fixture orders each detected mutual conflict pair by
+simulation ID. Action prompts thus contain real scene data but a test passing
+order, not actual LLM output or a safety claim. Fixed IDLE responses exercise
+the original parser, but are never applied: env.step is not called. The original
+action builder's speed clamp does execute; before/after states are recorded.
+DrivingMemory is not imported/constructed. This is validation-only memory off,
+not a completed production memory switch or model replacement.
+
+Expected: status captured, five captured calls (one negotiation plus four action),
+environment_steps=0, memory_module_imported=false and exit code 0. Return the
+whole JSON and console, including failures. The report preserves original raw
+vehicle labels alongside simulation IDs: original labels use object identity
+and can vary across processes. Token lengths still need the Qwen tokenizer.
+
 ## Planned separation
 
 Model-specific modules such as `qwen3_agent_negotiation_system.py` can coexist
