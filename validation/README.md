@@ -38,10 +38,17 @@ unchanged.
 At commit `54116f2`, Python 3.8.20 / Gym 0.15.3 / NumPy 1.24.4 /
 pandas 1.3.5 failed during the constructor's reset, before any decision step:
 `DataFrame` has no attribute `_append`. The report confirmed that the repository's
-local highway_env was loaded. KinematicsObservation now uses public `pd.concat`
-for nearby-vehicle rows and zero-padding rows, preserving their order and
-`ignore_index=True`. No package upgrade or simulator policy change is required
-for this fix. Actual successful execution still needs a new RDP report.
+local highway_env was loaded. Commit `45c83d9` used public `pd.concat` for
+nearby-vehicle and zero-padding rows; the RDP one-step test passed with exit 0,
+three physics ticks and 0.2 simulated seconds. At `fcaecdf`, all five synthetic
+and 48 live append/concat comparisons passed under pandas 1.3.5.
+
+Following the user's minimal-change preference, production now uses public
+`DataFrame.append` at both sites, preserving row order and `ignore_index=True`.
+This requires an append-compatible pandas version (the confirmed one is 1.3.5).
+It does not establish that the original `_append` was a typo. No packages,
+traffic rules or controllers were changed. Run the one-step smoke again after
+pulling this revision; its production append path still needs RDP confirmation.
 
 ## Report and acceptance
 
@@ -75,9 +82,10 @@ Write-Output "test_exit=$LASTEXITCODE"
 Requires the confirmed codriving_repro environment, without package changes.
 The baseline is the hypothesis that public `DataFrame.append` was intended;
 it is not an execution of the unavailable `_append`. Five synthetic cases
-cover 0--4 neighbours and zero padding. Live comparisons use the current
-observation method body and a copy with just the two concat expressions
-replaced by append. Both expose the intermediate DataFrame for comparison;
+cover 0--4 neighbours and zero padding. Live comparisons derive explicit concat
+and append variants from the current observation body, replacing only the two
+merge expressions. Either production implementation is supported, and its method
+is recorded in the report. Both expose the intermediate DataFrame for comparison;
 neither replaces the installed observation method or changes simulator policy.
 Frames (values, columns, order, index, dtype) and returned NumPy arrays must
 match exactly. Default expected counts: 5 synthetic cases and 48 live cases

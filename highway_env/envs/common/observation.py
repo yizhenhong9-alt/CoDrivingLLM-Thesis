@@ -208,7 +208,7 @@ class KinematicObservation(ObservationType):
             nearby = pd.DataFrame.from_records(
                 [v.to_dict(origin, observe_intentions=self.observe_intentions)
                  for v in close_vehicles[-self.vehicles_count + 1:]])[self.features]
-            df = pd.concat([df, nearby], ignore_index=True)
+            df = df.append(nearby, ignore_index=True)
 
         # Normalize and clip
         if self.normalize:
@@ -216,7 +216,7 @@ class KinematicObservation(ObservationType):
         # Fill missing rows
         if df.shape[0] < self.vehicles_count:
             rows = np.zeros((self.vehicles_count - df.shape[0], len(self.features)))
-            df = pd.concat([df, pd.DataFrame(data=rows, columns=self.features)], ignore_index=True)
+            df = df.append(pd.DataFrame(data=rows, columns=self.features), ignore_index=True)
         # Reorder
         df = df[self.features]
         obs = df.values.copy()

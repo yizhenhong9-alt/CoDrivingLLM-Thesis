@@ -60,8 +60,8 @@ def verify(report, seeds, max_steps):
         report["synthetic_cases"].append({"neighbours": count, "passed": True})
 
     # Execute the current observe body with only its return instrumented to expose
-    # the intermediate DataFrame. A second copy changes precisely the two concat
-    # expressions back to public append. The installed class is never patched.
+    # the intermediate DataFrame. Build explicit concat and append variants,
+    # accepting either production implementation. Never patch the installed class.
     source = textwrap.dedent(inspect.getsource(observation.KinematicObservation.observe))
     replacements = [
         ("df = pd.concat([df, nearby], ignore_index=True)",
@@ -74,9 +74,11 @@ def verify(report, seeds, max_steps):
     current_source = source.replace("return obs", "return df, obs")
     legacy_source = current_source
     for before, after in replacements:
-        if legacy_source.count(before) != 1:
+        if current_source.count(before) + current_source.count(after) != 1:
             raise RuntimeError("Observation merge source changed; review test baseline")
+        current_source = current_source.replace(after, before)
         legacy_source = legacy_source.replace(before, after)
+    report["production_merge_method"] = "concat" if "pd.concat(" in source else "append"
     report["observation_source_sha256"] = hashlib.sha256(source.encode("utf-8")).hexdigest()
     functions = []
     for code in (current_source, legacy_source):
