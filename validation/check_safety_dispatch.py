@@ -13,8 +13,8 @@ class SafetyDispatchTest(unittest.TestCase):
         calls = self.calls
 
         class Acceleration:
-            def inference(self, vehicle, ego, env):
-                calls.append(("acceleration", vehicle, ego, env))
+            def inference(self, vehicle, ego):
+                calls.append(("acceleration", vehicle, ego))
                 return "acceleration checked"
 
         class KeepSpeed:
@@ -41,18 +41,18 @@ class SafetyDispatchTest(unittest.TestCase):
         exec(compile(module, "<actual-safety-helper>", "exec"), namespace)
         self.helper = namespace[helper.name]
         self.tools = [Acceleration(), KeepSpeed(), Deceleration()]
-        self.vehicle, self.ego, self.env = object(), object(), object()
+        self.vehicle, self.ego = object(), object()
 
     def run_helper(self, leading=None, rearing=None):
         return self.helper(
             self.tools, {"lane": {"leadingCar": leading, "rearingCar": rearing}},
-            {"currentLaneID": "lane"}, self.ego, self.env,
+            {"currentLaneID": "lane"}, self.ego,
         )
 
-    def test_leading_vehicle_receives_same_env(self):
+    def test_leading_vehicle_uses_two_argument_tool(self):
         result = self.run_helper(leading=self.vehicle)
         self.assertEqual(self.calls, [
-            ("acceleration", self.vehicle, self.ego, self.env),
+            ("acceleration", self.vehicle, self.ego),
             ("keep_speed", self.vehicle, self.ego),
         ])
         self.assertEqual(result["acceleration_conflict"], "acceleration checked")
@@ -71,15 +71,25 @@ class SafetyDispatchTest(unittest.TestCase):
         self.assertEqual(self.calls, [])
         self.assertTrue(all(value is None for value in result.values()))
 
-    def test_action_builder_passes_env_to_helper(self):
+    def test_action_builder_uses_original_helper_arguments(self):
         source = (ROOT / "llm_controller" / "llm_agent_action.py").read_text(encoding="utf-8")
         calls = [node for node in ast.walk(ast.parse(source)) if isinstance(node, ast.Call)
                  and isinstance(node.func, ast.Name)
                  and node.func.id == "check_safety_in_current_lane"]
         self.assertEqual(len(calls), 1)
-        self.assertEqual(len(calls[0].args), 5)
+        self.assertEqual(len(calls[0].args), 4)
         self.assertIsInstance(calls[0].args[-1], ast.Name)
-        self.assertEqual(calls[0].args[-1].id, "env")
+        self.assertEqual(calls[0].args[-1].id, "ego_veh")
+
+    def test_actual_acceleration_tool_has_no_env_dependency(self):
+        source = (ROOT / "llm_controller" / "prompt_llm.py").read_text(encoding="utf-8")
+        tool = next(node for node in ast.parse(source).body if isinstance(node, ast.ClassDef)
+                    and node.name == "isAccelerationConflictWithCar")
+        method = next(node for node in tool.body if isinstance(node, ast.FunctionDef)
+                      and node.name == "inference")
+        self.assertEqual([arg.arg for arg in method.args.args], ["self", "vid", "ego_veh"])
+        self.assertFalse(any(isinstance(node, ast.Name) and node.id == "env"
+                             for node in ast.walk(method)))
 
 
 if __name__ == "__main__":

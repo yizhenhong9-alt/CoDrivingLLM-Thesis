@@ -316,7 +316,7 @@ class isAccelerationConflictWithCar:
 
     @prompts(name='Is Acceleration Conflict With Car',
              description="""useful when you want to know whether acceleration is safe with a specific car, ONLY when your decision is accelerate. The input to this tool should be a string, representing the id of the car you want to check.""")
-    def inference(self, vid: str, ego_veh, env) -> str:
+    def inference(self, vid: str, ego_veh) -> str:
 
         if vid not in self.sce.road_info.vehicles:
             return "Your input is not a valid vehicle id, make sure you use `Get Lane Involved Car` tool first!"
@@ -565,7 +565,7 @@ def assess_lane_change_safety(toolModels, lane_car_ids, availabel_lane, ego_veh)
     return safety_assessment
 
 
-def check_safety_in_current_lane(toolModels, lane_cars_id, availabel_lane, ego_veh, env):
+def check_safety_in_current_lane(toolModels, lane_cars_id, availabel_lane, ego_veh):
     # lane_cars_id -- {'lane_0': {'leadingCar': None, 'rearingCar': IDMVehicle #224: [173.94198546   0.        ]}}
     # availabel_lane -- {'currentLaneID': 'lane_0', 'leftLane': '', 'rightLane': ''}
     safety_analysis = {
@@ -591,7 +591,7 @@ def check_safety_in_current_lane(toolModels, lane_cars_id, availabel_lane, ego_v
     if current_lane_car_id:
         # Check for conflicts if there is a car in the current lane
         if leading_or_rearing == "leadingCar":  # if there is leading vehicle for ego
-            safety_analysis['acceleration_conflict'] = acceleration_tool.inference(current_lane_car_id, ego_veh, env)
+            safety_analysis['acceleration_conflict'] = acceleration_tool.inference(current_lane_car_id, ego_veh)
         if leading_or_rearing == "rearingCar" or leading_or_rearing == "leadingCar":
             safety_analysis['keep_speed_conflict'] = keep_speed_tool.inference(current_lane_car_id, ego_veh)
         if leading_or_rearing == "rearingCar":  # if there is rearing vehicle for ego
