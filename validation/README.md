@@ -33,6 +33,16 @@ Consequently it validates the environment, not the full driving algorithm or
 decision safety. The original controller, routes, rewards and physics remain
 unchanged.
 
+### First RDP failure and compatibility fix
+
+At commit `54116f2`, Python 3.8.20 / Gym 0.15.3 / NumPy 1.24.4 /
+pandas 1.3.5 failed during the constructor's reset, before any decision step:
+`DataFrame` has no attribute `_append`. The report confirmed that the repository's
+local highway_env was loaded. KinematicsObservation now uses public `pd.concat`
+for nearby-vehicle rows and zero-padding rows, preserving their order and
+`ignore_index=True`. No package upgrade or simulator policy change is required
+for this fix. Actual successful execution still needs a new RDP report.
+
 ## Report and acceptance
 
 Return the complete console, exit code and the JSON path printed as `Result:`.

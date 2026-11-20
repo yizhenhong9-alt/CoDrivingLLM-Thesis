@@ -73,12 +73,15 @@ def run(args, report):
     import gym
     import highway_env
     import numpy as np
+    import pandas as pd
 
     source = Path(highway_env.__file__).resolve()
     if source.parent != ROOT / "highway_env":
         raise RuntimeError("Expected repository highway_env, loaded: " + str(source))
     report["environment_source"] = str(source)
-    report["versions"] = {"gym": gym.__version__, "numpy": np.__version__}
+    report["versions"] = {
+        "gym": gym.__version__, "numpy": np.__version__, "pandas": pd.__version__,
+    }
 
     env = gym.make("intersection-multi-agent-v0")
     try:
