@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 import sys
 import traceback
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 from unittest.mock import patch
 from uuid import uuid4
 
@@ -20,11 +20,23 @@ from smoke_intersection import git_revision, json_value, vehicle_state
 def capture(args, report):
     import gym
     import highway_env
-    import httpx
     import numpy as np
     import pandas as pd
-    import llm_controller.llm_agent_negotiation_system as negotiation
-    import llm_controller.llm_agent_action as action
+
+    # Offline capture does not require installing either cloud SDK dependency.
+    # Supply only the names used by the original modules, with fail-closed defaults.
+    def reject_sdk(*unused_args, **unused_kwargs):
+        raise RuntimeError("Real SDK use is disabled in offline capture")
+
+    httpx = ModuleType("httpx")
+    httpx.Client = reject_sdk
+    openai = ModuleType("openai")
+    openai.OpenAI = reject_sdk
+    sdk_stubs = {"openai": openai, "httpx": httpx}
+    with patch.dict(sys.modules, sdk_stubs):
+        import llm_controller.llm_agent_negotiation_system as negotiation
+        import llm_controller.llm_agent_action as action
+    report["sdk_mode"] = "in-process offline stubs; no installed openai/httpx required"
 
     if Path(highway_env.__file__).resolve().parent != ROOT / "highway_env":
         raise RuntimeError("Expected repository highway_env")
@@ -85,7 +97,8 @@ def capture(args, report):
 
         # Original SDK constructors are replaced before send_to_chatgpt executes.
         # No endpoint/key/proxy is used. Patches are scoped to this process/block.
-        with patch.object(negotiation, "OpenAI", record("negotiation")), \
+        with patch.dict(sys.modules, sdk_stubs), \
+                patch.object(negotiation, "OpenAI", record("negotiation")), \
                 patch.object(action, "OpenAI", record("action")), \
                 patch.object(httpx, "Client", lambda **kwargs: None), \
                 patch("socket.socket.connect", block_network), \

@@ -106,6 +106,10 @@ The original negotiation/action classes build their prompts with SDK calls
 intercepted by record-only replacements. HTTP client construction is replaced,
 and socket connections are blocked during the agent calls. No key or endpoint
 is used. Original production modules are unchanged.
+OpenAI/httpx imports are supplied by process-local stub modules: installing
+those packages is not required for offline capture. This does not validate
+real SDK connectivity. The first capture attempt failed at import httpx before
+capturing any calls; the tool was corrected without changing conda packages.
 
 An arbitrary negotiation fixture orders each detected mutual conflict pair by
 simulation ID. Action prompts thus contain real scene data but a test passing
