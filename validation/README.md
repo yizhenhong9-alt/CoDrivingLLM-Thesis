@@ -166,6 +166,12 @@ For the M07 relative-source-path failure after all four suites passed, add
 `--resume-fixtures` to run only its new path regression and the two fixtures.
 
 Modification reports: [index](../modification_reports/README.md).
+M09: [runtime/preflight report](../modification_reports/M09-live-preflight/report.md).
+`inspect_qwen_runtime.py --output-dir /home/nclab/Yizhen/runs/M09-preflight`
+collects resource snapshots, installed source excerpts and existing Step8J-R1
+metadata using the inference interpreter. It does not import vLLM/torch, launch
+models, send signals or make API requests. A collected snapshot is not a resource
+reservation or proof that shutdown is fixed.
 M08: [token-count report and interpreter explanation](../modification_reports/M08-prompt-token-budget/report.md).
 Run tokenizer counting with the Spark inference Python 3.12, not simulation
 Python 3.8. The tool uses existing local tokenizer files, no model weights or
