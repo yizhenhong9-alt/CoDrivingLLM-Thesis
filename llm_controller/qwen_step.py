@@ -35,7 +35,7 @@ def _legacy_orders(agent, raw, vehicles, pairs, names):
 
 
 def run_step(env, negotiation, action, transport, report, *, parser_mode,
-             episode_id, apply_step=False, persist=lambda report: None):
+             episode_id, apply_step=False, persist=lambda report: None, step_id=0):
     if parser_mode not in ("legacy", "strict"):
         raise ValueError("Unknown parser mode")
     if apply_step and transport.mode != "live":
@@ -128,7 +128,7 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
         if not ids or any(value not in controller.actions for value in ids):
             raise OutputValidationError("Invalid simulator available actions")
         available[vehicle.id] = [controller.actions[value] for value in ids]
-    batch = mapping.step(0, vehicles, available, scene="intersection")
+    batch = mapping.step(step_id, vehicles, available, scene="intersection")
     report["available_actions"] = available
     for vehicle in vehicles:
         # Original action module applies this clamp before building each prompt.
@@ -169,7 +169,7 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
         if selected["status"] != "parsed":
             raise OutputValidationError("Action rejected: " + selected["error"])
         batch.add(json.dumps({key: selected["value"][key] for key in ("vehicle_id", "decision")}),
-                  episode_id=episode_id, step_id=0, expected_vehicle_id=vehicle.id)
+                  episode_id=episode_id, step_id=step_id, expected_vehicle_id=vehicle.id)
     result = batch.finalize(env.controlled_vehicles)
     report["validated_actions"] = result
     report["status"] = "validated_not_applied"

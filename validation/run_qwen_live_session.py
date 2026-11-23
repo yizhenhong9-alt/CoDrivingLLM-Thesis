@@ -5,6 +5,7 @@ installation, process-group signal or SIGKILL.
 Use the existing inference interpreter. This command DOES consume shared GPU.
 """
 import argparse
+import math
 from importlib import metadata
 from datetime import datetime, timezone
 import json
@@ -130,7 +131,15 @@ def parent_only_stop(proc, wait_seconds=120):
         return dict(exited=False, signal_target="API parent only", manual_review_required=True)
 
 
-def traffic_args(folder, parser_mode, seed, *, apply_step=False):
+def traffic_args(folder, parser_mode, seed, *, apply_step=False, project_entry=False,
+                 max_steps=1, wall_seconds=1800):
+    if project_entry:
+        if apply_step:
+            raise ValueError("Project entry applies steps itself; omit --apply-step")
+        return [str(SIMULATION), "-B", str(ROOT / "Run_multi_CAV_LLM.py"),
+                "--backend", "qwen", "--parser", parser_mode, "--seed", str(seed),
+                "--max-steps", str(max_steps), "--wall-seconds", str(wall_seconds),
+                "--output-dir", str(folder / "traffic")]
     command = [str(SIMULATION), "-B", str(ROOT / "validation/run_qwen_single_step.py"),
             "--mode", "live", "--parser", parser_mode, "--seed", str(seed),
             "--output-dir", str(folder / "traffic"), "--max-tokens", "256"]
@@ -184,6 +193,14 @@ def system_snapshot():
     return result
 
 
+def validate_single_step_result(client, traffic, apply_step):
+    expected = "single_step_complete" if apply_step else "validated_not_applied"
+    if client.returncode != 0 or traffic.get("status") != expected:
+        raise RuntimeError("Real response validation failed; retain original replies for review")
+    if traffic.get("actual_environment_steps") != int(apply_step) or traffic.get("memory_module_imported"):
+        raise RuntimeError("Unexpected step or memory state")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -191,7 +208,17 @@ def main():
     parser.add_argument("--parser", choices=("strict", "legacy"), default="strict")
     parser.add_argument("--apply-step", action="store_true",
                         help="After all replies pass validation, apply exactly one simulator step")
+    parser.add_argument("--project-entry", action="store_true",
+                        help="Run Run_multi_CAV_LLM.py instead of single-step validation")
+    parser.add_argument("--max-steps", type=int, default=1)
+    parser.add_argument("--wall-seconds", type=float, default=1800)
     args = parser.parse_args()
+    if args.project_entry and args.apply_step:
+        parser.error("--project-entry applies steps; do not combine with --apply-step")
+    if args.max_steps < 1 or not math.isfinite(args.wall_seconds) or args.wall_seconds <= 0:
+        parser.error("Positive finite time and step limits required")
+    if not args.project_entry and (args.max_steps != 1 or args.wall_seconds != 1800):
+        parser.error("Step/time options require --project-entry")
     if sys.platform != "linux":
         parser.error("Run on Spark Linux only; this command launches the real model")
     try:
@@ -208,6 +235,11 @@ def main():
                   scope="one simulator step" if args.apply_step else "real responses only, no env.step",
                   apply_step=args.apply_step, observed_environment_steps=None,
                   seed=args.seed, parser_mode=args.parser, model_started=False)
+    report["project_entry"] = args.project_entry
+    if args.project_entry:
+        report["scope"] = "original project entry, bounded episode"
+        report["max_steps"] = args.max_steps
+        report["wall_seconds"] = args.wall_seconds
     report["checked_paths"] = checked_paths
     report["script_sha256"] = hashlib.sha256(Path(__file__).resolve().read_bytes()).hexdigest()
     output, proc, client = folder / "result.json", None, None
@@ -254,7 +286,7 @@ def main():
                                 revision_evidence="Pinned local directory; no repeated weight verification")
         save()
         print("Run directory: " + str(folder), flush=True)
-        print("Starting one real Qwen service; apply exactly one step: " + str(args.apply_step), flush=True)
+        print("Starting one real Qwen service; scope: " + report["scope"], flush=True)
         with (folder / "server-console.txt").open("w", encoding="utf-8") as console:
             proc = subprocess.Popen(launch_args(), cwd=str(folder), env=env,
                                     stdout=console, stderr=subprocess.STDOUT, start_new_session=True)
@@ -286,27 +318,41 @@ def main():
             report["status"] = "model_ready"
             save()
             print("Model ready; validating traffic replies; apply-step=" + str(args.apply_step), flush=True)
-            command = traffic_args(folder, args.parser, args.seed, apply_step=args.apply_step)
+            command = traffic_args(folder, args.parser, args.seed, apply_step=args.apply_step,
+                                   project_entry=args.project_entry, max_steps=args.max_steps,
+                                   wall_seconds=args.wall_seconds)
             report["traffic_command"] = command
             with (folder / "traffic-console.txt").open("w", encoding="utf-8") as traffic_console:
                 client = subprocess.Popen(command, cwd=str(ROOT), env=env,
                                           stdout=traffic_console, stderr=subprocess.STDOUT)
+                client_deadline = time.monotonic()+args.wall_seconds+60
                 while client.poll() is None:
+                    if args.project_entry and time.monotonic() > client_deadline:
+                        raise TimeoutError("Project client exceeded wall-time plus cleanup allowance")
+                    if proc.poll() is not None:
+                        raise RuntimeError("Model exited while traffic was running")
                     remember()
                     time.sleep(2)
             report["traffic_exit_code"] = client.returncode
-            files = list((folder / "traffic").glob("*.json"))
+            files = list((folder / "traffic").glob("*/result.json" if args.project_entry else "*.json"))
             if len(files) != 1:
                 raise RuntimeError("Expected one traffic report; inspect traffic-console.txt")
             traffic = json.loads(files[0].read_text(encoding="utf-8"))
             report["traffic_report"] = str(files[0])
             report["observed_environment_steps"] = traffic.get("actual_environment_steps")
-            expected_status = "single_step_complete" if args.apply_step else "validated_not_applied"
-            if client.returncode != 0 or traffic.get("status") != expected_status:
-                raise RuntimeError("Real response validation failed; retain original replies for review")
-            if traffic.get("actual_environment_steps") != int(args.apply_step) or traffic.get("memory_module_imported"):
-                raise RuntimeError("Unexpected step or memory state")
-            report["status"] = "single_step_validated" if args.apply_step else "responses_validated"
+            if args.project_entry:
+                if (client.returncode != 0 or traffic.get("status") not in
+                        ("step_limit_reached", "episode_terminal") or
+                        not 1 <= traffic.get("actual_environment_steps", 0) <= args.max_steps or
+                        traffic.get("memory_module_imported") or
+                        traffic.get("entry_point") != "Run_multi_CAV_LLM.py"):
+                    raise RuntimeError("Project entry failed; retain step files and replies")
+                report["status"] = ("project_episode_terminal" if traffic["status"] == "episode_terminal"
+                                    else "project_step_limit_reached")
+                report["parser_statistics"] = traffic.get("parser_statistics")
+            else:
+                validate_single_step_result(client, traffic, args.apply_step)
+                report["status"] = "single_step_validated" if args.apply_step else "responses_validated"
     except (Exception, KeyboardInterrupt) as exc:
         report.update(status="failed", error=type(exc).__name__ + ": " + str(exc))
     finally:
@@ -350,7 +396,8 @@ def main():
         save()
         print("Status: " + report["status"])
         print("Result: " + str(output))
-    return 0 if report["status"] in ("responses_validated", "single_step_validated") else 1
+    return 0 if report["status"] in ("responses_validated", "single_step_validated",
+                                     "project_episode_terminal", "project_step_limit_reached") else 1
 
 
 if __name__ == "__main__":

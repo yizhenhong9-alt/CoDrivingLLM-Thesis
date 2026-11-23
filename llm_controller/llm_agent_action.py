@@ -1,7 +1,7 @@
 from .prompt_llm import *
 from .Scenario_description import Scenario
 import json
-from openai import OpenAI
+from .cloud_client import OpenAI
 import numpy as np
 import gym
 import re

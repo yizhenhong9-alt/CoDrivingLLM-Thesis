@@ -24,7 +24,7 @@ CLI 原本就保存 initial/final vehicle 狀態及 actual_environment_steps，�
 
 更新後 live-session helper 13 項、single-step flow 14 項，合計 27 項通過，見 [test-results.txt](./test-results.txt)。新增明確 --apply-step 的命令測試、逐車提交紀錄、physics ticks 換算與環境動作分開記錄檢查。皆為 fake process/environment，不載入模型，不代表真實道路運動已驗證。
 
-## Spark 待執行
+## Spark 執行方式（本次已完成）
 
 更新本輪版本並確認工作樹乾淨，再執行：
 
@@ -42,3 +42,21 @@ PYTHONDONTWRITEBYTECODE=1 /home/nclab/Yizhen/envs/qwen-vllm034-py312/bin/python 
 ## 未修改事項
 
 負距離與衝突敘述保留原基線，另見 [M13 審查](../M13-signed-distance-audit/report.md)。本次不將 negotiation 建議變為硬性控制、不修改 action 優先權、不改公式、不啟用 memory on。
+
+## Spark 實測結果：20261123T072921Z-61956b0a
+
+本地讀取使用者提供的 [result.json](../../../runs/M12-one-step/20261123T072921Z-61956b0a/result.json)、[traffic JSON](../../../runs/M12-one-step/20261123T072921Z-61956b0a/traffic/20261123T073128Z-053d29a8.json) 與 console 紀錄。這是使用者在 Spark 執行後回傳的證據，並非本地載入模型。執行版本為 d5bc64f404dede217e54d0a172462c19109cb1f9。
+
+- wrapper 為 single_step_validated；traffic 為 single_step_complete，actual_environment_steps=1。
+- 一次 negotiation、四次 action；通行建議為車 4、5 各先於車 3。逐車提交為 3:SLOWER(4)、4:FASTER(3)、5:IDLE(1)、6:FASTER(3)，與環境記錄動作一致。
+- 前進 3 個 physics ticks，共 0.2 秒。四台 CAV 的 crashed 均為 false；done=false、reward=0。這只證明單步串接完成，不能推論完整回合安全或決策品質改善。
+- 車 3 速度由 5 降至約 3.51 m/s；車 4、6 由 5 升至約 6.49 m/s；車 5 維持 5 m/s。原程式只在提示前截速，沒有在所有模擬更新中強制最高 5 m/s；本次未改限速，後續需另行確認研究設定。
+- memory_module_imported=false。停服 exit_code=0、埠已關、已知子程序無殘留，clean_observation=true；這不代表所有啟動警告皆消失或長期可靠性已證明。
+
+相較 M10 的零步驗證，M12 的實際幫助是確認解析後動作能按正確車號送入環境並產生狀態變化；兩次單一場景結果不能作為 parser 或駕駛品質的比較實驗。
+
+## LLM 角色與提示修改說明
+
+原始 agent 檔案保留；Qwen 專用組裝位於 [qwen_step.py](../../llm_controller/qwen_step.py)。negotiation 仍扮演 traffic police officer，提出通行順序建議；各 CAV action LLM 仍扮演 driving assistant，參考建議與場景選動作。兩個邏輯角色使用同一 Qwen 服務，各次請求分別組裝提示。
+
+實際修改包括：action 的 ChatGPT/OpenAI 身分改為一般 driving assistant；重新整理提示段落；memory off 時移除空白 memory 提示段；strict 模式改用明確 JSON、數字車號與可用動作清單。原交通規則與注意事項仍引用原方法，協商建議未改為強制動作。因此這是保留角色分工的 Qwen 適配，並非逐字相同的原版 prompt；未來比較模型效果時需控制 prompt/parser 等變因。

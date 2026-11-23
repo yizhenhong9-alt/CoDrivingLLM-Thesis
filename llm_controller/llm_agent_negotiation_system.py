@@ -1,6 +1,6 @@
 from llm_controller.prompt_llm import *
 from llm_controller.Scenario_description import Scenario
-from openai import OpenAI
+from .cloud_client import OpenAI
 import numpy as np
 import highway_env
 import json
