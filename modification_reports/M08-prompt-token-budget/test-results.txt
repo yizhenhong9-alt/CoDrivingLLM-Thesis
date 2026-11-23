@@ -1,0 +1,9 @@
+﻿test_invalid_messages_rejected (__main__.PromptTokensTests.test_invalid_messages_rejected) ... ok
+test_over_budget_is_not_success (__main__.PromptTokensTests.test_over_budget_is_not_success) ... ok
+test_template_and_generation_prefix_counted_once (__main__.PromptTokensTests.test_template_and_generation_prefix_counted_once) ... ok
+test_wrong_model_or_failed_fixture_rejected (__main__.PromptTokensTests.test_wrong_model_or_failed_fixture_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK

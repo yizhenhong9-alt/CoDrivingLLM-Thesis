@@ -72,3 +72,5 @@ mkdir -p "$XDG_CACHE_HOME" "$MPLCONFIGDIR" "$TMPDIR"
 ## 已有幫助與尚未證實
 
 已在局部測試中驗證單一步數上限、提交前資料檢查與失敗保留證據；尚未證實真實模型成功率、延遲、交通安全或整體 memory off。現有停服 EngineDeadError/semaphore 問題仍未處理，不重做 R4/8F。
+
+後續補記：Spark 的 strict/legacy fixture 已通過，詳細證據見 [M07 修正後結果](../M07-relative-source-path/report.md)。先前本地缺 gym 與 Spark 路徑失敗紀錄保留；實際模型回覆及 env.step 尚未執行。

@@ -21,3 +21,11 @@
 本地 Python 3.13 的聚焦測試 13 項全部通過，結果見 [test-results.txt](./test-results.txt)。Python 3.8 grammar 檢查不代替遠端 runtime；Spark 修正後 fixture 尚待使用者執行。
 
 Spark 已通過的 37 項不因這次記錄程式失敗而撤銷，也不需全數重跑。新版全套因新增一項測試變為 38 項；下一次只需執行新的路徑回歸案例，再接續 strict/legacy fixture。若有後續新錯誤，保留新的 console 與 JSON，另作對應修正。
+
+## Spark 修正後結果：已通過
+
+使用者提供 20261123T044039Z-baa96999 的完整結果，本地已讀取總報告及 strict/legacy 詳細 JSON。Python 3.8.20、commit b9dbffa4dc0f3084e5536b39e2b682da95daf200，新回歸測試與兩次 fixture 的退出碼皆為 0。
+
+兩種 parser 皆 validated_not_applied，4 台受控車、5 次人工回覆處理，動作 [1,1,1,1]，environment_steps=actual_environment_steps=0，memory_module_imported=false，sent_to_model 為 true 的呼叫數為 0。
+
+因此路徑修正及真實模擬器的離線提示/解析流程已驗證；不是 Qwen 真實回覆或行駛安全測試。不需再重跑。來源證據為使用者提供的 runs/M07-offline/20261123T044039Z-baa96999 資料夾，未直接連線遠端核查。

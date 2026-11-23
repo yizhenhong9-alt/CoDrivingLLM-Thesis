@@ -166,6 +166,10 @@ For the M07 relative-source-path failure after all four suites passed, add
 `--resume-fixtures` to run only its new path regression and the two fixtures.
 
 Modification reports: [index](../modification_reports/README.md).
+M08: [token-count report and interpreter explanation](../modification_reports/M08-prompt-token-budget/report.md).
+Run tokenizer counting with the Spark inference Python 3.12, not simulation
+Python 3.8. The tool uses existing local tokenizer files, no model weights or
+network. `check_prompt_tokens.py` tests the counting logic with a fake tokenizer.
 M05: `python validation/check_qwen_single_step.py` runs fake-environment offline
 flow tests. The [M05 report](../modification_reports/M05-qwen-single-step/report.md)
 documents the new single-step CLI, its local missing-gym failure and pending
