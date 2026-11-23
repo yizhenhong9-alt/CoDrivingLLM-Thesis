@@ -103,10 +103,10 @@ class LiveSessionTests(unittest.TestCase):
         self.assertEqual((item["ppid"], item["pgid"], item["start_ticks"]), (11, 123, 456789))
 
     def test_cache_paths_are_per_run_and_process_local(self):
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[2]) as directory:
             root = Path(directory).resolve()
             with patch.dict("os.environ", {"CUDA_VISIBLE_DEVICES": "hidden-before"}):
-                env, overrides = environment(root, "GPU-test")
+                env, overrides = environment(root, "GPU-test", owner=root)
                 self.assertEqual(env["CUDA_VISIBLE_DEVICES"], "GPU-test")
                 import os
                 self.assertEqual(os.environ["CUDA_VISIBLE_DEVICES"], "hidden-before")

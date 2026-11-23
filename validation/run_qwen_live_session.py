@@ -100,7 +100,28 @@ def launch_args():
             "--shutdown-timeout", "30"]
 
 
-def environment(folder, gpu_uuid):
+def validate_rpc_path(path):
+    # vLLM appends a 36-character UUID; Linux sockaddr_un allows 107 bytes.
+    endpoint = path / "00000000-0000-0000-0000-000000000000"
+    length = len(str(endpoint).encode("utf-8"))
+    if length > 107:
+        raise ValueError("RPC socket path would use {} bytes (limit 107): {}".format(length, endpoint))
+    return length
+
+
+def short_rpc_directory(owner):
+    owner = owner.resolve()
+    base = owner / ".rpc"
+    base.resolve().relative_to(owner)
+    path = base / uuid4().hex[:12]
+    validate_rpc_path(path)
+    base.mkdir(exist_ok=True)
+    path.mkdir()  # Exclusive run directory; never reuse another run's sockets.
+    return path
+
+
+def environment(folder, gpu_uuid, *, owner=OWNER):
+    folder.resolve().relative_to(owner.resolve())
     env = os.environ.copy()
     overrides = dict(CUDA_VISIBLE_DEVICES=gpu_uuid, CUDA_MODULE_LOADING="LAZY",
         HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1", VLLM_NO_USAGE_STATS="1",
@@ -113,11 +134,11 @@ def environment(folder, gpu_uuid):
                        ("MPLCONFIGDIR", "matplotlib"), ("CUDA_CACHE_PATH", "cuda-cache"),
                        ("TRITON_CACHE_DIR", "triton-cache"), ("TORCH_EXTENSIONS_DIR", "torch-extensions"),
                        ("VLLM_CACHE_ROOT", "vllm-cache"), ("FLASHINFER_WORKSPACE_BASE", "flashinfer"),
-                       ("TORCHINDUCTOR_CACHE_DIR", "torchinductor"), ("NUMBA_CACHE_DIR", "numba"),
-                       ("VLLM_RPC_BASE_PATH", "rpc")):
+                       ("TORCHINDUCTOR_CACHE_DIR", "torchinductor"), ("NUMBA_CACHE_DIR", "numba")):
         path = folder / child
         path.mkdir(exist_ok=True)
         overrides[key] = str(path)
+    overrides["VLLM_RPC_BASE_PATH"] = str(short_rpc_directory(owner))
     env.update(overrides)
     return env, overrides
 

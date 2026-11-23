@@ -51,3 +51,9 @@ PYTHONDONTWRITEBYTECODE=1 /home/nclab/Yizhen/envs/codriving-sim-py38/bin/python 
 ## 尚未取得的證據
 
 本次尚未在 Spark 執行 M14，不能宣稱正式入口已跑通、完整回合已完成或解析率提高。待使用者回傳整個新執行目錄，再補實測與修改前後比較。三步驗收後再安排完整一回合；完整回合仍須區分正常到達、碰撞、環境時限、程式上限與解析失敗。
+
+## 後續 Spark 回傳：啟動階段失敗
+
+使用者已執行 20261123T084407Z-0ea03d24。已讀取結果與服務日誌：RPC socket 完整路徑 108 bytes，超過 107 bytes，服務未 ready 就 exit 1；traffic_command 尚未建立，正式主程式沒有執行。埠已關、已知程序無殘留，不能將 needs_shutdown_review 當作殘留證據。修正與驗收安排另見 [M15](../M15-short-rpc-path/report.md)。
+
+回傳資料更正：只需 result.json、server-console.txt、traffic-console.txt 及 traffic 內 JSON／Markdown，無需下載整個含 socket／cache 的目錄。
