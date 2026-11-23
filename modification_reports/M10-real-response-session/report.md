@@ -54,3 +54,5 @@ PYTHONDONTWRITEBYTECODE=1 /home/nclab/Yizhen/envs/qwen-vllm034-py312/bin/python 
 2048/256 是本次候選測試設定，真實協商可能改變 action prompt 長度，若截斷或超出上下文就停止記錄，不能默認 M08 fixture 計數涵蓋一切。先審查真實回覆與正常停服，再規劃真正單步。
 
 後續執行補記：使用者首次執行被頂層路徑 guard 擋下，尚未啟動模型；[M11](../M11-venv-path-guard/report.md) 分開檢查寫入目錄與只讀 interpreter，並加具體路徑診斷。原 console 無法確定是哪條路徑，遠端根因待新訊息或 checked_paths 確認。
+
+後續成功補記：已讀取使用者提供的 20261123T064746Z-45166eef 四份檔案。真實回覆驗證與本次正常停服均通過、模擬步數為 0，完整數值見 [M12 修改前證據](../M12-one-step/report.md)。不把本次成功推論為長期可靠或交通安全已驗證。

@@ -86,6 +86,10 @@ class LiveSessionTests(unittest.TestCase):
         self.assertEqual(args[args.index("--mode")+1], "live")
         self.assertNotIn("--apply-step", args)
 
+    def test_step_must_be_explicit_and_occurs_once_in_command(self):
+        args = traffic_args(Path("test-run"), "strict", 0, apply_step=True)
+        self.assertEqual(args.count("--apply-step"), 1)
+
     def test_listener_detection(self):
         header = "sl local_address rem_address st tx rx tr uid timeout inode\n"
         listening = "0: 0100007F:46A0 00000000:0000 0A 0 0 0 1 0 12345\n"

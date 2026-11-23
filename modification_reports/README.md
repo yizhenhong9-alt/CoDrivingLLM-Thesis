@@ -13,7 +13,9 @@
 | M07 | Python 3.8 相對路徑紀錄修正 | [report.md](./M07-relative-source-path/report.md) | Spark 新回歸測試及 strict/legacy fixture 已通過，原失敗證據保留 |
 | M08 | 新版提示 token 計數 | [report.md](./M08-prompt-token-budget/report.md) | Spark 3.12 已完成 10 筆計數；輸入加 256 預算全部符合 2048，最大 1242 |
 | M09 | 真實 API 前資源與停服證據檢查 | [report.md](./M09-live-preflight/report.md) | Spark 快照與原啟動/停服證據已核對；不是資源預留 |
-| M10 | 真實回覆與主程序停服入口 | [report.md](./M10-real-response-session/report.md) | 9 項本地 fake-process 測試通過；待 Spark 真實執行 |
-| M11 | venv interpreter 路徑檢查修正 | [report.md](./M11-venv-path-guard/report.md) | 修正 executable symlink 誤擋；12 項聚焦測試通過，待 Spark 接續 M10 |
+| M10 | 真實回覆與主程序停服入口 | [report.md](./M10-real-response-session/report.md) | Spark 真實協商/action 解析及本次正常停服通過，0 步 |
+| M11 | venv interpreter 路徑檢查修正 | [report.md](./M11-venv-path-guard/report.md) | Spark 成功執行，確認 inference 基礎執行檔為 /usr/bin/python3.12 |
+| M12 | 真實單步控制入口 | [report.md](./M12-one-step/report.md) | M10 回覆與本次停服已通過；新增明確單步選項，27 項本地測試通過 |
+| M13 | 負距離來源審查 | [report.md](./M13-signed-distance-audit/report.md) | 原 function 重現 -6.59；abs 後仍不等於中心距，不改公式 |
 
 原版 agent 保留；後續真實 Qwen 回覆與 Spark 結果補入各報告，不覆蓋歷史證據。未執行項目不預先宣稱通過。

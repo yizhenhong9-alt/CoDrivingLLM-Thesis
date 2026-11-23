@@ -1,6 +1,7 @@
-"""M10: explicitly launch one local model, validate real traffic replies, stop.
+"""M10/M12: launch one local model, validate traffic replies, optionally step, stop.
 
-Spark only. No env.step, download, install, process-group signal or SIGKILL.
+Spark only. Default no step; --apply-step applies exactly one step. No download,
+installation, process-group signal or SIGKILL.
 Use the existing inference interpreter. This command DOES consume shared GPU.
 """
 import argparse
@@ -129,10 +130,13 @@ def parent_only_stop(proc, wait_seconds=120):
         return dict(exited=False, signal_target="API parent only", manual_review_required=True)
 
 
-def traffic_args(folder, parser_mode, seed):
-    return [str(SIMULATION), "-B", str(ROOT / "validation/run_qwen_single_step.py"),
+def traffic_args(folder, parser_mode, seed, *, apply_step=False):
+    command = [str(SIMULATION), "-B", str(ROOT / "validation/run_qwen_single_step.py"),
             "--mode", "live", "--parser", parser_mode, "--seed", str(seed),
             "--output-dir", str(folder / "traffic"), "--max-tokens", "256"]
+    if apply_step:
+        command.append("--apply-step")
+    return command
 
 
 def validate_session_paths(output_dir, repo, model_dir, interpreters, owner=OWNER):
@@ -185,6 +189,8 @@ def main():
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--parser", choices=("strict", "legacy"), default="strict")
+    parser.add_argument("--apply-step", action="store_true",
+                        help="After all replies pass validation, apply exactly one simulator step")
     args = parser.parse_args()
     if sys.platform != "linux":
         parser.error("Run on Spark Linux only; this command launches the real model")
@@ -199,7 +205,8 @@ def main():
     folder = args.output_dir.resolve() / (datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8])
     folder.mkdir(parents=True)
     report = dict(status="preflight", model=MODEL, expected_revision=REVISION,
-                  scope="real traffic responses only, no env.step", calls_to_step=0,
+                  scope="one simulator step" if args.apply_step else "real responses only, no env.step",
+                  apply_step=args.apply_step, observed_environment_steps=None,
                   seed=args.seed, parser_mode=args.parser, model_started=False)
     report["checked_paths"] = checked_paths
     report["script_sha256"] = hashlib.sha256(Path(__file__).resolve().read_bytes()).hexdigest()
@@ -247,7 +254,7 @@ def main():
                                 revision_evidence="Pinned local directory; no repeated weight verification")
         save()
         print("Run directory: " + str(folder), flush=True)
-        print("Starting one real Qwen service; no traffic steps will be applied", flush=True)
+        print("Starting one real Qwen service; apply exactly one step: " + str(args.apply_step), flush=True)
         with (folder / "server-console.txt").open("w", encoding="utf-8") as console:
             proc = subprocess.Popen(launch_args(), cwd=str(folder), env=env,
                                     stdout=console, stderr=subprocess.STDOUT, start_new_session=True)
@@ -278,8 +285,8 @@ def main():
                 raise RuntimeError("Readiness timeout; stop parent and inspect logs")
             report["status"] = "model_ready"
             save()
-            print("Model ready; validating traffic replies without env.step", flush=True)
-            command = traffic_args(folder, args.parser, args.seed)
+            print("Model ready; validating traffic replies; apply-step=" + str(args.apply_step), flush=True)
+            command = traffic_args(folder, args.parser, args.seed, apply_step=args.apply_step)
             report["traffic_command"] = command
             with (folder / "traffic-console.txt").open("w", encoding="utf-8") as traffic_console:
                 client = subprocess.Popen(command, cwd=str(ROOT), env=env,
@@ -293,11 +300,13 @@ def main():
                 raise RuntimeError("Expected one traffic report; inspect traffic-console.txt")
             traffic = json.loads(files[0].read_text(encoding="utf-8"))
             report["traffic_report"] = str(files[0])
-            if client.returncode != 0 or traffic.get("status") != "validated_not_applied":
+            report["observed_environment_steps"] = traffic.get("actual_environment_steps")
+            expected_status = "single_step_complete" if args.apply_step else "validated_not_applied"
+            if client.returncode != 0 or traffic.get("status") != expected_status:
                 raise RuntimeError("Real response validation failed; retain original replies for review")
-            if traffic.get("actual_environment_steps") != 0 or traffic.get("memory_module_imported"):
+            if traffic.get("actual_environment_steps") != int(args.apply_step) or traffic.get("memory_module_imported"):
                 raise RuntimeError("Unexpected step or memory state")
-            report["status"] = "responses_validated"
+            report["status"] = "single_step_validated" if args.apply_step else "responses_validated"
     except (Exception, KeyboardInterrupt) as exc:
         report.update(status="failed", error=type(exc).__name__ + ": " + str(exc))
     finally:
@@ -341,7 +350,7 @@ def main():
         save()
         print("Status: " + report["status"])
         print("Result: " + str(output))
-    return 0 if report["status"] == "responses_validated" else 1
+    return 0 if report["status"] in ("responses_validated", "single_step_validated") else 1
 
 
 if __name__ == "__main__":

@@ -1,0 +1,29 @@
+{
+  "source_sha256": "9db3b7a8e861b38c81e5aacf2604544690aedee89e48f1e3e387c6c65789b2ea",
+  "traffic_sha256": "847e886a37364cb424fba01f6cab0a3d46fd935c6b97d9c136ceeabbbf11adf5",
+  "input_precision": "ego from snapshot; other from rounded position in original prompt",
+  "destination_evidence": "Reconstructed from original road construction and saved ego route, not a recorded runtime field",
+  "reconstructed_destination": [
+    -111.0,
+    -2.0
+  ],
+  "ego_position": [
+    2.0,
+    45.771207413492775
+  ],
+  "other_position": [
+    2.0,
+    24.61763535
+  ],
+  "ego_to_destination_m": 122.6828767911111,
+  "other_to_ego_destination_m": 116.09262901504802,
+  "original_signed_difference_m": -6.59024777606308,
+  "absolute_difference_m": 6.59024777606308,
+  "center_to_center_euclidean_m": 21.153572063492774,
+  "leading_car_selected": true,
+  "rear_car_selected": false,
+  "generated_original_text": "IDMVehicle #992 is driving at 9.4m/s on ('o0', 'ir0', 0) which is the same lane as you are driving, and it's driving in front of the ego car for -6.59 meters. You need to make sure that your actions do not conflict with each of the vehicles mentioned.",
+  "saved_prompt_contains_minus_6_59": true,
+  "reproduced_minus_6_59": true,
+  "limitation": "Center distance is not bumper clearance; no formula, priority or prompt changed"
+}

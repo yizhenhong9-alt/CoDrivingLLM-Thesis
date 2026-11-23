@@ -166,6 +166,12 @@ For the M07 relative-source-path failure after all four suites passed, add
 `--resume-fixtures` to run only its new path regression and the two fixtures.
 
 Modification reports: [index](../modification_reports/README.md).
+M12: [single-step report](../modification_reports/M12-one-step/report.md).
+The managed live session defaults to no step; explicit `--apply-step` submits
+exactly one step only after all replies pass. Logs distinguish submitted actions
+from the environment's new_action. No safety policy or priority is changed.
+M13: [signed-distance audit](../modification_reports/M13-signed-distance-audit/report.md)
+reproduces original prompt text without changing formulas or adding abs().
 M10: [real-response session report](../modification_reports/M10-real-response-session/report.md).
 Unlike offline tools, `run_qwen_live_session.py` DOES launch the specified model
 on Spark, uses the existing simulation interpreter for live replies without

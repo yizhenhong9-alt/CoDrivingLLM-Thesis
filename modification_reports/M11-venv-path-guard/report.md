@@ -30,3 +30,5 @@
 ## 尚待驗證
 
 Spark 更新後接續原 M10 命令；若仍被擋，回傳新訊息中的具體路徑，不自行移動環境、修改 symlink、安裝套件或擴大權限。已通過 M01–M09 不重跑。模型實際啟停與回覆仍未完成。
+
+後續已確認：M10 成功結果 checked_paths 明確記錄 inference python 解析為 /usr/bin/python3.12；simulation python 解析為 /home/nclab/Yizhen/tools/python/cpython-3.8.20-linux-aarch64-gnu/bin/python3.8。這次不再只是 symlink 的假設，且驗證沒有修改系統 interpreter。成功結果細節見 [M12](../M12-one-step/report.md)。

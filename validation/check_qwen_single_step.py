@@ -91,6 +91,8 @@ class FlowTests(unittest.TestCase):
         transport.mode, transport.last_response = "live", {"test_double": True}
         self.assertEqual(self.run_flow(transport, apply=True), (1, 1))
         self.assertEqual(self.steps, [(1, 1)])
+        self.assertEqual(self.report["submitted_vehicle_actions"], [
+            {"vehicle_id":3,"action_id":1}, {"vehicle_id":4,"action_id":1}])
         self.assertTrue(any(s.get("status") == "validated_not_applied" for s in self.saved))
 
     def test_invalid_action_blocks_step_and_keeps_raw(self):
@@ -104,6 +106,22 @@ class FlowTests(unittest.TestCase):
             self.run_flow(transport, apply=True)
         self.assertEqual(self.steps, [])
         self.assertIn("99", self.report["calls"][-1]["raw_response"])
+
+    def test_step_records_ticks_and_environment_action_separately(self):
+        self.env.time = 20
+        self.env.config = {"simulation_frequency":20,"safety_guarantee":True}
+        def step(actions, env):
+            self.steps.append(actions)
+            env.time += 4
+            env.new_action = (4, 1)  # Test double, not an actual safety policy.
+            return None, 1, False, {}
+        self.env.step = step
+        transport = FixtureReplies("strict")
+        transport.mode, transport.last_response = "live", None
+        self.run_flow(transport, apply=True)
+        self.assertEqual(self.steps, [(1, 1)])
+        self.assertEqual(self.report["step_observation"], dict(physics_ticks=4,
+            simulated_seconds=0.2, safety_guarantee=True, environment_action=(4, 1)))
 
     def test_missing_negotiation_blocks_action_calls(self):
         transport = FixtureReplies("strict")

@@ -175,9 +175,21 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
     report["status"] = "validated_not_applied"
     persist(report)
     if apply_step:
+        report["submitted_vehicle_actions"] = [
+            {"vehicle_id": vehicle_id, "action_id": action_id}
+            for vehicle_id, action_id in zip(batch.ids, result)]
         report["step_attempted"] = True
         persist(report)
+        before_ticks = getattr(env, "time", None)
         _, reward, done, info = env.step(result, env)
+        after_ticks = getattr(env, "time", None)
+        frequency = getattr(env, "config", {}).get("simulation_frequency")
+        ticks = after_ticks-before_ticks if before_ticks is not None and after_ticks is not None else None
+        report["step_observation"] = dict(
+            physics_ticks=ticks,
+            simulated_seconds=ticks/frequency if ticks is not None and frequency else None,
+            safety_guarantee=getattr(env, "config", {}).get("safety_guarantee"),
+            environment_action=getattr(env, "new_action", None))
         report.update(environment_steps=1, reward=reward, done=bool(done), info=info,
                       status="single_step_complete")
         persist(report)
