@@ -1,0 +1,177 @@
+{
+  "run_id": "20261123T091604Z-c6871ba4",
+  "steps": 101,
+  "calls": {
+    "negotiation": 101,
+    "action": 404
+  },
+  "physics_ticks": 301,
+  "simulated_seconds": 20.066666666666666,
+  "audit_errors": [],
+  "terminal_steps": [
+    100
+  ],
+  "last_info": {
+    "speed": 5.555555555555555,
+    "cav_crashed": false,
+    "cost": 0.0,
+    "agents_dones": [
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "action_counts": {
+    "3": {
+      "SLOWER": 2,
+      "IDLE": 52,
+      "FASTER": 47
+    },
+    "4": {
+      "FASTER": 54,
+      "IDLE": 47
+    },
+    "5": {
+      "IDLE": 89,
+      "FASTER": 12
+    },
+    "6": {
+      "FASTER": 76,
+      "IDLE": 25
+    }
+  },
+  "negotiation_output_counts": [
+    {
+      "raw_response": "{\"decisions\":[{\"first_vehicle\":4,\"second_vehicle\":3},{\"first_vehicle\":5,\"second_vehicle\":3}]}",
+      "count": 40
+    },
+    {
+      "raw_response": "{\"decisions\":[{\"first_vehicle\":5,\"second_vehicle\":3}]}",
+      "count": 3
+    },
+    {
+      "raw_response": "{\"decisions\":[]}",
+      "count": 58
+    }
+  ],
+  "action_examples": {
+    "SLOWER": {
+      "step_id": 0,
+      "raw_response": "{\"vehicle_id\":3,\"decision\":\"SLOWER\"}"
+    },
+    "FASTER": {
+      "step_id": 0,
+      "raw_response": "{\"vehicle_id\":4,\"decision\":\"FASTER\"}"
+    },
+    "IDLE": {
+      "step_id": 0,
+      "raw_response": "{\"vehicle_id\":5,\"decision\":\"IDLE\"}"
+    }
+  },
+  "input_sha256": {
+    "result.json": "b6b35337917faf89c0dd765e6759ed8bf0a3042c1fabad6e171c9908c86d2800",
+    "step-0000.json": "c64d69e41ffa32cc1b664a4196950308c08ce6ca905fe6aa5979445fa130123a",
+    "step-0001.json": "40f05b8150cfe9dcf446e06ea0376b4f087f59f2733c767e69fe8273131ce2fc",
+    "step-0002.json": "7e28bafeb904e46af443116f5d3680ebd33e5062f7e3741abfad6b431b28862f",
+    "step-0003.json": "726b80878a719cbe850fb2310c3ce2052dc1c3f26be8f9f0d3ac82db73d40fe6",
+    "step-0004.json": "b25789bfd568746c78b868205266d6fd2926f256591fd81f67814e2143defea0",
+    "step-0005.json": "c4117f3209982f1e259eb96abec5f17b6be90f4103069c3631c61d88c2b30197",
+    "step-0006.json": "4ae69ec661544e4e01788bbed4b66ec9ce4f6c9d0fa3b2822bd10ec85bc6186e",
+    "step-0007.json": "cdd45abefd93a804f57fdf21cbea9952458b021e444e7005136232570404aa02",
+    "step-0008.json": "43e4c5c3148444d0aca58cdb99e36b9c94147bf93ddb3f41f868d66b461dd757",
+    "step-0009.json": "a60e4d914b4ad12e9fa2f9a813b9f4c83d3d8b99a8ac3ba4aab23418bab0f7b7",
+    "step-0010.json": "3e1b8dbcc0744be13be431c5a0290ad41128a1e7258447f598b0413c18c6e457",
+    "step-0011.json": "4b086e4b60ca5adf3e035f65fc1bedcfc668f74926d8c8ef0eee3cecd47ee1d5",
+    "step-0012.json": "d527eeebb5c2b5b62412c53afb8d3a1825780697eb89d9d81133e2ffb4fab469",
+    "step-0013.json": "46ab05833304cea7f1e01ed50be70eb29c25f2d679fef16fe2509960ee452237",
+    "step-0014.json": "ab579a2b839731525a7ffd29a1ddc2ce5e97cb4bd9b02514d13a293f882320b6",
+    "step-0015.json": "177db4a2ef85c489177f9445fa17ad92b1c99e5d2e80249c10310db9187d0246",
+    "step-0016.json": "3987646cc52a58b94dec27780df902fee7bd504b39394dba91ff4b17ffb078a9",
+    "step-0017.json": "7c5a95aca121845c73a249301ae7ccdd8922f83830e9f9efaa0764e9ac48b166",
+    "step-0018.json": "625b49767f5b430afce2cc3497f64b1f5920e218216d067ad0b082192e429f71",
+    "step-0019.json": "290ffdbb8345141650fc2f953d6c0953619ce3acb016cdc2b730bc7dedd5054f",
+    "step-0020.json": "0cdde1de1b44303e2a7fc2d7b323b372339e2f25b33f99492d10a9628020bc41",
+    "step-0021.json": "a7e04663cd74f0d8b136ee2f3d3b5565a4e6d26dfa9096168ea9779e242cb445",
+    "step-0022.json": "51985f349f0144a763d18baec54751e145321799147c7fcbb057072f1bebc0ba",
+    "step-0023.json": "b8cf0fa8f54c5d5971c32e0d38428401467cec82c0f0ff3d763850173c7e7fd9",
+    "step-0024.json": "a81cbf0be2ee1074f947f8095e13846320a00a8648fbb7eb4e49f892792b80c7",
+    "step-0025.json": "002d84250f79681547933b391cace5a9ad98425df0570be9481adf2ed2c8d678",
+    "step-0026.json": "8141b0544fe77326dc5b271d61f4b24e1eb5bbc0d70611bbb70aa6ed6961db2e",
+    "step-0027.json": "eecb99e0874bf6b183b447ee6472b6ad6629ad03a72b7003f90e492e93d8e475",
+    "step-0028.json": "0e2fe1a320d83187152e1045284fb5cadc95e254a25e915c20bbfa408a4637b4",
+    "step-0029.json": "dde44e0b582796e94b6c57ae302252df975cc47d07a6367d3ab411c966c12825",
+    "step-0030.json": "61ee5f7684d4ee0dfe2bb7182f7fb592656bdcb494bca63ea4dd80c181a4b9a6",
+    "step-0031.json": "59be39aec75cd3d82c739528c5c356bf41a0519c293b27154dcf7d9d5fb1537d",
+    "step-0032.json": "a6103e0ae4fe876693ababef4f12aa1d315fffe7d9d931c7d57e0a91c12d8f08",
+    "step-0033.json": "212f42d76cbf41b5cc9aeaf3c01f3524d07168d51b9daf86694045b2e2622c34",
+    "step-0034.json": "3502644626f5cc985baa7aa6a6f3f16d9197c4301bb1cf8402d15e6b9d6ada64",
+    "step-0035.json": "2341200891ae9ba21461dd5f91774473afb8fb3959b0b3cab3832d837dd3e5bc",
+    "step-0036.json": "9141a50097aa507e50f69fa32b9218dd0723d70b475b1de707218887dfb7e804",
+    "step-0037.json": "28aa75158cb582134519d0ef47613ce81f8e1726ef4e55bff3621288dd058073",
+    "step-0038.json": "f65044edf1fcafabb7dbd8b3edd2be35a5ea10823521efd4520faf8328ab3238",
+    "step-0039.json": "9301a71ed6eba22bb1cf003c54434cc3e8ff64c909a6ab39c4c5cbdfa925abfd",
+    "step-0040.json": "2603d122aa33d9364b98ee0bdf7add4881b3ba263491df683c8413974ee1daed",
+    "step-0041.json": "4fe0e4f7e72826c5cc01153e3764a365973e2a863dc2ce2fc2e05f7f8f620aea",
+    "step-0042.json": "44a05edc2b73e7dbdcd52f7e66f947c8fd3a06993a1386b59242998eed46347f",
+    "step-0043.json": "1d26766e1726fff00812e4901d89c903c1fed823f0048cd1d0fbbe16c11313dd",
+    "step-0044.json": "5ea4c77731d982b343d569024848eb5355c9565c2b3c9c68d9b928d864754b33",
+    "step-0045.json": "1de12d112d458549dd18d2f152d33befe0991df09cbcfec0f015fd4ef5339178",
+    "step-0046.json": "8deb6fda661d91166f8865a37ec6e8cefd95cc6e28fffc846409edfe29712ed5",
+    "step-0047.json": "c1b4e744db2be7576d8afb48eec9a299f4df6cc4597597945a5d3e88487a6cb4",
+    "step-0048.json": "8da4277f99aa8aebc165462cb2d4dcbca9f81adcfe02513abf270e1b659c719c",
+    "step-0049.json": "2a9db14e0f8b6c52fdc2cc59ec6c4954f9daff8358e4773d3669f7655365b7d0",
+    "step-0050.json": "25ab22c99eb63c515924631e2987e1ccf7de4687100ef0058063f9abb4a8de4e",
+    "step-0051.json": "756cb3be6f24b3c48b0ab331ad4dd9459ca6e5468c0852d9ae109a02e5b84867",
+    "step-0052.json": "f56e5aca5b7f23c2edf06dbd37ed1d84208e011390532839c8e6bc7a662b0a63",
+    "step-0053.json": "8f4466cb4eee2e254e06f20cb8c608fc3f49caaa6cc47b381cdd57f22a189373",
+    "step-0054.json": "d1d0df760a120d17d141c60d43609849d76a39d8b77b92e7624cd79a80723017",
+    "step-0055.json": "88a4c8b3396894415e2b9ae0a5e6effd05b34c903aaa73430162e32b0d051506",
+    "step-0056.json": "1ab2b5b26a820667ef1e75b1cead3c9146d08bbe817fcb36e910c468acf52ed0",
+    "step-0057.json": "6373f8b1d5f09e0f96d0f4d6a9888ba65608a2c18bc712b0dde6a2bf0e66bd68",
+    "step-0058.json": "15ae84baa4e1d52ca9fc499c665355531040917e347c56801b85b26b04dd4360",
+    "step-0059.json": "325febf4fc9b43666c21163f96ee94b6de0e36d02e6db9fa37919eb9f4b9b0d3",
+    "step-0060.json": "2b5f05e8b0ef7058f1d9150f2daae80b0579d2685caa71192aa82b34c2a92fba",
+    "step-0061.json": "16e89b86926d586881ac097d687d2ecce298867cfe0de60724fecae6bbe04590",
+    "step-0062.json": "23b57ff0c4e42356d8b2a6ac9c0c71f253c2a97c458c356961a6f28ec009dfba",
+    "step-0063.json": "9cdf1e773974793d194e7656f12713fdf1c8b4a7659c46c0dbd794fab54455b4",
+    "step-0064.json": "ee4ac357f6f0e97604f794db3620283e4cfc8deb4f566326429e7fa88762ed41",
+    "step-0065.json": "7362ee1323d67057d93ad2a5e501ea8dd81d1c1ddabf986eaf62fb1b6906236a",
+    "step-0066.json": "86602afd0c6b10000a0b7b4984560cbeb174b79dcd8b74d5567930585c04271d",
+    "step-0067.json": "56abdcd13a6bac8afc1d01b34a312dfd3ae1e06d7669365d98a985556cca67eb",
+    "step-0068.json": "943de6295d4b1d632c57395bb2183a65e97620fb673e0151729a00ccb7893aee",
+    "step-0069.json": "79ce260ec1a7912b8ca183133ea76532e51c1c494bdc0a5fdea8403e03fb315f",
+    "step-0070.json": "48e0d32b131c8a7c4cf7ea2d21c67ff5d2cf7161c93f20bd29dc549fd2e432c4",
+    "step-0071.json": "2f6a2920c4cfd09ae017cd604836259a678af4a766a71edcf6ed30d6456ef696",
+    "step-0072.json": "0b7cc8bc56e8cfb4b7786ce412e1e022dbc80ca86bb3863d8bb43052149cabcb",
+    "step-0073.json": "ab6676e733b6e51bb8c00c13208d3498b979d02926ccda31be3b472550ac4aa7",
+    "step-0074.json": "5549b88df853e74b8192792b341550d75e7f7b273f2c6c453db4268b6a369f57",
+    "step-0075.json": "3343e36fcebd39c505efc75798730619665a6f161010cb040f168a760362ef3d",
+    "step-0076.json": "1a8be31009f271d2989665ec8d9e80ad88053106f46f4f50993e57eace03485c",
+    "step-0077.json": "192ef030d936e06c2d4798391c262a31c5a4fb170338e90b339c38f1b6f3bbc2",
+    "step-0078.json": "80f25a489ec142f67ffe4ccd57c9c19e2f8d38886db7b21cf49ee052b68f8878",
+    "step-0079.json": "2a42eaf87a9d5ddbaaf4bd5f5691911e5a70b5cf7e93f61315045047da2a195c",
+    "step-0080.json": "aca209c79940e93de6f5fa2f081ca01dc667dbb7b507a9910fbed531eccadb0d",
+    "step-0081.json": "23f247ddd7dd9de4f295e47c42ece51eb0a078024bc1c04108cf907eb7bfe8c5",
+    "step-0082.json": "e29aa6f2250540bf088c2545c0d90ec5d9a7af7e390ab9765ee76648432bada7",
+    "step-0083.json": "3448d0bb6143f31a6dd2b31dd6bf80188ae4ed2ecc6f2234e43f58fcef6c58e1",
+    "step-0084.json": "aae9ba360b2da32711cb1615cfea244ef8ac93f1599be19d162c8120dd54b05e",
+    "step-0085.json": "706fde5c9c445b09080c8a7fb60ad3e86eaad7f1112889ccb186d1ad373c1019",
+    "step-0086.json": "30fbe2c3b9bcdb28eda5615dcbbc0fe6e57950faeb5427c2c72d0ba117d18a97",
+    "step-0087.json": "fa30b93a0f5e102d86da93f0cc23d503ce4f572cff1f1d5902e83b1120a1c416",
+    "step-0088.json": "7cf987b8f9c0607d1524024cc43447404a09c16d6c2ee93044781819b73819d4",
+    "step-0089.json": "cc72df4a7c48743850a676a93e92de81a940c6cd11b7fb8c5d83df8ecec73e65",
+    "step-0090.json": "f07bf0da37ae8290bd27c3b8a880ae76d7affe25d130bafeb28a0501a7a3fb7e",
+    "step-0091.json": "8f811a5e6453186382774ac8bf72e8e1c131dfb7c1211aed9fc3e63f998e96b8",
+    "step-0092.json": "99fbe5743dc9d0f5f878a678db226fbe163891eb548603b546eee37970e47ccb",
+    "step-0093.json": "d43c06027d90721242d77d6d4d33b2bba0c5380820e47af007cdde1dcb233b11",
+    "step-0094.json": "7669d437fde9825b5f6a7e9fb1bceef9c7bfd025c7e78ced05850fc0752c9bd5",
+    "step-0095.json": "55761dcc4eef5249bbfa5312880b661b8eca30c093f4c5b9e10494b0e622205c",
+    "step-0096.json": "0a3fc0395fd685bc6dbe3934c994b5ac3330f98b5eda3e549690be26cabbd433",
+    "step-0097.json": "45485336756dd3fd2c7cfdf7b45bf2ec44546c5bcc7a15af932c378b38f2b2e5",
+    "step-0098.json": "7744997812271c170bf2cd6cf9c80bbcd7cbb6da9ece35ea416d10a6a523827f",
+    "step-0099.json": "c25e2c053221e272b0708edf899f1f27429e443cb8448fe2331b541374549d79",
+    "step-0100.json": "d54c928dd211077c299b7cc31c103aceb74f9d5e9f73c33bb974d4d5b6473a7c"
+  },
+  "method": "Offline reparse of each saved raw_response with current strict parser; compare saved values, vehicle IDs, available actions, submitted/applied IDs, finish reasons, step sequence and CAV crash flags. No model or simulator loaded."
+}

@@ -19,5 +19,6 @@
 | M13 | 負距離來源審查 | [report.md](./M13-signed-distance-audit/report.md) | 原 function 重現 -6.59；abs 後仍不等於中心距，不改公式 |
 | M14 | Qwen 接入正式主入口 | [report.md](./M14-project-entry/report.md) | M15 修正後 Spark 正式入口實際三步通過；完整回合待驗證 |
 | M15 | RPC socket 短路徑修正 | [report.md](./M15-short-rpc-path/report.md) | Spark 啟動及正常停服通過；正式入口三步、15/15 strict 解析，非跨場景保證 |
+| M16 | 正式入口一回合實測 | [report.md](./M16-one-episode/report.md) | seed 0 跑完 101 步；505/505 strict 通過、CAV 無碰撞，依原條件推定全車到達出口，正常停服 |
 
 原版 agent 保留；後續真實 Qwen 回覆與 Spark 結果補入各報告，不覆蓋歷史證據。未執行項目不預先宣稱通過。
