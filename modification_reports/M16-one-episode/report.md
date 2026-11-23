@@ -80,3 +80,56 @@ Action 原文例如：
 仍不能據此宣稱：所有 seed／場景 100% 可解析、比 GPT 更好、新 parser 比原版整體更好，或既有距離與速度問題均已修復。此回合沒有公平的原版對照；prompt、輸出格式與 parser 的變因需控制。
 
 下一步建議先閱讀關鍵步驟的完整 prompt／回答，理解動作轉換與原場景敘述，之後才用少量不同 seed 檢查重現性。保持已知負距離、速度及優先權基線不變；若要修改，另編號並做前後比較。此回合已結束，不需為建立報告而重跑。
+
+## 關鍵步驟導讀：prompt → 原文 → 車輛變化
+
+以下 step_id 從 0 起算，所以 step-0000 是第一次決策。摘錄僅為閱讀方便，完整 prompt 保留在各 step JSON 的 calls[].messages[].content；raw_response 是真正模型輸出，parsers 是程式解析結果，environment_action 是環境記錄動作。模型未輸出理由，以下不能當作已知模型內部判斷過程。
+
+### step_id 0：建議後通行，車 3 回答 SLOWER
+
+見 [step-0000.json](../../../runs/M16-one-episode/20261123T091604Z-c6871ba4/traffic/20261123T091809Z-8f6caabe/step-0000.json)。negotiation 收到配對 [[4,3],[5,3]]、車速與到衝突點距離，輸出車 4、5 各先於車 3。車 3 的 action prompt 同時包含同車道安全警告、建議後通行，以及可用動作 IDLE／FASTER／SLOWER。
+
+模型原文為 `{"vehicle_id":3,"decision":"SLOWER"}`，解析為車 3、action ID 4，環境動作的車 3 位置也是 4。車速由 5 降至約 3.51 m/s。這個回答與提示的減速建議一致，但不能證明模型具體採用哪一段資訊作決定。
+
+### step_id 1：多行 JSON 仍能解析，IDLE 仍可能持續減速
+
+見 [step-0001.json](../../../runs/M16-one-episode/20261123T091604Z-c6871ba4/traffic/20261123T091809Z-8f6caabe/step-0001.json)。車 3 當步可用動作只剩 IDLE／FASTER，模型實際輸出：
+
+```json
+{
+  "vehicle_id": 3,
+  "decision": "IDLE"
+}
+```
+
+strict parser 正確處理換行與空白，解析為 ID 1；車速仍由約 3.51 降至 2.47 m/s。原控制器的 IDLE 不重新設定目標速度，所以不能把動作名稱直接解讀成瞬時車速完全不變。prompt 卻仍使用 `IDLE--remain in the current lane with current speed`，這是需要另行釐清的文字與執行語意差距，不是 parser 讀錯。
+
+### step_id 35：仍有讓行建議，但危險資訊段落寫「沒有衝突」
+
+見 [step-0035.json](../../../runs/M16-one-episode/20261123T091604Z-c6871ba4/traffic/20261123T091809Z-8f6caabe/step-0035.json)。negotiation 仍列 [[4,3],[5,3]]，車 3 的 prompt 仍附兩條建議後通行；但同一 prompt 也寫：
+
+```text
+Acceleration conflict: acceleration is safe
+Currently, ego vehicle do not have conflict
+Conflict info is empty
+```
+
+車 3 此時已接近停止（步前約 0.0000213 m/s），回答 FASTER。這只能說實際輸入存在易混淆的敘述，不能將動作轉換直接歸因於某一句話，或因此判定其行為安全／不安全。
+
+### step_id 42／43：配對消失後又出現
+
+見 [step-0042.json](../../../runs/M16-one-episode/20261123T091604Z-c6871ba4/traffic/20261123T091809Z-8f6caabe/step-0042.json) 與 [step-0043.json](../../../runs/M16-one-episode/20261123T091604Z-c6871ba4/traffic/20261123T091809Z-8f6caabe/step-0043.json)。42 的輸入 pairs=[]，模型回答 decisions=[]，車 3 回答 FASTER；43 的輸入重新出現 [[5,3]]，模型回答 5 先於 3，車 3 回答 IDLE。
+
+所以空清單與配對恢復先發生在程式產生的輸入，不是 parser 丟掉配對，也不是模型自行新增配對。為何偵測結果在相鄰步改變，需另外審查原 detect_conflicts 的條件與場景數值，不能僅由這兩份回答判斷是 bug。
+
+43 的 action prompt 同樣同時寫「沒有衝突」和「與車 5 有衝突，建議後通行」。本次未修改此文字。
+
+### step_id 100：環境結束，不是模型輸出停止命令
+
+見 [step-0100.json](../../../runs/M16-one-episode/20261123T091604Z-c6871ba4/traffic/20261123T091809Z-8f6caabe/step-0100.json)。模型只輸出四台車的正常動作，車 3 為 IDLE；執行後由原模擬環境回報 done=true，主迴圈才結束。不是模型直接決定關閉回合或服務。
+
+### 導讀發現的優先事項
+
+原 [check_safety_with_conflict_vehicles](../../llm_controller/prompt_llm.py) 只分析被建議後通行的車，按 TTCP（預估到衝突點的時間）差異分級，只有 level 高於目前危險等級時才填 most_dangerous_info。原 format_training_info 在沒有該資訊時卻輸出「沒有衝突」。因此「未選出危險項目」與「完全不存在衝突配對」可能被同一句話混用。這是由原程式路徑與保存 prompt 確認的文字問題；本次未逐筆重算 TTCP，未判定特定步究竟走哪一條數值條件。
+
+下一項應先做離線審查：分清楚衝突配對、風險分級與通行建議，並核對 IDLE 及速度敘述。不更改安全公式、門檻、優先權或 5 m/s 處理。確認可接受的文字修正範圍後，再另編修改號碼與前後比較，避免把原 prompt 問題誤算成 parser 或 Qwen 的能力差異。
