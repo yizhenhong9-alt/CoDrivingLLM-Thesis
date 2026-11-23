@@ -156,12 +156,14 @@ cd /home/nclab/Yizhen/src/CoDrivingLLM-Thesis
 PYTHONDONTWRITEBYTECODE=1 /home/nclab/Yizhen/envs/codriving-sim-py38/bin/python validation/validate_spark_offline.py --output-dir /home/nclab/Yizhen/runs/M06-offline
 ```
 
-This runs 37 unit tests followed by strict/legacy fixtures. It starts no model,
+This runs 38 unit tests (37 before M07) followed by strict/legacy fixtures. It starts no model,
 makes no model requests and applies no fixture actions. Child caches/temp files
 stay below the output directory; CUDA devices are hidden for these children and
 BLAS/OpenMP threads limited to one. CPU/RAM/disk remain shared hardware.
 Check result.json plus command logs; any failure stops subsequent commands.
 Do not install packages or change shared settings to work around a failure.
+For the M07 relative-source-path failure after all four suites passed, add
+`--resume-fixtures` to run only its new path regression and the two fixtures.
 
 Modification reports: [index](../modification_reports/README.md).
 M05: `python validation/check_qwen_single_step.py` runs fake-environment offline

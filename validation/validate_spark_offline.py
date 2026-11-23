@@ -19,6 +19,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--resume-fixtures", action="store_true",
+                        help="Run the M07 path regression and fixtures; do not repeat passed suites")
     args = parser.parse_args()
     base = args.output_dir.resolve()
     if os.name == "posix":
@@ -48,6 +50,9 @@ def main():
     commands = [[sys.executable, "validation/" + name] for name in (
         "check_output_schema.py", "check_vehicle_actions.py", "check_memory_off.py",
         "check_qwen_single_step.py")]
+    if args.resume_fixtures:
+        commands = [[sys.executable, "validation/check_qwen_single_step.py",
+                     "TransportTests.test_source_hash_record_accepts_relative_script_path"]]
     for mode in ("strict", "legacy"):
         commands.append([sys.executable, "validation/run_qwen_single_step.py", "--mode", "fixture",
                          "--parser", mode, "--seed", str(args.seed), "--output-dir", str(folder / mode)])

@@ -23,3 +23,5 @@ M01–M05 分散在多個測試入口，M05 尚未通過實際 Spark Python 3.8 
 本地已可執行 37 項測試；M06 runner 的完整流程因本地缺 gym，預期在 fixture 階段停止。實際本輪驗證結果另記於 [本地驗證輸出](../M06-local-validation/)。這不是 Spark 通過紀錄。
 
 Spark 結果尚未取得；後續將提供固定 commit 與手動同步指令，不假設遠端工作樹乾淨。
+
+後續補記：已取得使用者提供的 20261123T034727Z-a0ccb710 結果。Spark Python 3.8 的前四組 37 項通過；strict fixture 在記錄來源路徑時失敗，legacy 未執行。修正與後續狀態見 [M07](../M07-relative-source-path/report.md)，原始失敗紀錄保留。

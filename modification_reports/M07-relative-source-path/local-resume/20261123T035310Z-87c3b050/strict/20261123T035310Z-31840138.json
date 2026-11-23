@@ -1,0 +1,40 @@
+{
+  "status": "failed",
+  "episode_id": "20261123T035310Z-31840138",
+  "git_commit": "65a4d990ce3173d604c4071762cb37dec895a351",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:12:50) [MSC v.1942 64 bit (AMD64)]",
+  "seed": 0,
+  "environment_steps": 0,
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+  "mode": "fixture",
+  "parser_mode": "strict",
+  "calls": [],
+  "settings": {
+    "mode": "fixture",
+    "parser": "strict",
+    "seed": 0,
+    "apply_step": false,
+    "port": 18080,
+    "timeout": 120,
+    "max_tokens": 256,
+    "output_dir": "C:\\master's thesis\\CoDrivingLLM-Thesis\\modification_reports\\M07-relative-source-path\\local-resume\\20261123T035310Z-87c3b050\\strict"
+  },
+  "source_sha256": {
+    "llm_controller\\action_config.py": "0f482539d62a61bda572c91dbf958ece5c433b96e9bfc67b88e45b5e39d5a6c4",
+    "llm_controller\\llm_agent_action.py": "b6afc436afeff75585ca01c276886a6eca97e2bda1cfb21ace9a4b436cf8cc78",
+    "llm_controller\\llm_agent_negotiation_system.py": "987ddcbf4954e8547380eec9534dfc38c9fc3aded36697df5d995677eb71c648",
+    "llm_controller\\memory.py": "59629587078bd2cc721538d007a8bdda2248db4f6204a3ccd1afdde72def898a",
+    "llm_controller\\memory_mode.py": "99f0e7282fb43327a4a28c56a4b6efea1aa8128d768bdacf09e451f40c1c4016",
+    "llm_controller\\output_schema.py": "1a85957f65c317f9daaaafb52329250d4efeff285fc429b2e8470ce38d8a1b45",
+    "llm_controller\\prompt_llm.py": "9db3b7a8e861b38c81e5aacf2604544690aedee89e48f1e3e387c6c65789b2ea",
+    "llm_controller\\qwen_step.py": "453fe2464f9673716b24edd8f8f481d4991304e5bc013219f4fc435385e6b93c",
+    "llm_controller\\qwen_transport.py": "c0f30d41a0b1d25e0dba828a4033209fdce95df67eaa3d1d8516de8a0f262bff",
+    "llm_controller\\Scenario_description.py": "b2383f4eb0b3579fd8389ba2697034120da7e06a4741a605c0bad27cfca18f67",
+    "llm_controller\\vehicle_actions.py": "6eaa4bcc11b7c578f25f98d7976cd5182df5e1a5f7f68bc0ef5e39fb49c4d642",
+    "validation\\run_qwen_single_step.py": "b41e87fa9ab7f2560ac4b7840364bba57c270fdce10ef245ac65fd7005ace9c8"
+  },
+  "git_status": "M modification_reports/M06-spark-offline-validation/report.md\n M modification_reports/README.md\n M validation/README.md\n M validation/check_qwen_single_step.py\n M validation/run_qwen_single_step.py\n M validation/validate_spark_offline.py\n?? modification_reports/M07-relative-source-path/",
+  "error": "Traceback (most recent call last):\n  File \"C:\\master's thesis\\CoDrivingLLM-Thesis\\validation\\run_qwen_single_step.py\", line 93, in main\n    import gym\nModuleNotFoundError: No module named 'gym'\n",
+  "memory_module_imported": false,
+  "console": ""
+}

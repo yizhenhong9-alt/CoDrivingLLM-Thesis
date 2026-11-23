@@ -1,0 +1,35 @@
+{
+  "status": "failed",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:12:50) [MSC v.1942 64 bit (AMD64)]",
+  "executable": "C:\\Users\\user\\miniconda3\\python.exe",
+  "mode": "offline_no_model",
+  "seed": 0,
+  "commands": [
+    {
+      "command": [
+        "C:\\Users\\user\\miniconda3\\python.exe",
+        "validation/check_qwen_single_step.py",
+        "TransportTests.test_source_hash_record_accepts_relative_script_path"
+      ],
+      "exit_code": 0,
+      "log": "command-1.txt"
+    },
+    {
+      "command": [
+        "C:\\Users\\user\\miniconda3\\python.exe",
+        "validation/run_qwen_single_step.py",
+        "--mode",
+        "fixture",
+        "--parser",
+        "strict",
+        "--seed",
+        "0",
+        "--output-dir",
+        "C:\\master's thesis\\CoDrivingLLM-Thesis\\modification_reports\\M07-relative-source-path\\local-resume\\20261123T035310Z-87c3b050\\strict"
+      ],
+      "exit_code": 1,
+      "log": "command-2.txt"
+    }
+  ],
+  "error": "Command failed; inspect command-2.txt"
+}

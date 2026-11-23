@@ -10,5 +10,6 @@
 | M04 | 真正 memory off 入口 | [report.md](./M04-memory-off/report.md) | 實際入口已修改；5 項本地離線測試通過，未跑完整模擬 |
 | M05 | Qwen 專用單步入口 | [report.md](./M05-qwen-single-step/report.md) | 12 項本地測試通過；完整 fixture CLI 因本地缺 gym 停止，待 Spark 驗證 |
 | M06 | Spark 離線驗證與同步準備 | [report.md](./M06-spark-offline-validation/report.md) | 統一驗證入口與個人快取設定；Spark 結果待補 |
+| M07 | Python 3.8 相對路徑紀錄修正 | [report.md](./M07-relative-source-path/report.md) | Spark 前四組 37 項通過；fixture 因路徑紀錄失敗，已修正並加回歸測試 |
 
 原版 agent 保留；後續真實 Qwen 回覆與 Spark 結果補入各報告，不覆蓋歷史證據。未執行項目不預先宣稱通過。

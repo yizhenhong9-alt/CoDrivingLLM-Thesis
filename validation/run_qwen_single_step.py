@@ -65,7 +65,7 @@ def main():
     report["settings"]["output_dir"] = str(args.output_dir.resolve())
     report["source_sha256"] = {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
-        for path in list((ROOT / "llm_controller").glob("*.py")) + [Path(__file__)]}
+        for path in list((ROOT / "llm_controller").glob("*.py")) + [Path(__file__).resolve()]}
     git_command = ["git", "-c", "safe.directory=" + ROOT.as_posix()]
     for key, command in (("git_commit", ["rev-parse", "HEAD"]),
                          ("git_status", ["status", "--porcelain=v1"])):

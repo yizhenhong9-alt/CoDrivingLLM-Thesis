@@ -1,0 +1,6 @@
+test_source_hash_record_accepts_relative_script_path (__main__.TransportTests.test_source_hash_record_accepts_relative_script_path) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+OK

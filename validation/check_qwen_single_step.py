@@ -1,6 +1,8 @@
 """M05 standard-library flow tests, with fake environment and transport."""
 import ast
 import json
+import hashlib
+import os
 from pathlib import Path
 import re
 import sys
@@ -130,6 +132,17 @@ class FlowTests(unittest.TestCase):
 
 
 class TransportTests(unittest.TestCase):
+    def test_source_hash_record_accepts_relative_script_path(self):
+        script = ROOT / "validation/run_qwen_single_step.py"
+        tree = ast.parse(script.read_text(encoding="utf-8"))
+        assignment = next(node for node in ast.walk(tree) if isinstance(node, ast.Assign)
+                          and isinstance(node.value, ast.DictComp))
+        scope = {"ROOT": ROOT, "Path": Path, "hashlib": hashlib, "report": {},
+                 "__file__": os.path.relpath(str(script), os.getcwd())}
+        exec(compile(ast.Module(body=[assignment], type_ignores=[]), "<actual-provenance>", "exec"), scope)
+        self.assertEqual(scope["report"]["source_sha256"][str(script.relative_to(ROOT))],
+                         hashlib.sha256(script.read_bytes()).hexdigest())
+
     def test_python38_syntax(self):
         for name in ("llm_controller/qwen_step.py", "llm_controller/qwen_transport.py",
                      "validation/run_qwen_single_step.py"):
