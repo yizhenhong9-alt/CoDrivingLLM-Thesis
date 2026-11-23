@@ -57,3 +57,7 @@ PYTHONDONTWRITEBYTECODE=1 /home/nclab/Yizhen/envs/codriving-sim-py38/bin/python 
 使用者已執行 20261123T084407Z-0ea03d24。已讀取結果與服務日誌：RPC socket 完整路徑 108 bytes，超過 107 bytes，服務未 ready 就 exit 1；traffic_command 尚未建立，正式主程式沒有執行。埠已關、已知程序無殘留，不能將 needs_shutdown_review 當作殘留證據。修正與驗收安排另見 [M15](../M15-short-rpc-path/report.md)。
 
 回傳資料更正：只需 result.json、server-console.txt、traffic-console.txt 及 traffic 內 JSON／Markdown，無需下載整個含 socket／cache 的目錄。
+
+## M15 修正後：正式入口三步已驗收
+
+使用者回傳 20261123T085404Z-498455d8，commit 475192e。已核對 traffic_command 確實執行本專案 Run_multi_CAV_LLM.py --backend qwen，連續實際三步，共 0.6 秒；negotiation 3/3、action 12/12 通過 strict 解析，三步 CAV 未碰撞、done=false，正常停服。原文、動作與限制詳見 [M15 實測](../M15-short-rpc-path/report.md)。正式入口短程接線通過，完整回合與跨 seed 驗證仍未完成。

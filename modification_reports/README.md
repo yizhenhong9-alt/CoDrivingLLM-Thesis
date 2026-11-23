@@ -17,7 +17,7 @@
 | M11 | venv interpreter 路徑檢查修正 | [report.md](./M11-venv-path-guard/report.md) | Spark 成功執行，確認 inference 基礎執行檔為 /usr/bin/python3.12 |
 | M12 | 真實單步控制入口 | [report.md](./M12-one-step/report.md) | Spark 真正 1 步／0.2 秒與正常停服已核對；不能推論完整回合安全 |
 | M13 | 負距離來源審查 | [report.md](./M13-signed-distance-audit/report.md) | 原 function 重現 -6.59；abs 後仍不等於中心距，不改公式 |
-| M14 | Qwen 接入正式主入口 | [report.md](./M14-project-entry/report.md) | 本地整合通過；Spark 因 RPC 路徑過長啟動失敗，尚未執行正式入口 |
-| M15 | RPC socket 短路徑修正 | [report.md](./M15-short-rpc-path/report.md) | 重現 108 bytes 超過 107；短路徑 73 bytes，30 項本地測試通過，Spark 待驗證 |
+| M14 | Qwen 接入正式主入口 | [report.md](./M14-project-entry/report.md) | M15 修正後 Spark 正式入口實際三步通過；完整回合待驗證 |
+| M15 | RPC socket 短路徑修正 | [report.md](./M15-short-rpc-path/report.md) | Spark 啟動及正常停服通過；正式入口三步、15/15 strict 解析，非跨場景保證 |
 
 原版 agent 保留；後續真實 Qwen 回覆與 Spark 結果補入各報告，不覆蓋歷史證據。未執行項目不預先宣稱通過。
