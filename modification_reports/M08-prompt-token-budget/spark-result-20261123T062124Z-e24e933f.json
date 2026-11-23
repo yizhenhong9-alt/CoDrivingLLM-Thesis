@@ -1,0 +1,154 @@
+{
+  "status": "measured",
+  "model": "Qwen/Qwen3-30B-A3B-Instruct-2507-FP8",
+  "expected_revision": "5a5a776300a41aaa681dd7ff0106608ef2bc90db",
+  "revision_evidence": "Expected revision from handoff; this tool does not reverify weights",
+  "model_dir": "/home/nclab/Yizhen/models/Qwen3-30B-A3B-Instruct-2507-FP8-5a5a776300a4",
+  "python": "3.12.3 (main, Nov  6 2025, 13:44:16) [GCC 13.3.0]",
+  "fixtures": [
+    {
+      "path": "/home/nclab/Yizhen/runs/M07-offline/20261123T044039Z-baa96999/strict/20261123T044039Z-d08cd9b4.json",
+      "sha256": "894c8b3b95440ecd38ebca7e48bddcd8b9a08d5bb3893e29f4ec0cd758894305",
+      "prompt_version": "M05-strict",
+      "parser_mode": "strict",
+      "git_commit": "b9dbffa4dc0f3084e5536b39e2b682da95daf200",
+      "rows": [
+        {
+          "call": 0,
+          "stage": "negotiation",
+          "vehicle_id": null,
+          "input_tokens": 453,
+          "reserved_output_tokens": 256,
+          "required_tokens": 709,
+          "context_limit": 2048,
+          "remaining_tokens": 1339,
+          "fits": true,
+          "rendered_sha256": "76e06f1168c8483174cc10e44ecc20e6c83cd8fce6cb60612a28afa650b6ae84"
+        },
+        {
+          "call": 1,
+          "stage": "action",
+          "vehicle_id": 3,
+          "input_tokens": 977,
+          "reserved_output_tokens": 256,
+          "required_tokens": 1233,
+          "context_limit": 2048,
+          "remaining_tokens": 815,
+          "fits": true,
+          "rendered_sha256": "e80d94a1302d82a5e1cd5b80846e505f2863e7d568ac6b34ca4206bfd930d809"
+        },
+        {
+          "call": 2,
+          "stage": "action",
+          "vehicle_id": 4,
+          "input_tokens": 872,
+          "reserved_output_tokens": 256,
+          "required_tokens": 1128,
+          "context_limit": 2048,
+          "remaining_tokens": 920,
+          "fits": true,
+          "rendered_sha256": "814fcf2babf255f047c85c2d5539cbc25cb797b37cedc8c54dd635bbc3b7a371"
+        },
+        {
+          "call": 3,
+          "stage": "action",
+          "vehicle_id": 5,
+          "input_tokens": 986,
+          "reserved_output_tokens": 256,
+          "required_tokens": 1242,
+          "context_limit": 2048,
+          "remaining_tokens": 806,
+          "fits": true,
+          "rendered_sha256": "02e23c4426e3f36c10f38301e8585e339485fc43cd0df5a82055f524bbe7444b"
+        },
+        {
+          "call": 4,
+          "stage": "action",
+          "vehicle_id": 6,
+          "input_tokens": 813,
+          "reserved_output_tokens": 256,
+          "required_tokens": 1069,
+          "context_limit": 2048,
+          "remaining_tokens": 979,
+          "fits": true,
+          "rendered_sha256": "7d9b86a6089b465eaddef875f1772e9731b12ad55a0af58d86acc51aede9f13e"
+        }
+      ]
+    },
+    {
+      "path": "/home/nclab/Yizhen/runs/M07-offline/20261123T044039Z-baa96999/legacy/20261123T044041Z-f43a8225.json",
+      "sha256": "8d06fff335ff4e2ae61fcf1ec90df23bbdf492e40148530e40308bc33ce16293",
+      "prompt_version": "M05-legacy",
+      "parser_mode": "legacy",
+      "git_commit": "b9dbffa4dc0f3084e5536b39e2b682da95daf200",
+      "rows": [
+        {
+          "call": 0,
+          "stage": "negotiation",
+          "vehicle_id": null,
+          "input_tokens": 353,
+          "reserved_output_tokens": 256,
+          "required_tokens": 609,
+          "context_limit": 2048,
+          "remaining_tokens": 1439,
+          "fits": true,
+          "rendered_sha256": "cb66503e26c4c82855ff9cee24d86225b76c497e1b7c81be450500b6649aff8e"
+        },
+        {
+          "call": 1,
+          "stage": "action",
+          "vehicle_id": 3,
+          "input_tokens": 967,
+          "reserved_output_tokens": 256,
+          "required_tokens": 1223,
+          "context_limit": 2048,
+          "remaining_tokens": 825,
+          "fits": true,
+          "rendered_sha256": "6b8251efd49787ceb7ba4fb50fcb1d58b81a6e27aa200bd0985898446d799d1e"
+        },
+        {
+          "call": 2,
+          "stage": "action",
+          "vehicle_id": 4,
+          "input_tokens": 862,
+          "reserved_output_tokens": 256,
+          "required_tokens": 1118,
+          "context_limit": 2048,
+          "remaining_tokens": 930,
+          "fits": true,
+          "rendered_sha256": "a78629db2be309be2b65600a5e1a7bdd68b02d9c37b3d599ea7670cd5869ad5d"
+        },
+        {
+          "call": 3,
+          "stage": "action",
+          "vehicle_id": 5,
+          "input_tokens": 976,
+          "reserved_output_tokens": 256,
+          "required_tokens": 1232,
+          "context_limit": 2048,
+          "remaining_tokens": 816,
+          "fits": true,
+          "rendered_sha256": "7711cf5d1eeae2e2f86ceeac0869de294ae8cce0a4200ece5698e503c7740327"
+        },
+        {
+          "call": 4,
+          "stage": "action",
+          "vehicle_id": 6,
+          "input_tokens": 803,
+          "reserved_output_tokens": 256,
+          "required_tokens": 1059,
+          "context_limit": 2048,
+          "remaining_tokens": 989,
+          "fits": true,
+          "rendered_sha256": "9f4c49f913b3e1b7260db561341ed54a421aeaa80aa51bf4038229c4716fe23f"
+        }
+      ]
+    }
+  ],
+  "source_sha256": "622bb330dc0665d09f0037f27baca3696ba8028383c05869a92810d3bbd0a137",
+  "limitation": "Seed-0 fixture prompts; no real Qwen response, memory-on or multi-seed coverage",
+  "transformers_version": "5.22.2",
+  "tokenizer_class": "Qwen2Tokenizer",
+  "chat_template_sha256": "c87c39da4214fe8fee1f49f4b54bdb5ae1e1cd5aed22a356f3ffedb59964a715",
+  "all_fit": true
+}

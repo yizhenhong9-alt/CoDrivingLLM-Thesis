@@ -11,6 +11,6 @@
 | M05 | Qwen 專用單步入口 | [report.md](./M05-qwen-single-step/report.md) | Spark strict/legacy fixture 已通過；真實 Qwen 回覆與 step 待驗證 |
 | M06 | Spark 離線驗證與同步準備 | [report.md](./M06-spark-offline-validation/report.md) | 統一驗證入口與個人快取設定；Spark 結果待補 |
 | M07 | Python 3.8 相對路徑紀錄修正 | [report.md](./M07-relative-source-path/report.md) | Spark 新回歸測試及 strict/legacy fixture 已通過，原失敗證據保留 |
-| M08 | 新版提示 token 計數 | [report.md](./M08-prompt-token-budget/report.md) | 4 項本地 fake-tokenizer 測試通過；真實計數待 Spark 3.12 執行 |
+| M08 | 新版提示 token 計數 | [report.md](./M08-prompt-token-budget/report.md) | Spark 3.12 已完成 10 筆計數；輸入加 256 預算全部符合 2048，最大 1242 |
 
 原版 agent 保留；後續真實 Qwen 回覆與 Spark 結果補入各報告，不覆蓋歷史證據。未執行項目不預先宣稱通過。

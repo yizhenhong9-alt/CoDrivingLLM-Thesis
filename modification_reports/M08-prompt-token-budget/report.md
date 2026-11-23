@@ -16,7 +16,25 @@ CLI 僅供 Spark 執行，所有讀取與輸出路徑限制於 /home/nclab/Yizhe
 
 Windows Python 3.13.13 使用 fake tokenizer，4 項通過，見 [test-results.txt](./test-results.txt)。確認 chat template/generation prefix 編碼流程、輸出預算加總、超額判定、拒絕錯誤模型或失敗的 fixture，以及無效 messages。
 
-本地沒有載入真實 tokenizer 或模型，也沒有安裝套件。真實 token 數值尚待 Spark 執行，不預先填寫。
+本地沒有載入真實 tokenizer 或模型，也沒有安裝套件。真實 token 數值已由使用者在 Spark 執行並提供，見下方結果。
+
+## Spark 實測結果：已完成
+
+來源為使用者提供的 20261123T062124Z-e24e933f/result.json；本地已完整讀取並核對全部 10 筆輸入加預算、剩餘空間與 fits 計算。保存 [原始結果副本](./spark-result-20261123T062124Z-e24e933f.json)。這是對提供檔案的核對，不是遠端重新執行或重新核驗權重。
+
+Python 3.12.3、Transformers 5.22.2，結果 status=measured、all_fit=true。tokenizer 類別回報 Qwen2Tokenizer；此為 tokenizer 實作類別名稱，單憑類別名不能判定載入了另一個模型。記錄的模型目錄與預期模型一致，權重 revision 仍依交接證據。
+
+| 提示 | strict 輸入 | legacy 輸入 |
+|---|---:|---:|
+| negotiation | 453 | 353 |
+| action 車 3 | 977 | 967 |
+| action 車 4 | 872 | 862 |
+| action 車 5 | 986 | 976 |
+| action 車 6 | 813 | 803 |
+
+每筆預留輸出 256、候選上下文上限 2048。最大輸入為 strict 車 5 的 986，加輸出後 1242，剩 806；所有 10 筆均符合此次預算。這些是各自獨立 API 請求，不需把 5 次輸入相加後與 2048 比較。
+
+此結果支持使用 2048 作為這批提示初次真實回覆測試的候選設定，不保證任意場景、真實協商內容或回覆長度都足夠。token 計數未產生模型回答；尚無真實解析率、延遲或碰撞率結果。無需重跑本次計數。
 
 ## 為什麼有不同 Python 版本
 
@@ -30,7 +48,7 @@ Windows Python 3.13.13 使用 fake tokenizer，4 項通過，見 [test-results.t
 
 正式執行時，3.8 程式傳送 HTTP/JSON，3.12 服務回傳文字，兩個程序不直接共享 Python 記憶體或互相 import 套件，因此不要求版本相同。但仍需檢查 API 格式、回覆內容和逾時等行為，不能說分環境就完全沒有相容性問題。不要把模擬 requirements.txt 安裝到推論環境，也不要用 pip --user 混裝。
 
-## Spark 待執行指令
+## Spark 已執行指令（留存，不需重跑）
 
 先同步包含 M08 的 Git 版本；不用啟動模型。指定既有的 3.12 推論 interpreter：
 
