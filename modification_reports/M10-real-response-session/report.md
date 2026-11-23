@@ -52,3 +52,5 @@ PYTHONDONTWRITEBYTECODE=1 /home/nclab/Yizhen/envs/qwen-vllm034-py312/bin/python 
 只跑 seed 0 的 strict 提示，不是完整公平比較；legacy 真實回覆測試後續另排，不因兩版格式不同而宣稱誰較優。memory off 不代表模型 KV cache 關閉。安全公式、優先權與 5 m/s 限制未修改；無 env.step，因此不會產生交通通行/碰撞率證據。
 
 2048/256 是本次候選測試設定，真實協商可能改變 action prompt 長度，若截斷或超出上下文就停止記錄，不能默認 M08 fixture 計數涵蓋一切。先審查真實回覆與正常停服，再規劃真正單步。
+
+後續執行補記：使用者首次執行被頂層路徑 guard 擋下，尚未啟動模型；[M11](../M11-venv-path-guard/report.md) 分開檢查寫入目錄與只讀 interpreter，並加具體路徑診斷。原 console 無法確定是哪條路徑，遠端根因待新訊息或 checked_paths 確認。

@@ -7,10 +7,43 @@ import tempfile
 import unittest
 from unittest.mock import Mock, patch
 from run_qwen_live_session import (MODEL, launch_args, listener_inodes,
-                                   parent_only_stop, traffic_args, environment, process_info)
+                                   parent_only_stop, traffic_args, environment, process_info,
+                                   validate_session_paths)
 
 
 class LiveSessionTests(unittest.TestCase):
+    def test_venv_executable_symlink_may_resolve_outside_owner(self):
+        with tempfile.TemporaryDirectory() as directory:
+            owner = Path(directory).resolve() / "owner"
+            binary = owner / "env/bin/python"
+            binary.parent.mkdir(parents=True)
+            binary.touch()
+            outside = Path(directory).resolve() / "system-python"
+            original = Path.resolve
+            def resolve(path, *args, **kwargs):
+                return outside if path == binary else original(path, *args, **kwargs)
+            with patch.object(Path, "resolve", autospec=True, side_effect=resolve):
+                with self.assertRaises(ValueError):
+                    binary.resolve().relative_to(owner)  # Original guard rejects a venv symlink.
+                result = validate_session_paths(owner / "runs", owner / "repo", owner / "model",
+                                                {"inference_python": binary}, owner)
+            self.assertEqual(result["inference_python"]["resolved_executable"], str(outside))
+
+    def test_output_escape_still_rejected_with_path_details(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory).resolve()
+            with self.assertRaisesRegex(ValueError, "output_dir: requested="):
+                validate_session_paths(base / "outside", base / "owner/repo", base / "owner/model", {},
+                                       base / "owner")
+
+    def test_external_interpreter_location_still_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory).resolve()
+            owner = base / "owner"
+            with self.assertRaisesRegex(ValueError, "venv must stay inside"):
+                validate_session_paths(owner / "runs", owner / "repo", owner / "model",
+                                        {"simulation_python": base / "system/bin/python"}, owner)
+
     def test_served_name_matches_client(self):
         from llm_controller.qwen_step import MODEL as CLIENT_MODEL
         args = launch_args()

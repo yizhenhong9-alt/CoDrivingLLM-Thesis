@@ -135,6 +135,37 @@ def traffic_args(folder, parser_mode, seed):
             "--output-dir", str(folder / "traffic"), "--max-tokens", "256"]
 
 
+def validate_session_paths(output_dir, repo, model_dir, interpreters, owner=OWNER):
+    """Restrict writable/data directories, but allow a venv's binary symlink.
+
+    The venv/bin directory must remain inside owner. The interpreter executable
+    is read/executed only, and may resolve to a system or managed base Python.
+    """
+    owner = owner.resolve()
+    result = {}
+    for label, path in (("output_dir", output_dir), ("repository", repo), ("model_dir", model_dir)):
+        resolved = path.resolve()
+        try:
+            resolved.relative_to(owner)
+        except ValueError:
+            raise ValueError("{}: requested={}; resolved={}; directory must stay inside {}".format(
+                label, path, resolved, owner))
+        result[label] = str(resolved)
+    for label, path in interpreters.items():
+        parent = path.parent.resolve()
+        try:
+            path.absolute().relative_to(owner)
+            parent.relative_to(owner)
+        except ValueError:
+            raise ValueError("{}: requested={}; resolved bin directory={}; venv must stay inside {}".format(
+                label, path, parent, owner))
+        if not path.is_file():
+            raise ValueError("{}: interpreter not found: {}".format(label, path))
+        result[label] = dict(requested=str(path), resolved_executable=str(path.resolve()),
+                             resolved_bin_directory=str(parent), access="execute/read only")
+    return result
+
+
 def system_snapshot():
     result = {}
     try:
@@ -157,18 +188,20 @@ def main():
     args = parser.parse_args()
     if sys.platform != "linux":
         parser.error("Run on Spark Linux only; this command launches the real model")
-    for path in (args.output_dir, ROOT, INFERENCE, SIMULATION, MODEL_DIR):
-        try:
-            path.resolve().relative_to(OWNER)
-        except ValueError:
-            parser.error("All paths must stay inside /home/nclab/Yizhen")
+    try:
+        checked_paths = validate_session_paths(args.output_dir, ROOT, MODEL_DIR,
+            {"inference_python": INFERENCE, "simulation_python": SIMULATION})
+    except ValueError as exc:
+        parser.error(str(exc))
     if Path(sys.prefix).resolve() != INFERENCE.parent.parent.resolve():
-        parser.error("Use the specified inference environment interpreter")
+        parser.error("Wrong environment: sys.prefix={}; expected={}".format(
+            sys.prefix, INFERENCE.parent.parent))
     folder = args.output_dir.resolve() / (datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8])
     folder.mkdir(parents=True)
     report = dict(status="preflight", model=MODEL, expected_revision=REVISION,
                   scope="real traffic responses only, no env.step", calls_to_step=0,
                   seed=args.seed, parser_mode=args.parser, model_started=False)
+    report["checked_paths"] = checked_paths
     report["script_sha256"] = hashlib.sha256(Path(__file__).resolve().read_bytes()).hexdigest()
     output, proc, client = folder / "result.json", None, None
     known = {}

@@ -14,5 +14,6 @@
 | M08 | 新版提示 token 計數 | [report.md](./M08-prompt-token-budget/report.md) | Spark 3.12 已完成 10 筆計數；輸入加 256 預算全部符合 2048，最大 1242 |
 | M09 | 真實 API 前資源與停服證據檢查 | [report.md](./M09-live-preflight/report.md) | Spark 快照與原啟動/停服證據已核對；不是資源預留 |
 | M10 | 真實回覆與主程序停服入口 | [report.md](./M10-real-response-session/report.md) | 9 項本地 fake-process 測試通過；待 Spark 真實執行 |
+| M11 | venv interpreter 路徑檢查修正 | [report.md](./M11-venv-path-guard/report.md) | 修正 executable symlink 誤擋；12 項聚焦測試通過，待 Spark 接續 M10 |
 
 原版 agent 保留；後續真實 Qwen 回覆與 Spark 結果補入各報告，不覆蓋歷史證據。未執行項目不預先宣稱通過。
