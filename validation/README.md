@@ -166,6 +166,12 @@ For the M07 relative-source-path failure after all four suites passed, add
 `--resume-fixtures` to run only its new path regression and the two fixtures.
 
 Modification reports: [index](../modification_reports/README.md).
+M10: [real-response session report](../modification_reports/M10-real-response-session/report.md).
+Unlike offline tools, `run_qwen_live_session.py` DOES launch the specified model
+on Spark, uses the existing simulation interpreter for live replies without
+env.step, then signals only its own API parent for shutdown. Rechecks current
+resources and port before launch; no group kill or automatic SIGKILL fallback.
+Read the report before running; this has not yet been validated on Spark.
 M09: [runtime/preflight report](../modification_reports/M09-live-preflight/report.md).
 `inspect_qwen_runtime.py --output-dir /home/nclab/Yizhen/runs/M09-preflight`
 collects resource snapshots, installed source excerpts and existing Step8J-R1

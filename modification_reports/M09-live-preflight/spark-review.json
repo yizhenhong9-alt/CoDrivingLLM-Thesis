@@ -1,0 +1,1486 @@
+﻿{
+    "source_file":  "C:/master\u0027s thesis/runs/M09-preflight/20261123T063318Z-d85e982b/result.json",
+    "source_sha256":  "797538b8eb8200185fc6786fbac99c581b7fc2dd082e7eafc6f55171e44a5b6d",
+    "utc":  "2026-11-23T06:33:18.565707+00:00",
+    "status":  "snapshot_collected",
+    "memory":  {
+                   "MemTotal_bytes":  128524255232,
+                   "MemAvailable_bytes":  99307765760,
+                   "SwapTotal_bytes":  17179865088,
+                   "SwapFree_bytes":  11213283328
+               },
+    "packages":  {
+                     "vllm":  "0.34.0",
+                     "torch":  "2.14.0+cu130",
+                     "transformers":  "5.22.2",
+                     "uvicorn":  "0.54.0",
+                     "flashinfer-python":  "0.7.3"
+                 },
+    "warnings":  [
+
+                 ],
+    "gpu_snapshot":  {
+                         "command":  [
+                                         "nvidia-smi"
+                                     ],
+                         "exit_code":  0,
+                         "stdout":  "Mon Nov 23 14:33:18 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 580.95.05              Driver Version: 580.95.05      CUDA Version: 13.0     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA GB10                    On  |   0000000F:01:00.0 Off |                  N/A |\n| N/A   47C    P0             10W /  N/A  | Not Supported          |      0%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|    0   N/A  N/A            9312      G   /usr/lib/xorg/Xorg                       33MiB |\n|    0   N/A  N/A          295851      C   venv/bin/python                       15046MiB |\n|    0   N/A  N/A          561196      C   ..._project/app/venv/bin/python3       3505MiB |\n|    0   N/A  N/A         2193007      C   ...esfm-service/venv/bin/python3       1319MiB |\n+-----------------------------------------------------------------------------------------+\n",
+                         "stderr":  ""
+                     },
+    "port_snapshot":  {
+                          "command":  [
+                                          "ss",
+                                          "-ltnp",
+                                          "sport = :18080"
+                                      ],
+                          "exit_code":  0,
+                          "stdout":  "State Recv-Q Send-Q Local Address:Port Peer Address:PortProcess\n",
+                          "stderr":  ""
+                      },
+    "previous_launch_config":  {
+                                   "path":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/launch-config.json",
+                                   "sha256":  "b2118f16d70d1f0b0d8a6cb7a3cda43c618b93c01a002625a8e438f9742eca1e",
+                                   "data":  {
+                                                "args":  [
+                                                             "/home/nclab/Yizhen/envs/qwen-vllm034-py312/bin/python",
+                                                             "-I",
+                                                             "-B",
+                                                             "-m",
+                                                             "vllm.entrypoints.openai.api_server",
+                                                             "--model",
+                                                             "/home/nclab/Yizhen/models/Qwen3-30B-A3B-Instruct-2507-FP8-5a5a776300a4",
+                                                             "--served-model-name",
+                                                             "Qwen3-30B-A3B-Instruct-2507-FP8",
+                                                             "--host",
+                                                             "127.0.0.1",
+                                                             "--port",
+                                                             "18080",
+                                                             "--max-model-len",
+                                                             "2048",
+                                                             "--max-num-seqs",
+                                                             "1",
+                                                             "--max-num-batched-tokens",
+                                                             "256",
+                                                             "--enforce-eager",
+                                                             "--moe-backend",
+                                                             "triton",
+                                                             "--kv-cache-memory-bytes",
+                                                             "536870912",
+                                                             "--gpu-memory-utilization",
+                                                             "0.40",
+                                                             "--load-format",
+                                                             "safetensors"
+                                                         ],
+                                                "environment_overrides":  {
+                                                                              "CUDA_VISIBLE_DEVICES":  "GPU-9dc7c211-0cb3-dc3c-9df6-67e50e4848db",
+                                                                              "CUDA_MODULE_LOADING":  "LAZY",
+                                                                              "HF_HUB_OFFLINE":  "1",
+                                                                              "TRANSFORMERS_OFFLINE":  "1",
+                                                                              "HF_HOME":  "/home/nclab/Yizhen/cache/huggingface",
+                                                                              "XDG_CACHE_HOME":  "/home/nclab/Yizhen/cache",
+                                                                              "XDG_CONFIG_HOME":  "/home/nclab/Yizhen/config",
+                                                                              "XDG_DATA_HOME":  "/home/nclab/Yizhen/cache/xdg-data",
+                                                                              "TMPDIR":  "/home/nclab/Yizhen/tmp",
+                                                                              "OMP_NUM_THREADS":  "1",
+                                                                              "MKL_NUM_THREADS":  "1",
+                                                                              "VLLM_NO_USAGE_STATS":  "1",
+                                                                              "DO_NOT_TRACK":  "1",
+                                                                              "TOKENIZERS_PARALLELISM":  "false",
+                                                                              "CUDA_CACHE_PATH":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/cuda-cache",
+                                                                              "TRITON_CACHE_DIR":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/triton-cache",
+                                                                              "TORCH_EXTENSIONS_DIR":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/torch-extensions",
+                                                                              "VLLM_CACHE_ROOT":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/vllm-cache",
+                                                                              "FLASHINFER_WORKSPACE_BASE":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/flashinfer",
+                                                                              "TORCHINDUCTOR_CACHE_DIR":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/torchinductor",
+                                                                              "NUMBA_CACHE_DIR":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/numba",
+                                                                              "VLLM_RPC_BASE_PATH":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/rpc"
+                                                                          }
+                                            }
+                               },
+    "previous_result":  {
+                            "path":  "/home/nclab/Yizhen/runs/step8J-R1-api-smoke-d41rak3z/result.json",
+                            "sha256":  "b0b9e1a4ee493f407b3149b2012f5436b8a1d435c7fa25af812552d1b0bbd06f",
+                            "data":  {
+                                         "step":  "8J-R1",
+                                         "model":  "Qwen3-30B-A3B-Instruct-2507-FP8",
+                                         "revision":  "5a5a776300a41aaa681dd7ff0106608ef2bc90db",
+                                         "status":  "api_smoke_passed",
+                                         "model_started":  true,
+                                         "console":  "/home/nclab/Yizhen/logs/spark-step8J-R1-api-smoke-d41rak3z-console.txt",
+                                         "checks":  {
+                                                        "models_endpoint":  "passed",
+                                                        "chat_generated":  "passed",
+                                                        "port_closed_after_stop":  true
+                                                    },
+                                         "server_pid":  1906783,
+                                         "chat_latency_seconds":  0.7699308581650257,
+                                         "chat_content":  "2",
+                                         "arithmetic_exact_match":  true,
+                                         "usage":  {
+                                                       "prompt_tokens":  21,
+                                                       "total_tokens":  23,
+                                                       "completion_tokens":  2,
+                                                       "completion_tokens_details":  null
+                                                   },
+                                         "server_exit_code":  0,
+                                         "available_after_bytes":  99072864256,
+                                         "min_available_during_bytes":  58225598464,
+                                         "utc":  "2026-11-23T02:12:48.825976+00:00",
+                                         "shutdown_review":  {
+                                                                 "api_requests_completed_before_shutdown":  true,
+                                                                 "observed":  "SIGTERM sent to API and EngineCore process group; vLLM abort shutdown forced EngineCore termination and logged EngineDeadError plus semaphore cleanup warning.",
+                                                                 "server_and_engine_pids_absent":  true,
+                                                                 "port_closed":  true,
+                                                                 "gpu_process_absent_after_stop":  true,
+                                                                 "clean_graceful_shutdown_verified":  false,
+                                                                 "followup":  "Use documented graceful shutdown controls and signal API parent only; verify before persistent deployment."
+                                                             },
+                                         "scope":  "Short API smoke passed; traffic integration, reliability, latency benchmark and graceful shutdown remain unverified."
+                                     }
+                        },
+    "source_excerpts":  [
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/entrypoints/cli/serve.py",
+                                "sha256":  "927ec66a86d0c62329eab647aba3ded8a13ec42fb856208bfc76344f99290b65",
+                                "truncated":  false,
+                                "lines":  [
+                                              {
+                                                  "line":  203,
+                                                  "text":  "        raise ValueError(\"data_parallel_size_local must be \u003e 0 in headless mode\")"
+                                              },
+                                              {
+                                                  "line":  204,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  205,
+                                                  "text":  "    shutdown_requested = False"
+                                              },
+                                              {
+                                                  "line":  206,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  207,
+                                                  "text":  "    # Catch SIGTERM and SIGINT to allow graceful shutdown."
+                                              },
+                                              {
+                                                  "line":  208,
+                                                  "text":  "    def signal_handler(signum, frame):"
+                                              },
+                                              {
+                                                  "line":  209,
+                                                  "text":  "        nonlocal shutdown_requested"
+                                              },
+                                              {
+                                                  "line":  210,
+                                                  "text":  "        logger.debug(\"Received %d signal.\", signum)"
+                                              },
+                                              {
+                                                  "line":  211,
+                                                  "text":  "        if not shutdown_requested:"
+                                              },
+                                              {
+                                                  "line":  212,
+                                                  "text":  "            shutdown_requested = True"
+                                              },
+                                              {
+                                                  "line":  213,
+                                                  "text":  "            raise SystemExit"
+                                              },
+                                              {
+                                                  "line":  214,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  215,
+                                                  "text":  "    signal.signal(signal.SIGTERM, signal_handler)"
+                                              },
+                                              {
+                                                  "line":  216,
+                                                  "text":  "    signal.signal(signal.SIGINT, signal_handler)"
+                                              },
+                                              {
+                                                  "line":  217,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  218,
+                                                  "text":  "    if parallel_config.node_rank_within_dp \u003e 0:"
+                                              },
+                                              {
+                                                  "line":  219,
+                                                  "text":  "        from vllm.version import __version__ as VLLM_VERSION"
+                                              },
+                                              {
+                                                  "line":  220,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  264,
+                                                  "text":  "        engine_manager.monitor_engine_liveness()"
+                                              },
+                                              {
+                                                  "line":  265,
+                                                  "text":  "    finally:"
+                                              },
+                                              {
+                                                  "line":  266,
+                                                  "text":  "        timeout = None"
+                                              },
+                                              {
+                                                  "line":  267,
+                                                  "text":  "        if shutdown_requested:"
+                                              },
+                                              {
+                                                  "line":  268,
+                                                  "text":  "            timeout = vllm_config.shutdown_timeout"
+                                              },
+                                              {
+                                                  "line":  269,
+                                                  "text":  "            logger.info(\"Waiting up to %d seconds for processes to exit\", timeout)"
+                                              },
+                                              {
+                                                  "line":  270,
+                                                  "text":  "        engine_manager.shutdown(timeout=timeout)"
+                                              },
+                                              {
+                                                  "line":  271,
+                                                  "text":  "        logger.info(\"Shutting down.\")"
+                                              },
+                                              {
+                                                  "line":  272,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  288,
+                                                  "text":  "        setup_multiprocess_prometheus()"
+                                              },
+                                              {
+                                                  "line":  289,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  290,
+                                                  "text":  "    shutdown_requested = False"
+                                              },
+                                              {
+                                                  "line":  291,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  292,
+                                                  "text":  "    # Catch SIGTERM and SIGINT to allow graceful shutdown."
+                                              },
+                                              {
+                                                  "line":  293,
+                                                  "text":  "    def signal_handler(signum, frame):"
+                                              },
+                                              {
+                                                  "line":  294,
+                                                  "text":  "        nonlocal shutdown_requested"
+                                              },
+                                              {
+                                                  "line":  295,
+                                                  "text":  "        logger.debug(\"Received %d signal.\", signum)"
+                                              },
+                                              {
+                                                  "line":  296,
+                                                  "text":  "        if not shutdown_requested:"
+                                              },
+                                              {
+                                                  "line":  297,
+                                                  "text":  "            shutdown_requested = True"
+                                              },
+                                              {
+                                                  "line":  298,
+                                                  "text":  "            raise SystemExit"
+                                              },
+                                              {
+                                                  "line":  299,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  300,
+                                                  "text":  "    signal.signal(signal.SIGTERM, signal_handler)"
+                                              },
+                                              {
+                                                  "line":  301,
+                                                  "text":  "    signal.signal(signal.SIGINT, signal_handler)"
+                                              },
+                                              {
+                                                  "line":  302,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  303,
+                                                  "text":  "    listen_address, sock = setup_server(args, reuse_port=num_api_servers \u003e 1)"
+                                              },
+                                              {
+                                                  "line":  304,
+                                                  "text":  "    # `--grpc-port` is only accepted for the Rust frontend, which inherits this"
+                                              },
+                                              {
+                                                  "line":  305,
+                                                  "text":  "    # listener like the HTTP one. gRPC follows the HTTP TCP host, or IPv4"
+                                              },
+                                              {
+                                                  "line":  395,
+                                                  "text":  "        )"
+                                              },
+                                              {
+                                                  "line":  396,
+                                                  "text":  "    finally:"
+                                              },
+                                              {
+                                                  "line":  397,
+                                                  "text":  "        timeout = shutdown_by = None"
+                                              },
+                                              {
+                                                  "line":  398,
+                                                  "text":  "        if shutdown_requested:"
+                                              },
+                                              {
+                                                  "line":  399,
+                                                  "text":  "            timeout = vllm_config.shutdown_timeout"
+                                              },
+                                              {
+                                                  "line":  400,
+                                                  "text":  "            shutdown_by = time.monotonic() + timeout"
+                                              },
+                                              {
+                                                  "line":  401,
+                                                  "text":  "            logger.info(\"Waiting up to %d seconds for processes to exit\", timeout)"
+                                              },
+                                              {
+                                                  "line":  402,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  403,
+                                                  "text":  "        def to_timeout(deadline: float | None) -\u003e float | None:"
+                                              }
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py",
+                                "sha256":  "d9c281e9c194479bde62f7c684386665c814e7f2704abf1ded682cebf78ec012",
+                                "truncated":  false,
+                                "lines":  [
+
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/entrypoints/launchers/launcher.py",
+                                "sha256":  "8dfa0e70029f8acdda6901f6adeb4e1f29da7347fb5dc4d01754d91422a211f1",
+                                "truncated":  false,
+                                "lines":  [
+                                              {
+                                                  "line":  44,
+                                                  "text":  "_NOT_ACCEPTING = 2**31 - 1"
+                                              },
+                                              {
+                                                  "line":  45,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  46,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  47,
+                                                  "text":  "class NoSignalServer(uvicorn.Server):"
+                                              },
+                                              {
+                                                  "line":  48,
+                                                  "text":  "    \"\"\"Uvicorn server that never installs its own SIGINT/SIGTERM handlers."
+                                              },
+                                              {
+                                                  "line":  49,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  50,
+                                                  "text":  "    Callers register their own handlers on the event loop for graceful"
+                                              },
+                                              {
+                                                  "line":  51,
+                                                  "text":  "    shutdown; uvicorn\u0027s would race with and override them (see #49668)."
+                                              },
+                                              {
+                                                  "line":  52,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  147,
+                                                  "text":  "        finally:"
+                                              },
+                                              {
+                                                  "line":  148,
+                                                  "text":  "            self._connecting -= 1"
+                                              },
+                                              {
+                                                  "line":  149,
+                                                  "text":  "            self._publish_load()"
+                                              },
+                                              {
+                                                  "line":  150,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  151,
+                                                  "text":  "    async def shutdown(self, sockets: list[socket.socket] | None = None) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  152,
+                                                  "text":  "        # Before super() closes the listening sockets."
+                                              },
+                                              {
+                                                  "line":  153,
+                                                  "text":  "        tasks = list(self._accept_tasks)"
+                                              },
+                                              {
+                                                  "line":  154,
+                                                  "text":  "        for task in tasks:"
+                                              },
+                                              {
+                                                  "line":  155,
+                                                  "text":  "            task.cancel()"
+                                              },
+                                              {
+                                                  "line":  262,
+                                                  "text":  "    async def handle_shutdown() -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  263,
+                                                  "text":  "        await shutdown_event.wait()"
+                                              },
+                                              {
+                                                  "line":  264,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  265,
+                                                  "text":  "        if engine_client is not None:"
+                                              },
+                                              {
+                                                  "line":  266,
+                                                  "text":  "            timeout = engine_client.vllm_config.shutdown_timeout"
+                                              },
+                                              {
+                                                  "line":  267,
+                                                  "text":  "            mode = \"abort\" if timeout == 0 else \"drain\""
+                                              },
+                                              {
+                                                  "line":  268,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  269,
+                                                  "text":  "            logger.info("
+                                              },
+                                              {
+                                                  "line":  270,
+                                                  "text":  "                \"[shutdown] API server: stopping engine client mode=%s timeout=%ss\","
+                                              },
+                                              {
+                                                  "line":  284,
+                                                  "text":  "            watchdog_task.cancel()"
+                                              },
+                                              {
+                                                  "line":  285,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  286,
+                                                  "text":  "    shutdown_task = None"
+                                              },
+                                              {
+                                                  "line":  287,
+                                                  "text":  "    try:"
+                                              },
+                                              {
+                                                  "line":  288,
+                                                  "text":  "        loop.add_signal_handler(signal.SIGINT, signal_handler)"
+                                              },
+                                              {
+                                                  "line":  289,
+                                                  "text":  "        loop.add_signal_handler(signal.SIGTERM, signal_handler)"
+                                              },
+                                              {
+                                                  "line":  290,
+                                                  "text":  "        shutdown_task = loop.create_task(handle_shutdown())"
+                                              },
+                                              {
+                                                  "line":  291,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  292,
+                                                  "text":  "        await server_task"
+                                              },
+                                              {
+                                                  "line":  293,
+                                                  "text":  "        return dummy_shutdown()"
+                                              }
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/entrypoints/launchers/api_server/entry.py",
+                                "sha256":  "adb0cb43088273ee8041c98b94cc892534829c5406c5eefcf2659aae6ab5f526",
+                                "truncated":  false,
+                                "lines":  [
+                                              {
+                                                  "line":  108,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  109,
+                                                  "text":  "        yield async_llm"
+                                              },
+                                              {
+                                                  "line":  110,
+                                                  "text":  "    finally:"
+                                              },
+                                              {
+                                                  "line":  111,
+                                                  "text":  "        if async_llm:"
+                                              },
+                                              {
+                                                  "line":  112,
+                                                  "text":  "            async_llm.shutdown(timeout=vllm_config.shutdown_timeout)"
+                                              },
+                                              {
+                                                  "line":  113,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  114,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  115,
+                                                  "text":  "async def build_and_serve("
+                                              },
+                                              {
+                                                  "line":  116,
+                                                  "text":  "    engine_client: EngineClient,"
+                                              },
+                                              {
+                                                  "line":  164,
+                                                  "text":  "async def run_server(args, **uvicorn_kwargs) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  165,
+                                                  "text":  "    \"\"\"Run a single-worker API server.\"\"\""
+                                              },
+                                              {
+                                                  "line":  166,
+                                                  "text":  "    decorate_logs(\"APIServer\", skip_if_decorated=True)"
+                                              },
+                                              {
+                                                  "line":  167,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  168,
+                                                  "text":  "    # Interrupt initialization if SIGTERM arrives before uvicorn installs its"
+                                              },
+                                              {
+                                                  "line":  169,
+                                                  "text":  "    # own signal handlers. Once uvicorn is running it replaces this."
+                                              },
+                                              {
+                                                  "line":  170,
+                                                  "text":  "    def _interrupt_init(*_) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  171,
+                                                  "text":  "        raise KeyboardInterrupt(\"terminated\")"
+                                              },
+                                              {
+                                                  "line":  172,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  173,
+                                                  "text":  "    signal.signal(signal.SIGTERM, _interrupt_init)"
+                                              },
+                                              {
+                                                  "line":  174,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  175,
+                                                  "text":  "    listen_address, sock = setup_server(args, reuse_port=False)"
+                                              },
+                                              {
+                                                  "line":  176,
+                                                  "text":  "    await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)"
+                                              },
+                                              {
+                                                  "line":  177,
+                                                  "text":  ""
+                                              }
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/entrypoints/common/cli_args.py",
+                                "sha256":  "b7b64c46c329670cdba7c19a601ed85081074d013f7dd210076ece3444173a5b",
+                                "truncated":  false,
+                                "lines":  [
+
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/engine/arg_utils.py",
+                                "sha256":  "47c6ddbc3f1bdfad19a97e50c340c561ce48f8a92708e69beffb69ad669e4d08",
+                                "truncated":  false,
+                                "lines":  [
+                                              {
+                                                  "line":  865,
+                                                  "text":  "    kv_offloading_size: float | None = CacheConfig.kv_offloading_size"
+                                              },
+                                              {
+                                                  "line":  866,
+                                                  "text":  "    kv_offloading_backend: KVOffloadingBackend = CacheConfig.kv_offloading_backend"
+                                              },
+                                              {
+                                                  "line":  867,
+                                                  "text":  "    tokens_only: bool = False"
+                                              },
+                                              {
+                                                  "line":  868,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  869,
+                                                  "text":  "    shutdown_timeout: int = 0"
+                                              },
+                                              {
+                                                  "line":  870,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  871,
+                                                  "text":  "    watchdog_config: WatchdogConfig = get_field(VllmConfig, \"watchdog_config\")"
+                                              },
+                                              {
+                                                  "line":  872,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  873,
+                                                  "text":  "    weight_transfer_config: WeightTransferConfig | None = get_field("
+                                              },
+                                              {
+                                                  "line":  1968,
+                                                  "text":  "            action=argparse.BooleanOptionalAction,"
+                                              },
+                                              {
+                                                  "line":  1969,
+                                                  "text":  "        )"
+                                              },
+                                              {
+                                                  "line":  1970,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  1971,
+                                                  "text":  "        parser.add_argument("
+                                              },
+                                              {
+                                                  "line":  1972,
+                                                  "text":  "            \"--shutdown-timeout\","
+                                              },
+                                              {
+                                                  "line":  1973,
+                                                  "text":  "            type=int,"
+                                              },
+                                              {
+                                                  "line":  1974,
+                                                  "text":  "            default=0,"
+                                              },
+                                              {
+                                                  "line":  1975,
+                                                  "text":  "            help=\"Shutdown timeout in seconds. 0 = abort, \u003e0 = wait.\","
+                                              },
+                                              {
+                                                  "line":  1976,
+                                                  "text":  "        )"
+                                              },
+                                              {
+                                                  "line":  2948,
+                                                  "text":  "            optimization_level=self.optimization_level,"
+                                              },
+                                              {
+                                                  "line":  2949,
+                                                  "text":  "            performance_mode=self.performance_mode,"
+                                              },
+                                              {
+                                                  "line":  2950,
+                                                  "text":  "            weight_transfer_config=self.weight_transfer_config,"
+                                              },
+                                              {
+                                                  "line":  2951,
+                                                  "text":  "            watchdog_config=self.watchdog_config,"
+                                              },
+                                              {
+                                                  "line":  2952,
+                                                  "text":  "            shutdown_timeout=self.shutdown_timeout,"
+                                              },
+                                              {
+                                                  "line":  2953,
+                                                  "text":  "        )"
+                                              },
+                                              {
+                                                  "line":  2954,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  2955,
+                                                  "text":  "        return config"
+                                              },
+                                              {
+                                                  "line":  2956,
+                                                  "text":  ""
+                                              }
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/config/vllm.py",
+                                "sha256":  "d1bbad8d631ad301d32b8b7fe85128124fe8ab2b63bb831c66c0685696098fdc",
+                                "truncated":  false,
+                                "lines":  [
+                                              {
+                                                  "line":  480,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  481,
+                                                  "text":  "    watchdog_config: WatchdogConfig = Field(default_factory=WatchdogConfig)"
+                                              },
+                                              {
+                                                  "line":  482,
+                                                  "text":  "    \"\"\"Configuration for the stack-dump watchdog.\"\"\""
+                                              },
+                                              {
+                                                  "line":  483,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  484,
+                                                  "text":  "    shutdown_timeout: int = Field(default=0, ge=0)"
+                                              },
+                                              {
+                                                  "line":  485,
+                                                  "text":  "    \"\"\"Shutdown grace period for in-flight requests. Shutdown will be delayed for"
+                                              },
+                                              {
+                                                  "line":  486,
+                                                  "text":  "    up to this amount of time to allow already-running requests to complete. Any"
+                                              },
+                                              {
+                                                  "line":  487,
+                                                  "text":  "    remaining requests are aborted once the timeout is reached."
+                                              },
+                                              {
+                                                  "line":  488,
+                                                  "text":  "    \"\"\""
+                                              }
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/v1/engine/utils.py",
+                                "sha256":  "5c29f3a0ac94842a14a070d115013ab06ecf69abd07057388fffd7101d3dc14a",
+                                "truncated":  false,
+                                "lines":  [
+                                              {
+                                                  "line":  43,
+                                                  "text":  "STARTUP_POLL_PERIOD_MS = 10000"
+                                              },
+                                              {
+                                                  "line":  44,
+                                                  "text":  "ROCM_ENGINE_PROCESS_SHUTDOWN_TIMEOUT_S = 15.0"
+                                              },
+                                              {
+                                                  "line":  45,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  46,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  47,
+                                                  "text":  "def get_engine_process_shutdown_timeout("
+                                              },
+                                              {
+                                                  "line":  48,
+                                                  "text":  "    request_timeout: float | None,"
+                                              },
+                                              {
+                                                  "line":  49,
+                                                  "text":  "    process_timeout: float | None,"
+                                              },
+                                              {
+                                                  "line":  50,
+                                                  "text":  ") -\u003e float | None:"
+                                              },
+                                              {
+                                                  "line":  51,
+                                                  "text":  "    \"\"\"Return the EngineCore process-manager shutdown timeout."
+                                              },
+                                              {
+                                                  "line":  52,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  53,
+                                                  "text":  "    ``VllmConfig.shutdown_timeout`` controls how long in-flight requests may"
+                                              },
+                                              {
+                                                  "line":  54,
+                                                  "text":  "    drain. A value of zero therefore tells EngineCore to abort requests as soon"
+                                              },
+                                              {
+                                                  "line":  55,
+                                                  "text":  "    as it receives SIGTERM. The parent process manager still needs a separate"
+                                              },
+                                              {
+                                                  "line":  56,
+                                                  "text":  "    window in which the EngineCore can release device resources before it is"
+                                              },
+                                              {
+                                                  "line":  57,
+                                                  "text":  "    force-killed. An explicitly set ``VLLM_WORKER_SHUTDOWN_TIMEOUT_SECONDS``"
+                                              },
+                                              {
+                                                  "line":  58,
+                                                  "text":  "    sets that window on every platform. Otherwise ROCm gets a fixed window:"
+                                              },
+                                              {
+                                                  "line":  59,
+                                                  "text":  "    its teardown can take longer than the generic best-effort window, and"
+                                              },
+                                              {
+                                                  "line":  256,
+                                                  "text":  "        log_stats: bool,"
+                                              },
+                                              {
+                                                  "line":  257,
+                                                  "text":  "        client_handshake_address: str | None = None,"
+                                              },
+                                              {
+                                                  "line":  258,
+                                                  "text":  "        tensor_queue: Queue | None = None,"
+                                              },
+                                              {
+                                                  "line":  259,
+                                                  "text":  "    ):"
+                                              },
+                                              {
+                                                  "line":  260,
+                                                  "text":  "        self._request_shutdown_timeout = vllm_config.shutdown_timeout"
+                                              },
+                                              {
+                                                  "line":  261,
+                                                  "text":  "        context = get_mp_context()"
+                                              },
+                                              {
+                                                  "line":  262,
+                                                  "text":  "        common_kwargs = {"
+                                              },
+                                              {
+                                                  "line":  263,
+                                                  "text":  "            \"vllm_config\": vllm_config,"
+                                              },
+                                              {
+                                                  "line":  264,
+                                                  "text":  "            \"local_client\": local_client,"
+                                              },
+                                              {
+                                                  "line":  337,
+                                                  "text":  "            # Kill other procs if not all are running."
+                                              },
+                                              {
+                                                  "line":  338,
+                                                  "text":  "            if self.finished_procs():"
+                                              },
+                                              {
+                                                  "line":  339,
+                                                  "text":  "                self.shutdown()"
+                                              },
+                                              {
+                                                  "line":  340,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  341,
+                                                  "text":  "    def shutdown(self, timeout: float | None = None) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  342,
+                                                  "text":  "        \"\"\"Shutdown engine core processes with configurable timeout.\"\"\""
+                                              },
+                                              {
+                                                  "line":  343,
+                                                  "text":  "        self.manager_stopped.set()"
+                                              },
+                                              {
+                                                  "line":  344,
+                                                  "text":  "        if self._finalizer.detach() is not None:"
+                                              },
+                                              {
+                                                  "line":  345,
+                                                  "text":  "            process_timeout = get_engine_process_shutdown_timeout("
+                                              },
+                                              {
+                                                  "line":  346,
+                                                  "text":  "                self._request_shutdown_timeout, timeout"
+                                              },
+                                              {
+                                                  "line":  347,
+                                                  "text":  "            )"
+                                              },
+                                              {
+                                                  "line":  348,
+                                                  "text":  "            if process_timeout != timeout:"
+                                              },
+                                              {
+                                                  "line":  349,
+                                                  "text":  "                logger.info("
+                                              },
+                                              {
+                                                  "line":  350,
+                                                  "text":  "                    \"[shutdown] EngineCore process manager: using %ss \""
+                                              },
+                                              {
+                                                  "line":  1106,
+                                                  "text":  "                break"
+                                              },
+                                              {
+                                                  "line":  1107,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  1108,
+                                                  "text":  "        self.shutdown()"
+                                              },
+                                              {
+                                                  "line":  1109,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  1110,
+                                                  "text":  "    def shutdown(self, timeout: float | None = None) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  1111,
+                                                  "text":  "        import ray"
+                                              },
+                                              {
+                                                  "line":  1112,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  1113,
+                                                  "text":  "        self.manager_stopped.set()"
+                                              },
+                                              {
+                                                  "line":  1114,
+                                                  "text":  "        for actor in self.local_engine_actors + self.remote_engine_actors:"
+                                              }
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/v1/engine/core_client.py",
+                                "sha256":  "b6307a6302935d9ccd72c0faa5ec1fa88ab2112a2166de8a97238a6661bf73e6",
+                                "truncated":  false,
+                                "lines":  [
+                                              {
+                                                  "line":  185,
+                                                  "text":  "            renderer=renderer,"
+                                              },
+                                              {
+                                                  "line":  186,
+                                                  "text":  "        )"
+                                              },
+                                              {
+                                                  "line":  187,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  188,
+                                                  "text":  "    @abstractmethod"
+                                              },
+                                              {
+                                                  "line":  189,
+                                                  "text":  "    def shutdown(self, timeout: float | None = None) -\u003e None: ..."
+                                              },
+                                              {
+                                                  "line":  190,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  191,
+                                                  "text":  "    def get_output(self) -\u003e EngineCoreOutputs:"
+                                              },
+                                              {
+                                                  "line":  192,
+                                                  "text":  "        raise NotImplementedError"
+                                              },
+                                              {
+                                                  "line":  193,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  438,
+                                                  "text":  "    def abort_requests(self, request_ids: list[str]) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  439,
+                                                  "text":  "        if len(request_ids) \u003e 0:"
+                                              },
+                                              {
+                                                  "line":  440,
+                                                  "text":  "            self.engine_core.abort_requests(request_ids)"
+                                              },
+                                              {
+                                                  "line":  441,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  442,
+                                                  "text":  "    def shutdown(self, timeout: float | None = None) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  443,
+                                                  "text":  "        if self._finalizer.detach() is not None:"
+                                              },
+                                              {
+                                                  "line":  444,
+                                                  "text":  "            self.engine_core.shutdown()"
+                                              },
+                                              {
+                                                  "line":  445,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  446,
+                                                  "text":  "    def profile("
+                                              },
+                                              {
+                                                  "line":  814,
+                                                  "text":  "        finally:"
+                                              },
+                                              {
+                                                  "line":  815,
+                                                  "text":  "            if not success:"
+                                              },
+                                              {
+                                                  "line":  816,
+                                                  "text":  "                self._finalizer()"
+                                              },
+                                              {
+                                                  "line":  817,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  818,
+                                                  "text":  "    def shutdown(self, timeout: float | None = None) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  819,
+                                                  "text":  "        \"\"\"Shutdown engine manager under timeout and clean up resources.\"\"\""
+                                              },
+                                              {
+                                                  "line":  820,
+                                                  "text":  "        if self._finalizer.detach() is not None:"
+                                              },
+                                              {
+                                                  "line":  821,
+                                                  "text":  "            timeout_str = \"default\" if timeout is None else f\"{timeout}s\""
+                                              },
+                                              {
+                                                  "line":  822,
+                                                  "text":  "            logger.info(\"[shutdown] MPClient: start timeout=%s\", timeout_str)"
+                                              }
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py",
+                                "sha256":  "bd4368ed97b9b1b10b9cf32bd043089f788b078e047233f186811c6ed0355601",
+                                "truncated":  false,
+                                "lines":  [
+                                              {
+                                                  "line":  302,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  303,
+                                                  "text":  "    def __del__(self):"
+                                              },
+                                              {
+                                                  "line":  304,
+                                                  "text":  "        self.shutdown()"
+                                              },
+                                              {
+                                                  "line":  305,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  306,
+                                                  "text":  "    def shutdown(self, timeout: float | None = None) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  307,
+                                                  "text":  "        \"\"\"Shutdown, cleaning up the background proc and IPC.\"\"\""
+                                              },
+                                              {
+                                                  "line":  308,
+                                                  "text":  "        shutdown_prometheus()"
+                                              },
+                                              {
+                                                  "line":  309,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  310,
+                                                  "text":  "        if renderer := getattr(self, \"renderer\", None):"
+                                              },
+                                              {
+                                                  "line":  1428,
+                                                  "text":  "        await self.collective_rpc("
+                                              },
+                                              {
+                                                  "line":  1429,
+                                                  "text":  "            \"init_weight_transfer_engine\", kwargs={\"init_info\": request.init_info}"
+                                              },
+                                              {
+                                                  "line":  1430,
+                                                  "text":  "        )"
+                                              },
+                                              {
+                                                  "line":  1431,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  1432,
+                                                  "text":  "    async def shutdown_weight_transfer_engine(self) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  1433,
+                                                  "text":  "        \"\"\"Release the trainer connection without shutting down inference.\"\"\""
+                                              },
+                                              {
+                                                  "line":  1434,
+                                                  "text":  "        await self.collective_rpc(\"shutdown_weight_transfer_engine\")"
+                                              },
+                                              {
+                                                  "line":  1435,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  1436,
+                                                  "text":  "    async def start_weight_update(self) -\u003e None:"
+                                              }
+                                          ]
+                            },
+                            {
+                                "path":  "/home/nclab/Yizhen/envs/qwen-vllm034-py312/lib/python3.12/site-packages/vllm/v1/utils.py",
+                                "sha256":  "ef7185dfc98d950ebb42b3885b71b73551db387958bbc41dbaf46067162cc856",
+                                "truncated":  false,
+                                "lines":  [
+                                              {
+                                                  "line":  268,
+                                                  "text":  "            self.processes,"
+                                              },
+                                              {
+                                                  "line":  269,
+                                                  "text":  "            listeners,"
+                                              },
+                                              {
+                                                  "line":  270,
+                                                  "text":  "        )"
+                                              },
+                                              {
+                                                  "line":  271,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  272,
+                                                  "text":  "    def shutdown(self, timeout: float | None = None) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  273,
+                                                  "text":  "        \"\"\"Shutdown API server processes with configurable timeout\"\"\""
+                                              },
+                                              {
+                                                  "line":  274,
+                                                  "text":  "        if self._finalizer.detach() is not None:"
+                                              },
+                                              {
+                                                  "line":  275,
+                                                  "text":  "            _shutdown_processes_and_cleanup_listeners("
+                                              },
+                                              {
+                                                  "line":  276,
+                                                  "text":  "                self.processes, self._listeners, timeout=timeout"
+                                              },
+                                              {
+                                                  "line":  371,
+                                                  "text":  "        redacted_json = json.dumps(redact_sensitive_args(args_dict), sort_keys=True)"
+                                              },
+                                              {
+                                                  "line":  372,
+                                                  "text":  "        logger.info(\"Launching Rust frontend: %s\", \" \".join(cmd[:-1] + [redacted_json]))"
+                                              },
+                                              {
+                                                  "line":  373,
+                                                  "text":  "        self._listeners = [input_listener, output_listener]"
+                                              },
+                                              {
+                                                  "line":  374,
+                                                  "text":  "        try:"
+                                              },
+                                              {
+                                                  "line":  375,
+                                                  "text":  "            self._proc = subprocess.Popen(cmd, pass_fds=inherited_fds)"
+                                              },
+                                              {
+                                                  "line":  376,
+                                                  "text":  "        except BaseException:"
+                                              },
+                                              {
+                                                  "line":  377,
+                                                  "text":  "            for listener in self._listeners:"
+                                              },
+                                              {
+                                                  "line":  378,
+                                                  "text":  "                listener.cleanup()"
+                                              },
+                                              {
+                                                  "line":  379,
+                                                  "text":  "            raise"
+                                              },
+                                              {
+                                                  "line":  392,
+                                                  "text":  "            self.processes,"
+                                              },
+                                              {
+                                                  "line":  393,
+                                                  "text":  "            self._listeners,"
+                                              },
+                                              {
+                                                  "line":  394,
+                                                  "text":  "        )"
+                                              },
+                                              {
+                                                  "line":  395,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  396,
+                                                  "text":  "    def shutdown(self, timeout: float | None = None) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  397,
+                                                  "text":  "        if self._finalizer.detach() is not None:"
+                                              },
+                                              {
+                                                  "line":  398,
+                                                  "text":  "            _shutdown_subprocesses_and_cleanup_listeners("
+                                              },
+                                              {
+                                                  "line":  399,
+                                                  "text":  "                self.processes, self._listeners, timeout=timeout"
+                                              },
+                                              {
+                                                  "line":  400,
+                                                  "text":  "            )"
+                                              },
+                                              {
+                                                  "line":  401,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  402,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  403,
+                                                  "text":  "class _SubprocessWrapper:"
+                                              },
+                                              {
+                                                  "line":  404,
+                                                  "text":  "    \"\"\"Wraps subprocess.Popen to provide the BaseProcess-like interface"
+                                              },
+                                              {
+                                                  "line":  405,
+                                                  "text":  "    needed by wait_for_completion_or_failure.\"\"\""
+                                              },
+                                              {
+                                                  "line":  406,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  407,
+                                                  "text":  "    def __init__(self, proc, name: str):"
+                                              },
+                                              {
+                                                  "line":  408,
+                                                  "text":  "        self._proc = proc"
+                                              },
+                                              {
+                                                  "line":  438,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  439,
+                                                  "text":  "    def is_alive(self) -\u003e bool:"
+                                              },
+                                              {
+                                                  "line":  440,
+                                                  "text":  "        return self._proc.poll() is None"
+                                              },
+                                              {
+                                                  "line":  441,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  442,
+                                                  "text":  "    def terminate(self):"
+                                              },
+                                              {
+                                                  "line":  443,
+                                                  "text":  "        self._proc.terminate()"
+                                              },
+                                              {
+                                                  "line":  444,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  445,
+                                                  "text":  "    def join(self, timeout=None):"
+                                              },
+                                              {
+                                                  "line":  446,
+                                                  "text":  "        with contextlib.suppress(Exception):"
+                                              },
+                                              {
+                                                  "line":  447,
+                                                  "text":  "            self._proc.wait(timeout=timeout)"
+                                              },
+                                              {
+                                                  "line":  469,
+                                                  "text":  "    )"
+                                              },
+                                              {
+                                                  "line":  470,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  471,
+                                                  "text":  "    for proc in procs:"
+                                              },
+                                              {
+                                                  "line":  472,
+                                                  "text":  "        if proc.is_alive():"
+                                              },
+                                              {
+                                                  "line":  473,
+                                                  "text":  "            proc.terminate()"
+                                              },
+                                              {
+                                                  "line":  474,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  475,
+                                                  "text":  "    deadline = time.monotonic() + timeout"
+                                              },
+                                              {
+                                                  "line":  476,
+                                                  "text":  "    for proc in procs:"
+                                              },
+                                              {
+                                                  "line":  477,
+                                                  "text":  "        remaining = deadline - time.monotonic()"
+                                              },
+                                              {
+                                                  "line":  601,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  602,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  603,
+                                                  "text":  "# Note(rob): shutdown function cannot be a bound method,"
+                                              },
+                                              {
+                                                  "line":  604,
+                                                  "text":  "# else the gc cannot collect the object."
+                                              },
+                                              {
+                                                  "line":  605,
+                                                  "text":  "def shutdown(procs: list[BaseProcess], timeout: float | None = None) -\u003e None:"
+                                              },
+                                              {
+                                                  "line":  606,
+                                                  "text":  "    \"\"\"Shutdown processes with timeout."
+                                              },
+                                              {
+                                                  "line":  607,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  608,
+                                                  "text":  "    Args:"
+                                              },
+                                              {
+                                                  "line":  609,
+                                                  "text":  "        procs: List of processes to shutdown"
+                                              },
+                                              {
+                                                  "line":  627,
+                                                  "text":  "        if proc.is_alive():"
+                                              },
+                                              {
+                                                  "line":  628,
+                                                  "text":  "            logger.info("
+                                              },
+                                              {
+                                                  "line":  629,
+                                                  "text":  "                \"[shutdown] Process manager: send sigterm to process %s\", proc.name"
+                                              },
+                                              {
+                                                  "line":  630,
+                                                  "text":  "            )"
+                                              },
+                                              {
+                                                  "line":  631,
+                                                  "text":  "            proc.terminate()"
+                                              },
+                                              {
+                                                  "line":  632,
+                                                  "text":  ""
+                                              },
+                                              {
+                                                  "line":  633,
+                                                  "text":  "    # Allow time for remaining procs to terminate."
+                                              },
+                                              {
+                                                  "line":  634,
+                                                  "text":  "    deadline = time.monotonic() + timeout"
+                                              },
+                                              {
+                                                  "line":  635,
+                                                  "text":  "    for proc in procs:"
+                                              }
+                                          ]
+                            }
+                        ]
+}

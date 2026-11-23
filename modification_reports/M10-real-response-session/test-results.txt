@@ -1,0 +1,14 @@
+﻿test_cache_paths_are_per_run_and_process_local (__main__.LiveSessionTests.test_cache_paths_are_per_run_and_process_local) ... ok
+test_exited_parent_receives_no_signal (__main__.LiveSessionTests.test_exited_parent_receives_no_signal) ... ok
+test_listener_detection (__main__.LiveSessionTests.test_listener_detection) ... ok
+test_live_client_never_applies_step (__main__.LiveSessionTests.test_live_client_never_applies_step) ... ok
+test_original_resource_settings_preserved (__main__.LiveSessionTests.test_original_resource_settings_preserved) ... ok
+test_parent_signal_and_wait_only (__main__.LiveSessionTests.test_parent_signal_and_wait_only) ... ok
+test_process_identity_handles_spaces_and_parentheses (__main__.LiveSessionTests.test_process_identity_handles_spaces_and_parentheses) ... ok
+test_served_name_matches_client (__main__.LiveSessionTests.test_served_name_matches_client) ... ok
+test_timeout_has_no_escalation (__main__.LiveSessionTests.test_timeout_has_no_escalation) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.022s
+
+OK

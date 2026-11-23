@@ -46,3 +46,15 @@ PYTHONDONTWRITEBYTECODE=1 /home/nclab/Yizhen/envs/qwen-vllm034-py312/bin/python 
 待取得 Spark source 與既有 Step8J-R1 證據後，整理精確啟停指令與程序身分記錄。使用已下載的官方 Qwen/Qwen3-30B-A3B-Instruct-2507-FP8、revision 5a5a776300a41aaa681dd7ff0106608ef2bc90db。首次真實交通回覆先使用 live 而不加 --apply-step，通過後再安排真正單步；不是重做 1+1 或合成 GPU 測試。
 
 記憶模式維持 off，安全公式、優先權與 5 m/s 限制保留。實際協商回覆可能改變後續 action 提示長度，M08 fixture 計數仍不保證所有真實請求符合 2048。
+
+## Spark 已取得結果與核對
+
+使用者提供 20261123T063318Z-d85e982b/result.json，本地已讀取資源、歷史 launch-config/result、run-smoke.py 摘錄及全部 installed source excerpts，非直接登入 Spark。
+
+- 當時 MemAvailable 為 92.49 GiB；18080 的 ss 結果只有表頭，無監聽程序。
+- vLLM 0.34.0、Python 3.12.3、PyTorch 2.14.0+cu130、Transformers 5.22.2；warnings 與 forbidden_modules_imported 均為空。
+- 取得 Step8J-R1 原始設定，確認 served-model-name 使用不含 Qwen/ 的短名稱；目前 client 要求完整名稱。M10 將服務別名統一為完整名稱，保留權重及主要執行參數。
+- 已安裝 arg_utils.py 明確定義 --shutdown-timeout，預設 0，help 為 0=abort、>0=wait；launcher.py 註冊 SIGINT/SIGTERM 並讀取 shutdown_timeout。此為已安裝 source 證據，不只上游資訊。
+- 原 run-smoke.py 實際使用 killpg 同步發 SIGTERM，逾時可 SIGKILL；M10 不沿用此方式。
+
+保存必要來源與 SHA256 的 [核對摘錄](./spark-review.json)；完整原檔仍在使用者提供的 runs/M09-preflight/20261123T063318Z-d85e982b。未重驗權重大小或 SHA256；停服改善尚未實測。92.49 GiB 僅為當時快照。
