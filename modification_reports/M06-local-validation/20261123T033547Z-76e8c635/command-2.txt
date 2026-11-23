@@ -1,0 +1,18 @@
+test_changed_controlled_order (__main__.BatchTests.test_changed_controlled_order) ... ok
+test_duplicate_reply_blocks_entire_batch (__main__.BatchTests.test_duplicate_reply_blocks_entire_batch) ... ok
+test_duplicate_simulation_id (__main__.BatchTests.test_duplicate_simulation_id) ... ok
+test_invalid_reply_does_not_select_fallback (__main__.BatchTests.test_invalid_reply_does_not_select_fallback) ... ok
+test_original_zip_truncates_missing_action (__main__.BatchTests.test_original_zip_truncates_missing_action) ... ok
+test_out_of_order_replies (__main__.BatchTests.test_out_of_order_replies) ... ok
+test_replaced_object_is_not_same_vehicle (__main__.BatchTests.test_replaced_object_is_not_same_vehicle) ... ok
+test_stale_metadata (__main__.BatchTests.test_stale_metadata) ... ok
+test_unknown_reply (__main__.BatchTests.test_unknown_reply) ... ok
+test_wrong_vehicle_in_response (__main__.BatchTests.test_wrong_vehicle_in_response) ... ok
+test_original_ids (__main__.SceneTests.test_original_ids) ... ok
+test_returned_mapping_is_independent (__main__.SceneTests.test_returned_mapping_is_independent) ... ok
+test_scene_restrictions (__main__.SceneTests.test_scene_restrictions) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.002s
+
+OK

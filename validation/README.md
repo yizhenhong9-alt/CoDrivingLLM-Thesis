@@ -145,7 +145,72 @@ parameter and restore the original helper/caller arguments. Safety formulas
 remain unchanged; this does not bypass the check or prove the author's intent.
 Other safety branches and other scenes still need separate runtime validation.
 
-## Planned separation
+## Strict output schema (Qwen preparation)
+
+### Spark offline validation (M06)
+
+After syncing the reviewed Git commit, use the existing simulation interpreter:
+
+```bash
+cd /home/nclab/Yizhen/src/CoDrivingLLM-Thesis
+PYTHONDONTWRITEBYTECODE=1 /home/nclab/Yizhen/envs/codriving-sim-py38/bin/python validation/validate_spark_offline.py --output-dir /home/nclab/Yizhen/runs/M06-offline
+```
+
+This runs 37 unit tests followed by strict/legacy fixtures. It starts no model,
+makes no model requests and applies no fixture actions. Child caches/temp files
+stay below the output directory; CUDA devices are hidden for these children and
+BLAS/OpenMP threads limited to one. CPU/RAM/disk remain shared hardware.
+Check result.json plus command logs; any failure stops subsequent commands.
+Do not install packages or change shared settings to work around a failure.
+
+Modification reports: [index](../modification_reports/README.md).
+M05: `python validation/check_qwen_single_step.py` runs fake-environment offline
+flow tests. The [M05 report](../modification_reports/M05-qwen-single-step/report.md)
+documents the new single-step CLI, its local missing-gym failure and pending
+Spark fixture checks. This is not a completed real-model integration result.
+M04: run `python validation/check_memory_off.py` for offline entry assignment and
+action-builder checks. See the [M04 report](../modification_reports/M04-memory-off/report.md)
+for test-double boundaries. Do not run the full legacy entry for this check: it
+still invokes the original cloud agents and multi-episode simulation.
+M02 adds explicit `scene="intersection"`, `scene="merge"` or `scene="highway"`
+to `parse_action`; no scene is guessed. Run
+`python validation/check_vehicle_actions.py` for scene and vehicle batch checks.
+These utilities are not yet connected to the simulator entry point.
+
+### Original parser reproduction
+
+Run `python validation/reproduce_original_parsers.py` to execute the two actual
+method bodies from the original action agent using AST extraction. No agent
+constructor, SDK, model, memory or simulator is loaded. The nine tests describe
+observed original behavior: a passing reproduction includes known defects and
+does not mean the original parser is correct. JSON output includes the source
+SHA256, interpreter version, inputs and actual results. Results from Windows
+Python 3.13 are stored in [original_parser_reproduction.json](./original_parser_reproduction.json).
+The initial exploratory assertion for plain JSON IDLE was incorrect; execution
+showed it returns IDLE successfully, and the final test preserves that result.
+No Spark Python 3.8 or real model response validation is claimed.
+
+### New parser checks
+
+Run `python validation/check_output_schema.py` (standard library only).
+The parser in [output_schema.py](../llm_controller/output_schema.py) accepts:
+
+- Action: `{"vehicle_id":3,"decision":"IDLE"}`. The caller supplies the current
+  vehicle ID and available action names. Mapping remains IDLE=1, FASTER=3,
+  SLOWER=4. Names must match exactly.
+- Negotiation: `{"decisions":[{"first_vehicle":3,"second_vehicle":4}]}`.
+  Each input conflict pair must occur exactly once; no conflicts means `[]`.
+
+Only a complete JSON object is accepted, without Markdown fences or prose.
+Invalid replies raise `OutputValidationError`; no fallback action is selected.
+The caller must retain the raw reply and stop before env.step on failure.
+IDs must come from the current episode mapping, not `id(vehicle) % 1000`.
+This validates format and pair coverage, not safety or ordering cycles.
+The new parser is not yet connected to the original agents: their old prompts
+and parsing remain the baseline until a separate Qwen integration step.
+No model, memory, simulator, or safety policy is changed by this addition.
+
+## Planned agent integration
 
 Model-specific modules such as `qwen3_agent_negotiation_system.py` can coexist
 with the original GPT modules. Share model-independent validation/parsing where

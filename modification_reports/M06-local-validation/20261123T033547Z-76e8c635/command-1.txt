@@ -1,0 +1,12 @@
+test_action_mapping (__main__.OutputSchemaTest.test_action_mapping) ... ok
+test_current_availability (__main__.OutputSchemaTest.test_current_availability) ... ok
+test_empty_conflicts (__main__.OutputSchemaTest.test_empty_conflicts) ... ok
+test_invalid_actions (__main__.OutputSchemaTest.test_invalid_actions) ... ok
+test_invalid_negotiation (__main__.OutputSchemaTest.test_invalid_negotiation) ... ok
+test_multiple_pairs_require_complete_coverage (__main__.OutputSchemaTest.test_multiple_pairs_require_complete_coverage) ... ok
+test_negotiation_whitespace_and_order (__main__.OutputSchemaTest.test_negotiation_whitespace_and_order) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.003s
+
+OK

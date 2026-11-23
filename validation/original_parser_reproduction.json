@@ -1,0 +1,73 @@
+{
+  "purpose": "Reproduce original behavior; passing does not mean correct parsing",
+  "source": "llm_controller/llm_agent_action.py",
+  "source_sha256": "b6afc436afeff75585ca01c276886a6eca97e2bda1cfb21ace9a4b436cf8cc78",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:12:50) [MSC v.1942 64 bit (AMD64)]",
+  "execution": "Local offline method-body execution via AST; no agent constructor or imports",
+  "model_calls": 0,
+  "environment_steps": 0,
+  "tests_run": 9,
+  "reproduction_passed": true,
+  "cases": [
+    {
+      "case": "compact_json",
+      "input": "{\"decisions\":[{\"first_vehicle\":\"MDPVehicle #3\",\"second_vehicle\":\"MDPVehicle #4\"}]}",
+      "actual": [],
+      "concern": "Equivalent compact JSON silently loses the decision"
+    },
+    {
+      "case": "ambiguous_action",
+      "input": "\"decision\": {\"IDLE or FASTER\"}",
+      "actual": "FASTER",
+      "concern": "Ambiguous alternatives silently choose FASTER by branch order"
+    },
+    {
+      "case": "negated_action",
+      "input": "\"decision\": {\"NOT IDLE\"}",
+      "actual": "IDLE",
+      "concern": "Negated action is silently accepted as IDLE"
+    },
+    {
+      "case": "legacy_action",
+      "input": "\"decision\": {\"IDLE\"}",
+      "actual": "IDLE",
+      "concern": "Original prompt format works, although it is not valid JSON"
+    },
+    {
+      "case": "legacy_spacing",
+      "input": "{\"decisions\": [{\"first_vehicle\": \"MDPVehicle #3\", \"second_vehicle\": \"MDPVehicle #4\"}]}",
+      "actual": [
+        [
+          "MDPVehicle #3",
+          "MDPVehicle #4",
+          "first"
+        ]
+      ],
+      "concern": "Original spacing and field order work"
+    },
+    {
+      "case": "plain_json_action",
+      "input": "{\"decision\":\"IDLE\"}",
+      "actual": "IDLE",
+      "concern": "This valid JSON example works through keyword matching"
+    },
+    {
+      "case": "pretty_json",
+      "input": "{\n  \"decisions\": [\n    {\n      \"first_vehicle\": \"MDPVehicle #3\",\n      \"second_vehicle\": \"MDPVehicle #4\"\n    }\n  ]\n}",
+      "actual": [],
+      "concern": "Equivalent multiline JSON silently loses the decision"
+    },
+    {
+      "case": "reordered_fields",
+      "input": "{\"decisions\": [{\"second_vehicle\": \"MDPVehicle #4\", \"first_vehicle\": \"MDPVehicle #3\"}]}",
+      "actual": [],
+      "concern": "Equivalent field reordering silently loses the decision"
+    },
+    {
+      "case": "missing_decision",
+      "input": "{\"comment\":\"FASTER\"}",
+      "actual": "FASTER",
+      "concern": "Missing decision field still produces an action"
+    }
+  ]
+}

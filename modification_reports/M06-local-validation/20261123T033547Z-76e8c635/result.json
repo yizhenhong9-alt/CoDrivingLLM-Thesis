@@ -1,0 +1,58 @@
+{
+  "status": "failed",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:12:50) [MSC v.1942 64 bit (AMD64)]",
+  "executable": "C:\\Users\\user\\miniconda3\\python.exe",
+  "mode": "offline_no_model",
+  "seed": 0,
+  "commands": [
+    {
+      "command": [
+        "C:\\Users\\user\\miniconda3\\python.exe",
+        "validation/check_output_schema.py"
+      ],
+      "exit_code": 0,
+      "log": "command-1.txt"
+    },
+    {
+      "command": [
+        "C:\\Users\\user\\miniconda3\\python.exe",
+        "validation/check_vehicle_actions.py"
+      ],
+      "exit_code": 0,
+      "log": "command-2.txt"
+    },
+    {
+      "command": [
+        "C:\\Users\\user\\miniconda3\\python.exe",
+        "validation/check_memory_off.py"
+      ],
+      "exit_code": 0,
+      "log": "command-3.txt"
+    },
+    {
+      "command": [
+        "C:\\Users\\user\\miniconda3\\python.exe",
+        "validation/check_qwen_single_step.py"
+      ],
+      "exit_code": 0,
+      "log": "command-4.txt"
+    },
+    {
+      "command": [
+        "C:\\Users\\user\\miniconda3\\python.exe",
+        "validation/run_qwen_single_step.py",
+        "--mode",
+        "fixture",
+        "--parser",
+        "strict",
+        "--seed",
+        "0",
+        "--output-dir",
+        "C:\\master's thesis\\CoDrivingLLM-Thesis\\modification_reports\\M06-local-validation\\20261123T033547Z-76e8c635\\strict"
+      ],
+      "exit_code": 1,
+      "log": "command-5.txt"
+    }
+  ],
+  "error": "Command failed; inspect command-5.txt"
+}

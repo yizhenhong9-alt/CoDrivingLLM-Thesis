@@ -1,11 +1,15 @@
 from llm_controller.llm_agent_action import *
 from llm_controller.llm_agent_negotiation_system import *  # system perspective negotiation
-from llm_controller.memory import DrivingMemory
+from llm_controller.memory_mode import create_memory
 import highway_env
 import imageio
 import openpyxl
 import os
 import shutil
+
+# M04: off performs no memory construction or embedding/vector-store import.
+# The original cloud-backed memory implementation is retained in memory.py.
+MEMORY_MODE = "off"
 
 def open_excel(i):
     file_dir = './llm_controller/excel/' + '/'
@@ -65,7 +69,7 @@ for i in range(100):
     while not (terminated):
         print('---------------------------------------------------------------')
         # memory module
-        memory = DrivingMemory(env)
+        memory = create_memory(env, mode=MEMORY_MODE)
 
         # negotiation module
         llm_agent_conflict_resolver = LlmAgent_negotiation_module(env)  # system perspective negotiation
