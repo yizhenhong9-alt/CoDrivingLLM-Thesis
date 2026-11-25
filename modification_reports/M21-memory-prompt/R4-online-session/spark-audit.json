@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "commit": "7a786a914a9c7f1a9e772cdc6b71bd708deb2cba",
+  "queries": 4,
+  "fixture_calls": 5,
+  "actual_environment_steps": 0,
+  "token_checks": 9,
+  "tokenizer_reference_counts": [
+    1129,
+    949
+  ],
+  "negotiation_input_tokens": 453,
+  "cases": [
+    {
+      "vehicle_id": 3,
+      "top1": "fixture-1",
+      "injected_count": 2,
+      "input_tokens": 1092,
+      "fixture_action": {
+        "vehicle_id": 3,
+        "decision": "IDLE",
+        "action_id": 1
+      }
+    },
+    {
+      "vehicle_id": 4,
+      "top1": "fixture-0",
+      "injected_count": 2,
+      "input_tokens": 987,
+      "fixture_action": {
+        "vehicle_id": 4,
+        "decision": "IDLE",
+        "action_id": 1
+      }
+    },
+    {
+      "vehicle_id": 5,
+      "top1": "fixture-0",
+      "injected_count": 2,
+      "input_tokens": 1101,
+      "fixture_action": {
+        "vehicle_id": 5,
+        "decision": "IDLE",
+        "action_id": 1
+      }
+    },
+    {
+      "vehicle_id": 6,
+      "top1": "fixture-1",
+      "injected_count": 2,
+      "input_tokens": 928,
+      "fixture_action": {
+        "vehicle_id": 6,
+        "decision": "IDLE",
+        "action_id": 1
+      }
+    }
+  ],
+  "maximum_required_tokens": 1357,
+  "snapshot_sha256": "24d3717e8019cf575195ffd321945a1d964423444ffe24cb2b2e25a3234c7546",
+  "session": {
+    "mode": "retrieve-only",
+    "opened": true,
+    "closed": true,
+    "queries": 4,
+    "token_checks": 9,
+    "expected_snapshot_sha256": "24d3717e8019cf575195ffd321945a1d964423444ffe24cb2b2e25a3234c7546",
+    "config_sha256": "e24772016421b7c66ad72ee62cb3896ed28397b510b085e787a7bc5fef370080",
+    "final_snapshot_verified": true
+  },
+  "evidence_sha256": {
+    "acceptance.json": "19788dedd11036bfc965a56541727b018d823a1d6cbf2ceebf4b9796a2f40ddc",
+    "memory-config.json": "e24772016421b7c66ad72ee62cb3896ed28397b510b085e787a7bc5fef370080",
+    "git-commit.txt": "a1b04b68952085658b6b1517b3cfc150b64dd23f50598a978d461e78a6a3a7a6",
+    "capture/20261125T072255Z-3f5411b8.json": "ab0ac1dbcdc6861aeec004e11be50d126e1e19d98e5b43cc52d6fd579656dfcf"
+  },
+  "limitation": "Fixture negotiation/action responses, not Qwen generation. Token counts audited from returned receipts, no local tokenizer rerun; service console/DB not supplied."
+}

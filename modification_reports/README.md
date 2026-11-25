@@ -60,3 +60,5 @@ M21-R3：[真檢索 prompt 的零步進 Qwen 回答驗收](./M21-memory-prompt/R
 M21-R3 最新審查：Spark responses_validated／exit 0，五份回傳原檔已核對；兩次 prompt 與 R2 一致，SLOWER／FASTER strict 通過，API input 1129／949 與 tokenizer 相同，0 步進，停服 clean_observation=true。未完成即時檢索／M22 更新或證明交通改善。
 
 M21-R4：[即時唯讀 session 與 prompt 計數](./M21-memory-prompt/R4-online-session/report.md)；明確設定／scope開關、同一memory服務載tokenizer並提供/count、目前模擬情境四次即時檢索的零步進fixture驗收已實作，本地66項通過，Spark待手動執行。主入口仍off，未完成正式episode或M22更新。
+
+M21-R4 最新審查：Spark PASS／exit0，四份回傳檔核對通過；四次真檢索均注入兩筆、零排除，五份prompt預算符合，session正常關閉且snapshot一致、0步進。回答仍為fixture，尚非即時session＋真Qwen的完整聯測或M22寫入。

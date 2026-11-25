@@ -1,5 +1,23 @@
 # M21-R4：即時唯讀檢索 session 與完整 prompt 計數
 
+## Spark 成功回傳與原檔審查（M21-R4-07）
+
+使用者 console：`M21-R4 online readonly memory: PASS; queries=4; LLM fixture calls=5; env.step=0`、exit0；結果目錄 `/home/nclab/Yizhen/runs/M21-R4-online-memory-x0pF7u`。
+已實際審閱本地 [回傳資料](../../../../runs/m21-r4/) 四份檔案（acceptance、config、commit、capture），使用 [audit_returned.py](./audit_returned.py) 重核對，exit0。詳細結果與證據SHA256見 [spark-audit.json](./spark-audit.json)。
+
+- 完整commit：7a786a914a9c7f1a9e772cdc6b71bd708deb2cba，根目錄與capture一致。
+- memory環境tokenizer對照舊R2兩份messages計數為1129／949，與已驗收Qwen環境相同；本地審查未重新載tokenizer。
+- 目前情境四次query均由原scenario最後兩行還原且hash相符；車3／6為空資訊、top1=fixture-1；車4／5為原危險尾段、top1=fixture-0。原文、原四欄與額外test_only source逐筆相符，注入順序等於實際候選順序。
+- 4/4均兩筆候選、兩筆注入、零排除；注入段去除後base prompt hash一致。negotiation沒有記憶段。
+- negotiation輸入453 tokens；車3／4／5／6為1092／987／1101／928，加預留256後最大1357，低於2048。session token_checks=9，即四次prepare計數＋五次完整請求檢查，並非九次LLM呼叫。
+- 重新以strict parser解析5份fixture原文，與保存結果一致；negotiation的legacy比較被拒絕是預期比較結果，不是strict驗收失敗。四台fixture action皆IDLE，不能解讀成Qwen實際選擇。
+- status=validated_not_applied、mode=fixture、sent_to_model全部false、actual_environment_steps=0，沒有提交動作。legacy cloud memory_module_imported=false。
+- session opened=true／closed=true／queries=4／final_snapshot_verified=true；config hash與回傳設定一致，snapshot維持 `24d3717e8019cf575195ffd321945a1d964423444ffe24cb2b2e25a3234c7546`。
+
+本節取代以下建立時「Spark待驗」狀態，證據足夠，不需補檔或重跑R4。沒有回傳服務console或DB，未獨立逐檔盤點服務停服；session closed指client scope關閉，不能混稱整個服務程序關閉的直接證據。此關只支持目前兩筆測試庫上的即時唯讀檢索／完整計數接線，沒有Qwen生成、交通結果、全面相關性或M22寫入證據。
+
+下一關可把已驗證的即時session與真negotiation／CAV Qwen回答在同一零步進流程串起，再接M22原版逐車步前寫入。正式主入口仍off，不將本次凍結唯讀驗收當作完整原版memory-on等價。
+
 2026-11-25。設定、scope 生命週期、memory HTTP 完整 token 計數與目前情境驗收腳本已實作；本地替身通過，Spark 待使用者手動執行。正式應用預設 off／factory on 拒絕均不變，未實作 M22 寫入，不允許 memory 模式 env.step。
 
 ## M21-R3 究竟驗了什麼
