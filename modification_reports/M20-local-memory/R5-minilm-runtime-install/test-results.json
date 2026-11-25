@@ -1,0 +1,13 @@
+﻿{
+    "date":  "2026-11-25",
+    "python":  "3.13.13",
+    "exit_code":  0,
+    "passed":  5,
+    "spark_executed":  false,
+    "model_loaded":  false,
+    "source_sha256":  {
+                          "validation/verify_minilm_install.py":  "094da49b6075e257931cf97015e6f678a9646aba7f19e146a86e08153b4e943d",
+                          "validation/install_minilm_runtime.sh":  "4be0d6c865a1a7d8c70a417e94da87a77773d5bf4c1287aae32c6d70bb7d8ceb",
+                          "validation/check_minilm_install.py":  "9ca279ab2e69f8b26ae19ff61d13c552718213c266c8380517423b38a4743538"
+                      }
+}

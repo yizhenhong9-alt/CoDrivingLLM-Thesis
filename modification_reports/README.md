@@ -36,3 +36,5 @@ M20-R2：[原版 memory 語意與差異審查](./M20-local-memory/R2-memory-sema
 M20-R3：[原格式欄位對照與 Chroma 驗收準備](./M20-local-memory/R3-chroma-acceptance/report.md)；凍結原方法測試案例、加入跨程序重開驗證與 Spark 手動腳本，本地替身通過，真 Chroma 與 MiniLM 待驗。
 
 M20-R4：[MiniLM CPU 相依規劃](./M20-local-memory/R4-minilm-runtime-plan/report.md)；R3 已在 Spark 14/14 通過，現在以完整已驗證版本清單約束新相依，只做 dry-run；MiniLM 尚未下載／載入。
+
+M20-R5：[MiniLM CPU runtime 安裝與回歸準備](./M20-local-memory/R5-minilm-runtime-install/report.md)；R4 已解析通過，固定 9 個新增套件，驗證 CPU imports／tensor 與 Chroma 回歸；Spark 待執行，無模型下載／載入。

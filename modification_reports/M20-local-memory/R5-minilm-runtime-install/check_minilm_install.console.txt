@@ -1,0 +1,10 @@
+﻿test_baseline_change_rejected (__main__.InstallTests.test_baseline_change_rejected) ... ok
+test_before_and_after (__main__.InstallTests.test_before_and_after) ... ok
+test_cpu_url_hash_and_exact_pins (__main__.InstallTests.test_cpu_url_hash_and_exact_pins) ... ok
+test_partial_install_is_not_accepted_as_pristine (__main__.InstallTests.test_partial_install_is_not_accepted_as_pristine) ... ok
+test_unapproved_version_or_missing_package_rejected (__main__.InstallTests.test_unapproved_version_or_missing_package_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK

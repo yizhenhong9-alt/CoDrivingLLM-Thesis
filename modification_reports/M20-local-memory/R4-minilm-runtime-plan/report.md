@@ -2,6 +2,17 @@
 
 日期：2026-11-25。狀態：規劃工具及本地 6 項測試通過；Spark 解析待使用者手動執行。沒有安裝 embedding 相依或下載／載入 MiniLM。M20-R3 已由 step3 console 確認真 Chroma 14/14 通過，此次不重跑已通過項目。
 
+## Spark 規劃回傳（M20-R4-04）
+
+使用者提供 [step4 console](../../../../spark相關console/memory%20on前置作業%20step4%20console.txt)，確認 Spark 已更新至 f39a23d8e6807c8670684f98c33fb6b3eb9e951a。
+
+- 已通過的 Chroma baseline 80 個套件完全保留，基線 SHA256=47fc33fca8897a99c8935d68c41e1a4d0217e1b4e3541049fc93881f39cfb400。
+- 官方 CPU wheel URL 與 SHA256 已選出；dry-run 解析成功，預計新增 9 個套件：jinja2 3.1.6、markupsafe 3.0.4、mpmath 1.3.0、networkx 3.7、regex 2026.11.23、safetensors 0.8.0、sympy 1.14.0、torch 2.9.1+cpu、transformers 5.22.2。
+- 顯示 M20-R4 plan: PASS，package baseline unchanged，exit 0；遠端結果目錄 /home/nclab/Yizhen/runs/M20-R4-minilm-plan-EbHo7u。
+- 沒有安裝這 9 個套件、沒有下載／載入 MiniLM，也沒有 CPU／GPU 延遲實測。當時約 92 GiB RAM available、2.3 TiB 磁碟可用，是快照而非資源預留。
+
+使用者詢問 GPU 選擇：目前 CPU 是可驗證的初始方案，非已證明的最優方案。既有 Chroma 0.4.15 HNSW 儲存／檢索維持 CPU，能切換 device 的主要是 embedding 前向計算。GPU 方案還需確認 Spark GB10 的 CUDA torch／算子相容性與共享資源；不能將 CPU wheel 改成 model.to('cuda') 就宣稱可用。後續可先測 warm embedding、完整 retrieve／add、含 memory 的整步延遲，再依需求安排 GPU 比較；不得僅憑 RAM available 判定 GPU 效能或獨占權。
+
 ## 編號與範圍
 
 - M20-R4-01：[plan_minilm_runtime.py](../../../validation/plan_minilm_runtime.py) 核對個人 memory interpreter、ARM64／Python 3.12，以及當前套件是否與上次通過的 packages-after.txt 完全一致。只用 stdlib metadata，不匯入 Chroma／ML。
