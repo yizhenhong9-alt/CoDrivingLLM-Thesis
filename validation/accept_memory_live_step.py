@@ -66,7 +66,7 @@ def validate_live_step(outer, episode, step):
     require(previous == session['final_snapshot_sha256'], 'Final snapshot mismatch')
 
 
-def main():
+def main(_episode=False):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-dir', type=Path, required=True)
     args = parser.parse_args()
@@ -88,7 +88,8 @@ def main():
         # Existing manager owns startup/shutdown. No new Qwen deployment or model loading here.
         command = ['/home/nclab/Yizhen/envs/qwen-vllm034-py312/bin/python', '-B',
                    str(ROOT/'validation/run_qwen_live_session.py'), '--output-dir', str(run/'live'),
-                   '--project-entry', '--seed', '0', '--max-steps', '1', '--wall-seconds', '600',
+                   '--project-entry', '--seed', '0', '--max-steps', '300' if _episode else '1',
+                   '--wall-seconds', '3600' if _episode else '600',
                    '--memory', 'on', '--memory-config', str(config_path)]
         # No outer timeout: let the existing manager complete its owned shutdown path.
         code = subprocess.run(command, cwd=str(ROOT)).returncode
@@ -98,19 +99,29 @@ def main():
         outer = json.loads(files[0].read_text(encoding='utf-8'))
         episode_path = personal_path(Path(outer['traffic_report']))
         episode = json.loads(episode_path.read_text(encoding='utf-8'))
-        require(len(episode['step_files']) == 1, 'Expected one step report')
-        step_path = personal_path(episode_path.parent/episode['step_files'][0])
-        step = json.loads(step_path.read_text(encoding='utf-8'))
-        validate_live_step(outer, episode, step)
+        step_paths = [personal_path(episode_path.parent/name) for name in episode['step_files']]
+        steps = [json.loads(path.read_text(encoding='utf-8')) for path in step_paths]
+        if _episode:
+            from validation.accept_memory_episode import validate_episode
+            validate_episode(outer, episode, steps)
+        else:
+            require(len(steps) == 1, 'Expected one step report')
+            validate_live_step(outer, episode, steps[0])
         status = client.status()
-        require(status['count'] == 4 and status['snapshot_sha256'] == episode['memory_session']['final_snapshot_sha256'],
+        require(status['count'] == episode['memory_session']['final_count'] and
+                status['snapshot_sha256'] == episode['memory_session']['final_snapshot_sha256'],
                 'Service final corpus mismatch')
-    result = dict(status='PASS', seed=0, actual_environment_steps=1, verified_writes=4,
-                  manager_report=str(files[0]), episode_report=str(episode_path), step_report=str(step_path),
+    result = dict(status='PASS', seed=0, actual_environment_steps=len(steps), verified_writes=status['count'],
+                  manager_report=str(files[0]), episode_report=str(episode_path),
+                  step_reports=[str(path) for path in step_paths],
                   final_snapshot_sha256=status['snapshot_sha256'],
-                  limitation='One real Qwen step in an isolated test store; no completed episode, seed study or safety/effectiveness claim.')
+                  limitation=('Single seed0 terminal episode; terminal does not imply successful arrival or safety improvement.' if _episode else
+                  'One real Qwen step in an isolated test store; no completed episode, seed study or safety/effectiveness claim.'))
+    if not _episode:
+        result['step_report'] = str(step_paths[0])
     (run/'acceptance.json').write_text(canonical(result)+'\n', encoding='utf-8')
-    print('M22-R2 real Qwen memory on: PASS; seed=0; writes=4; env.step=1')
+    print('{} real Qwen memory on: PASS; seed=0; writes={}; env.step={}'.format(
+        'M22-R3' if _episode else 'M22-R2', status['count'], len(steps)))
 
 
 if __name__ == '__main__':

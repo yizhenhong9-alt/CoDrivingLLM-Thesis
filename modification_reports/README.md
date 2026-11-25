@@ -72,3 +72,5 @@ M22-R2：[真正Qwen＋memory on單步聯測](./M22-original-memory/R2-live-one-
 M22-R2 回傳審查：Spark PASS／exit0；真Qwen五次回答、四筆逐車寫入與一次0.2秒步進可得證據核對通過，該步無碰撞，最大1087＋256=1343 tokens。尚缺manager result.json供完整停服與啟動設定審查；不需重跑，未作交通效果結論。
 
 M22-R2 補件完成：manager result已核對、離線audit PASS，設定及session一致，Qwen exit0／無已知殘留程序／port關閉／clean_observation=true。原版註解更新位置確實具有同一步前車新記憶可見性；非已實現成效的記憶，相關限制已補報告。
+
+M22-R3：[單seed完整memory-on回合驗證](./M22-original-memory/R3-live-episode/report.md)；全新空庫、seed0、300步／3600秒上限，自然terminal才PASS，跨步滾動記憶驗收已準備，本地19項通過。Spark待手動執行，未開始多seed效果實驗。
