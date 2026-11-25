@@ -4,8 +4,11 @@
 """
 import ast
 import copy
+import json
 import math
+import os
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -130,6 +133,20 @@ class ChromaTests(unittest.TestCase):
             self.assertEqual(memory.retrieve('current')[0]['text'], 'past')
         self.assertEqual(calls, [['past'], ['current']])
 
+    def test_original_fields_survive_metadata_envelope(self):
+        fixture = json.loads((ROOT/'modification_reports/M20-local-memory/R2-memory-semantics/fixtures.json').read_text(encoding='utf-8'))
+        with self.store(create=True) as store:
+            for index, row in enumerate(fixture['rows']):
+                original = row['would_write']
+                metadata = dict(original['metadata'], source={'run': 'M16-replay-fixture-not-training',
+                                                             'step': row['step_id'], 'vehicle': row['vehicle_id']})
+                store.add('original-'+str(index), original['page_content'], metadata, unit(index))
+                found = store.search(unit(index), 1)[0]
+                self.assertEqual(found['text'], original['page_content'])
+                self.assertEqual({key: found['metadata'][key] for key in original['metadata']}, original['metadata'])
+                self.assertEqual(row['query'], '\n'+found['text'])
+                self.assertEqual(found['metadata']['negotiation_result'], 'None')
+
     def test_duplicate_is_rejected_before_backend_add(self):
         with self.store(create=True) as store:
             store.add('a', 'original', {'source': {'run': 'synthetic'}}, unit())
@@ -216,12 +233,38 @@ class ChromaTests(unittest.TestCase):
 
     @unittest.skipUnless(RUN_REAL, 'Real Chroma test is manual Spark-only; use --real-chroma')
     def test_real_chroma_persistence_with_synthetic_vectors(self):
+        fixture = json.loads((ROOT/'modification_reports/M20-local-memory/R2-memory-semantics/fixtures.json').read_text(encoding='utf-8'))
         with ChromaMemoryStore(self.path, self.spec, create=True) as store:
-            store.add('fixture-a', 'synthetic situation A', {'source': {'run': 'M20-R1-fixture'}}, unit())
-            store.add('fixture-b', 'synthetic situation B', {'source': {'run': 'M20-R1-fixture'}}, unit(1))
+            for index, row in enumerate(fixture['rows']):
+                original = row['would_write']
+                store.add('fixture-a' if index == 0 else 'fixture-b', original['page_content'],
+                          dict(original['metadata'], source={'run': 'M20-R3-off-replay-fixture-not-training'}), unit(index))
             self.assertEqual(store.search(unit(), 2)[0]['id'], 'fixture-a')
         with ChromaMemoryStore(self.path, self.spec) as store:
-            self.assertEqual(store.search(unit())[0]['metadata']['source']['run'], 'M20-R1-fixture')
+            found = store.search(unit())[0]
+            self.assertEqual(found['text'], fixture['rows'][0]['would_write']['page_content'])
+            for key, value in fixture['rows'][0]['would_write']['metadata'].items():
+                self.assertEqual(found['metadata'][key], value)
+        # Reopen in a fresh Python process to avoid mistaking a cached client
+        # for proof that on-disk records can actually be recovered.
+        code = '''
+import json, sys
+from llm_controller.local_memory import manifest
+from llm_controller.chroma_memory import ChromaMemoryStore
+query = [1.0]+[0.0]*383
+with ChromaMemoryStore(sys.argv[1], manifest('synthetic-v1')) as store:
+    print(json.dumps(store.search(query, 1)[0], ensure_ascii=False))
+'''
+        environment = dict(os.environ, PYTHONPATH=str(ROOT), PYTHONDONTWRITEBYTECODE='1')
+        child = subprocess.run([sys.executable, '-c', code, str(self.path)],
+                               env=environment, cwd=str(ROOT), capture_output=True,
+                               text=True, timeout=120)
+        self.assertEqual(child.returncode, 0, child.stdout+'\n'+child.stderr)
+        found = json.loads(child.stdout.strip().splitlines()[-1])
+        self.assertEqual(found['id'], 'fixture-a')
+        self.assertEqual(found['text'], fixture['rows'][0]['would_write']['page_content'])
+        for key, value in fixture['rows'][0]['would_write']['metadata'].items():
+            self.assertEqual(found['metadata'][key], value)
 
 
 if __name__ == '__main__':

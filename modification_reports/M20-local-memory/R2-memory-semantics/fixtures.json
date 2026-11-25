@@ -1,0 +1,41 @@
+{
+  "origin": "M16 memory-off replay of original methods, never actual retrieved hits",
+  "rows": [
+    {
+      "step_id": 0,
+      "vehicle_id": 3,
+      "action_id": 4,
+      "decision": "SLOWER",
+      "query": "\n Currently, the most dangerous collision information with the ego vehicle is as follows:Ego is _equal close_ to conflict point than other vehicles considering current speed and distance, Ego vehicle speed minus other vehicle is 0",
+      "top_k": 2,
+      "would_write": {
+        "page_content": " Currently, the most dangerous collision information with the ego vehicle is as follows:Ego is _equal close_ to conflict point than other vehicles considering current speed and distance, Ego vehicle speed minus other vehicle is 0",
+        "metadata": {
+          "human_question": "None",
+          "negotiation_result": "None",
+          "final_action": "[4]",
+          "comments": "might not safe, you should be careful and check"
+        }
+      },
+      "format_only_if_selected_as_hit": "- Last time None, you choose to [4], it is might not safe, you should be careful and check\nAbove messages are some examples of how you make a decision in the past. Those scenarios are similar to the current scenario. You should refer to those examples to make a decision for the current scenario."
+    },
+    {
+      "step_id": 35,
+      "vehicle_id": 3,
+      "action_id": 3,
+      "decision": "FASTER",
+      "query": "\n Conflict info is empty",
+      "top_k": 2,
+      "would_write": {
+        "page_content": " Conflict info is empty",
+        "metadata": {
+          "human_question": "None",
+          "negotiation_result": "None",
+          "final_action": "[3]",
+          "comments": "recommended to FASTER"
+        }
+      },
+      "format_only_if_selected_as_hit": "- Last time None, you choose to [3], it is recommended to FASTER\nAbove messages are some examples of how you make a decision in the past. Those scenarios are similar to the current scenario. You should refer to those examples to make a decision for the current scenario."
+    }
+  ]
+}

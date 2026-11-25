@@ -1,0 +1,37 @@
+﻿{
+    "date":  "2026-11-25",
+    "base_commit":  "c486a549ea965ee1149df432c0adb481a9d4c9b5",
+    "python":  "3.13.13",
+    "test_results":  [
+                         {
+                             "script":  "validation/check_chroma_memory.py",
+                             "exit_code":  0,
+                             "console":  "check_chroma_memory.py.console.txt"
+                         },
+                         {
+                             "script":  "validation/check_local_memory.py",
+                             "exit_code":  0,
+                             "console":  "check_local_memory.py.console.txt"
+                         },
+                         {
+                             "script":  "validation/check_memory_off.py",
+                             "exit_code":  0,
+                             "console":  "check_memory_off.py.console.txt"
+                         },
+                         {
+                             "script":  "validation/check_vehicle_actions.py",
+                             "exit_code":  0,
+                             "console":  "check_vehicle_actions.py.console.txt"
+                         }
+                     ],
+    "passed":  46,
+    "skipped":  2,
+    "actual_chroma_imported":  false,
+    "model_loaded":  false,
+    "spark_executed":  false,
+    "source_sha256":  {
+                          "validation/check_chroma_memory.py":  "bc56b5e0f4eeb884f61b97bc4f28f1b9931e78336848ecffc86d723896bb22b2",
+                          "validation/run_chroma_acceptance.sh":  "3031d5322553ee9c68b6b1f17081ac291e0c106af3414df8d555505c069227a3",
+                          "modification_reports/M20-local-memory/R2-memory-semantics/fixtures.json":  "bbb38feffd80956336ec3ca9f22bfd46af440a2c1a0dadc7b60099cc09639183"
+                      }
+}

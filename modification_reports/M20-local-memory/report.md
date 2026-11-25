@@ -2,6 +2,8 @@
 
 2026-11-25 補充：使用者確認接續調整。正式後端方向改為本地 MiniLM＋Chroma；SQLite 保留作精確搜尋參考。本頁以下保留第一版歷史，最新狀態及測試見 [M20-R1 Chroma 報告](./R1-chroma/report.md)。仍未接入正式駕駛流程，未操作 Spark。
 
+2026-11-25 語意補充：[M20-R2 原版 memory 流程與 M16 重播](./R2-memory-semantics/report.md) 已確認本批 query／page_content 僅差前導換行，並列出 embedding 以外的實作差異；不得將 R1 底層接線宣稱為原版 memory on 完整等價。
+
 日期：2026-11-24。程式與本地替身驗證完成；Spark 真 embedding、套件安裝／ARM64 相容性及權重核驗尚待手動驗收。未接入正式駕駛流程，memory on 仍由現有 factory 拒絕，不能據此宣稱已完成 memory on。
 
 ## 基線與變更
