@@ -1,5 +1,5 @@
 {
-  "status": "AVAILABLE_EVIDENCE_PASS_MANAGER_REPORT_MISSING",
+  "status": "PASS",
   "commit": "8980e7eb5bcdbe8ec849a4ae8ec38033201d6ccc",
   "calls": [
     {
@@ -133,11 +133,21 @@
       "crashed": false
     }
   ],
-  "missing_manager_report": "/home/nclab/Yizhen/runs/M22-R2-memory-live-step-Zk1p13/live/20261125T092853Z-c72b7973/result.json",
-  "limitation": "Cannot independently verify manager exit code, remaining processes or closed port without manager result.json. No DB inspection or safety-effect claim.",
+  "manager_report": "/home/nclab/Yizhen/runs/M22-R2-memory-live-step-Zk1p13/live/20261125T092853Z-c72b7973/result.json",
+  "shutdown": {
+    "exited": true,
+    "exit_code": 0,
+    "signal_target": "API parent only",
+    "remaining_known_processes": [],
+    "port_closed": true,
+    "warnings": [],
+    "clean_observation": true
+  },
+  "limitation": "Returned manager observations and logs agree. No direct Spark process/DB inspection or safety-effect claim.",
   "evidence_sha256": {
     "acceptance.json": "997c0bad76fc74e1b5e3535ef5c35417a69af71cd5f0927d05dc26c45ababb11",
     "git-commit.txt": "f2cde1c747908e1c162c17e6c79827897b266f942d8fbf9809b7d4b931084de2",
+    "live/result.json": "b17d4ed6400e15f1a01bf183b97a33a40de272a7c5ba12e072dde850a433b25c",
     "live/server-console.txt": "3455c09d049bfa8898ae5b1dfa8fcfbdb8528c86d83005510d03ff883d1b7438",
     "live/traffic-console.txt": "26c0f8c187d1568846e8d173227bba8b0544e72402ce0346a29151961a5b5ead",
     "memory-config.json": "5e871873fed0c8e3533e8bd1ad02df4a4f764459d137b857c5183ed3d16f0b7f",

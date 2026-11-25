@@ -9,6 +9,7 @@ sys.path.insert(0, str(ROOT))
 from llm_controller.local_memory import canonical, text_hash, manifest
 from llm_controller.memory_prompt import QUERY_SCHEMA
 from llm_controller.output_schema import parse_action, parse_negotiation
+from validation.accept_memory_live_step import validate_live_step
 
 
 def main():
@@ -19,8 +20,20 @@ def main():
     assert len(episodes) == 1
     episode = load(episodes[0])
     step = load(episodes[0].parent/'step-0000.json')
+    manager = load(folder/'live/result.json')
+    validate_live_step(manager, episode, step)
     commit = (folder/'git-commit.txt').read_text().strip()
     assert commit == episode['git_commit'] == step['git_commit'] == '8980e7eb5bcdbe8ec849a4ae8ec38033201d6ccc'
+    assert manager['git_commit'] == commit and manager['memory_session'] == episode['memory_session']
+    assert manager['traffic_report'] == acceptance['episode_report']
+    assert manager['memory_mode'] == 'on' and manager['project_entry'] is True
+    assert manager['observed_environment_steps'] == manager['max_steps'] == 1
+    launch = manager['launch']['args']
+    for flag, value in {'--host': '127.0.0.1', '--port': '18080', '--max-model-len': '2048',
+                        '--gpu-memory-utilization': '0.40', '--kv-cache-memory-bytes': '536870912',
+                        '--moe-backend': 'triton', '--shutdown-timeout': '30'}.items():
+        assert launch[launch.index(flag)+1] == value
+    assert manager['expected_revision'] == '5a5a776300a41aaa681dd7ff0106608ef2bc90db'
     assert episode['git_status'] == '' and episode['seed'] == 0 and episode['memory_mode'] == 'on'
     assert episode['status'] == 'step_limit_reached' and episode['actual_environment_steps'] == 1
     assert episode['memory_module_imported'] is False and episode['step_files'] == ['step-0000.json']
@@ -78,13 +91,13 @@ def main():
     assert server.count('POST /v1/chat/completions HTTP/1.1" 200 OK') == 5
     assert 'Application shutdown complete.' in server
     assert not any(word in server for word in ('EngineDeadError', 'Traceback', 'force killing', 'Force killing'))
-    result = dict(status='AVAILABLE_EVIDENCE_PASS_MANAGER_REPORT_MISSING', commit=commit,
+    result = dict(status='PASS', commit=commit,
         calls=calls, max_required_tokens=max(c['usage']['prompt_tokens'] for c in calls)+256,
         query_corpus_counts=[q['corpus_count'] for q in step['memory_queries']],
         verified_writes=len(known), step_observation=step['step_observation'], reward=step['reward'],
         done=step['done'], info=step['info'], final_vehicles=step['final_vehicles'],
-        missing_manager_report=acceptance['manager_report'],
-        limitation='Cannot independently verify manager exit code, remaining processes or closed port without manager result.json. No DB inspection or safety-effect claim.',
+        manager_report=acceptance['manager_report'], shutdown=manager['shutdown'],
+        limitation='Returned manager observations and logs agree. No direct Spark process/DB inspection or safety-effect claim.',
         evidence_sha256={p.relative_to(folder).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
                          for p in sorted(folder.rglob('*')) if p.is_file()})
     (Path(__file__).parent/'spark-audit.json').write_text(json.dumps(result, indent=2)+'\n', encoding='utf-8')

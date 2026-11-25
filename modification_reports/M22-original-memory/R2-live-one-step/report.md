@@ -2,6 +2,14 @@
 
 ## 回傳審查（2026-11-25）
 
+補件完成：使用者另提供本地 `runs/m22-r2/live/result.json`，已重跑離線審查為 PASS。manager commit、traffic 路徑與 memory session 對應 episode；既有模型revision、loopback18080、context2048、GPUutil0.40、KV536870912、Triton與shutdown30設定一致。shutdown exit_code=0、remaining_known_processes=[]、port_closed=true、warnings=[]、clean_observation=true，與正常停服console相符。此 warnings 是管理器的特定停服警告清單，不表示所有啟動warning皆不存在。先前「缺manager」段落是歷史狀態，現在已解除，無需補傳或重跑。
+
+### 原版同一步記憶可見性
+
+只讀核對原作者副本：`llm_agent_action.py:35` 逐車迴圈，`:45` 取得本車回答，`:46` 原有但註解的 memory_update 位於下一車之前；主入口 `Run_multi_CAV_LLM.py:77` 先取得全部車輛決策，`:85` 才 env.step。因此恢復原記憶呼叫後，較後車可能檢索同一步較早車的新紀錄。原提交的retrieval/update呼叫被註解，不能說原專案當時已實際運行此現象；可說原預留的更新位置具有這項語義。M22依已授權的原版順序恢復，沒有改成post-step或每步凍結庫。
+
+這些紀錄是「當前情境＋選擇的動作＋既有heuristic評語」，並非已觀察到步後成效的歷史經驗。由此可能產生同一步資訊混入、車輛順序依賴；本次核對沒有證明它造成決策錯誤。若未來改成全部車回答後才寫入或step後附實際結果，須另立方法變更，不能宣稱與原版等價。
+
 Spark console PASS／exit0；commit `8980e7eb5bcdbe8ec849a4ae8ec38033201d6ccc`，工作樹紀錄乾淨。已回傳 acceptance、config、commit、episode result／review／step 與三份 console。[離線審查](./audit_spark.py) 可得證據通過，數值與檔案SHA256見 [spark-audit.json](./spark-audit.json)。**尚缺 manager result.json，不將停服證據審查標成完整完成。**下文歷史待執行文字以此更新。
 
 實際 Spark 層級（先前回傳清單未清楚標明兩個同名 result.json 的完整階層，現修正）：
