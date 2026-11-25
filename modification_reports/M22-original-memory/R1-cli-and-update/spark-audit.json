@@ -1,0 +1,48 @@
+{
+  "status": "PASS",
+  "commit": "d9abe48b0b3d63bf6164e70386be638fbb1df779",
+  "phases": [
+    {
+      "query_corpus_counts": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "final_snapshot_sha256": "8290c0e3b8916b0f3f5eea26fbd7cc8cea62d5043c3f9ea51d200c0e3782b91b"
+    },
+    {
+      "query_corpus_counts": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "final_snapshot_sha256": "cb7cf48a99f21f0e44ca29ce2e6327398e86ad94bf55ec919ef9a9e9560a111b"
+    }
+  ],
+  "unique_verified_writes": 8,
+  "input_tokens": [
+    452,
+    1050,
+    963,
+    1101,
+    928,
+    452,
+    1086,
+    993,
+    1107,
+    922
+  ],
+  "max_required_tokens": 1363,
+  "actual_environment_steps": 0,
+  "sent_to_qwen": false,
+  "evidence_sha256": {
+    "acceptance.json": "2a841863eb036f73caa15531b623fd9a161520e44d422b086500dbdd7465d356",
+    "episode-scope-1/capture/20261125T075331Z-17eb8400.json": "753ef149c9ee60e42dd2c7723d4b561895b8d88ad123b3e1ab1677ffd3070fec",
+    "episode-scope-2/capture/20261125T075332Z-2b13d348.json": "41aeb5414a31e80198b03df6e1739fbe0318f2b986df74818d9523ecff49a420",
+    "git-commit.txt": "1c711ddb079efedf4a77232a1514faaabd9dd4b09fb9ba275ef99f9d9dd7c6dd",
+    "memory-config.json": "9f15ba7bd6daf725ea8cb3e5cb186617614595c470a0bc09c9e9b4191a45e6cc"
+  },
+  "limitation": "Returned JSON receipts audited; no independent database inspection or traffic/safety validation."
+}

@@ -64,3 +64,5 @@ M21-R4：[即時唯讀 session 與 prompt 計數](./M21-memory-prompt/R4-online-
 M21-R4 最新審查：Spark PASS／exit0，四份回傳檔核對通過；四次真檢索均注入兩筆、零排除，五份prompt預算符合，session正常關閉且snapshot一致、0步進。回答仍為fixture，尚非即時session＋真Qwen的完整聯測或M22寫入。
 
 M22-R1：[原版逐車步前更新與off/on CLI](./M22-original-memory/R1-cli-and-update/report.md)；依使用者選擇只保留正式--memory off/on，on=檢索＋原方法四欄／評語＋逐車步前寫入、跨episode共用，不提供--memory-write。程式及本地替身已接線，Spark空庫／兩scope時序驗收待手動執行；正式預設off，未自動跑實驗。
+
+M22-R1 最新審查：Spark PASS／exit0，五份回傳檔離線核對通過；空庫起始，逐車查詢前筆數0–7，八次寫入與候選來源／receipt hash／跨scope快照鏈一致，最大1107＋256=1363 tokens。fixture、零Qwen／零步進；尚未正式memory-on seeds。

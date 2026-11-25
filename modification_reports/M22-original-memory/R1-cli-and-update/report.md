@@ -1,5 +1,15 @@
 # M22-R1：依原版逐車檢索／步前更新，正式 CLI 只分 off／on
 
+## Spark 回傳審查（2026-11-25）
+
+測試 commit `d9abe48b0b3d63bf6164e70386be638fbb1df779`；使用者 console PASS／exit 0，結果 `/home/nclab/Yizhen/runs/M22-R1-original-memory-GuYu06`。已核對 acceptance、config、commit 及兩份 capture；[離線審查程式](./audit_spark.py) 通過，[spark-audit.json](./spark-audit.json) 保存數值與回傳檔 SHA256。以下歷史待驗敘述以本補記更新。
+
+- 第一 scope 查詢前庫筆數 0／1／2／3，候選 0／1／2／2；第二 scope 庫筆數 4／5／6／7，候選均 2。八個唯一 ID 均有 verified 寫入 receipt，最後 8 筆。
+- 所有候選 ID、文字與 metadata 對應較早寫入；receipt 文字／metadata hash、manifest、query／prompt hash、source commit／scope／step／vehicle 一致。逐車快照鏈連續，第二 scope 初始快照等於第一 scope 最終快照。這是回傳 JSON receipts 交叉核對，未另行開啟 Spark DB。
+- 原四欄 None／None／[action_id] 與空衝突既有 heuristic 評語保留；source 標記 test_only=true，沒有將 fixture 當作實際結果。每個 session 四查詢／四寫入／九次 token checks，正常關閉且最終 snapshot 驗證通過。
+- 十份完整 prompt 最大輸入 1107 tokens；加預留輸出 256 為 1363 ≤ 2048，八次檢索沒有因長度排除候選。
+- 兩個 scope 均為 fixture、零真正 Qwen 呼叫、零 env.step；不是兩個完整 episode，亦不是正式 memory-on seeds／交通安全效果驗證。下一階段可準備最小真正 Qwen＋memory-on 步進聯測，正式預設 off 不變。
+
 2026-11-25。使用者明確選擇依原版，不將「唯讀檢索」另作正式實驗。現已實作 on=檢索＋每車回答後寫入、主入口 CLI 與每回合共用 session；本地替身測試通過，Spark 空庫／跨scope讀寫仍待手動驗收。沒有自動執行真Qwen或交通實驗。
 
 ## 先釐清原版與本次授權
