@@ -1,5 +1,19 @@
 # M21-R1：原格式記憶檢索與 CAV prompt 注入接點
 
+## Spark 回傳審查（M21-R1-06）
+
+使用者回傳 console：PASS、action_count=404、max_input_tokens=1129、exit 0，遠端結果目錄 `/home/nclab/Yizhen/runs/M21-R1-memory-prompt-VvEugP`。
+後續將 [acceptance.json](../../../../runs/m21-1/acceptance.json) 與 [git-commit.txt](../../../../runs/m21-1/git-commit.txt) 放入本地；已實際讀取審查，並以 [audit_returned.py](./audit_returned.py) 核對本地原 M16。
+
+- 完整 commit：e0dd0eba8b192c1501b9e144aa16913d67ca4e92。
+- 101 份來源 step 的 SHA256 與本地 M16 原檔全部相符；404 筆 action 索引完整、不重複。
+- 404/404 均為兩筆合成候選、兩筆注入、零排除，沒有因 token 預算減少記憶。
+- 原 query hash、base／final prompt hash、原四欄呈現文字逐筆核對成功；除加入記憶段外，原 prompt 不變。
+- 輸入 928–1129 tokens，輸出預留 256、context 2048；最大需求 1385，最小剩餘 663。
+- acceptance.json SHA256：`9bdc1d9ad4fe6f27ee44f90eb61e64d399fdb5fd9c91b68a2dca6c4c28f703a1`；詳細來源 hashes 見 [spark-audit.json](./spark-audit.json)。
+
+本關證據已齊，不需再回傳其他檔案或重跑同一測試。下方「待驗」為建立時歷史狀態，由本節補記取代。審查只核對 Spark 回傳 token 數與算術，Windows 未載入 tokenizer 重新計數；候選仍為固定順序的兩筆合成記憶，不是真檢索排名，不是 Qwen 生成／交通效果驗收。下一階段為新 schema 隔離庫的真檢索與 prompt 接線，正式 memory off 與 M22 更新仍不變。
+
 2026-11-25。已完成 stdlib 介面、fixture-only 接點、預算檢查與離線測試；真 Qwen tokenizer 驗收待使用者手動執行。沒有啟用正式 memory on 或實作 M22 寫入。
 
 ## 基線與本次變更

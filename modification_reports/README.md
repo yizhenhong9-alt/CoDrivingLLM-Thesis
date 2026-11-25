@@ -48,3 +48,5 @@ M20-R7：[跨環境 localhost memory HTTP](./M20-local-memory/R7-memory-http/rep
 最新回傳：R7 Spark create／reopen PASS、exit 0，兩階段快照相同；證據與範圍見 R7 報告補記。
 
 M21-R1：[原格式 CAV 記憶注入接點](./M21-memory-prompt/R1-reference-injection/report.md)；fixture-only 檢索接點、原呈現文字與完整 token 預算，本地 39 項通過；Spark tokenizer-only 保存 prompt 重播待驗。正式 off／factory on 拒絕維持，未實作 M22 更新。
+
+M21-R1 最新審查：回傳原檔已核對，101 份 M16 source hash／404 份 action prompt 全部一致；404/404 保留兩筆合成記憶、零排除，最大 1129＋256=1385 tokens。Spark tokenizer-only PASS，不代表真檢索或 live memory on 完成。
