@@ -52,3 +52,5 @@ M21-R1：[原格式 CAV 記憶注入接點](./M21-memory-prompt/R1-reference-inj
 M21-R1 最新審查：回傳原檔已核對，101 份 M16 source hash／404 份 action prompt 全部一致；404/404 保留兩筆合成記憶、零排除，最大 1129＋256=1385 tokens。Spark tokenizer-only PASS，不代表真檢索或 live memory on 完成。
 
 M21-R2：[真檢索→完整 prompt 隔離驗收](./M21-memory-prompt/R2-real-retrieval/report.md)；新 schema 測試庫、實際 MiniLM／Chroma 候選與 Qwen tokenizer 跨環境計數腳本已實作，本地替身通過，Spark 待手動驗收。正式 off／fixture-only gate／M22 更新未改。
+
+M21-R2 最新審查：Spark PASS／exit 0，回傳三份原檔已核對；兩筆真檢索順序、原 metadata、六組 messages hash／token count 對應一致；輸入 1129／949 tokens、均保留兩筆。可進 M21-R3 最小真 Qwen prompt 驗收準備，尚未生成／步進或完成 M22 更新。

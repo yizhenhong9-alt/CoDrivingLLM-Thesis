@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "commit": "d3626020622939f6e3074bf131e2dbb6d309002c",
+  "cases": [
+    {
+      "step": 0,
+      "top1": "fixture-0",
+      "input_tokens": 1129,
+      "injected_count": 2
+    },
+    {
+      "step": 35,
+      "top1": "fixture-1",
+      "input_tokens": 949,
+      "injected_count": 2
+    }
+  ],
+  "exact_message_token_counts_verified": 6,
+  "snapshot_sha256": "24d3717e8019cf575195ffd321945a1d964423444ffe24cb2b2e25a3234c7546",
+  "evidence_sha256": {
+    "acceptance.json": "28d4167ad41e4a2896ea579bab24c1dd646f188d251ad08afee455d222f0dfc2",
+    "counts.json": "d92eebc7e42000990ffbf752084dc10d0c0c7f7521b75d48c7fc2e24cdaeb085",
+    "git-commit.txt": "6d4995efaed516ad27281dd8039184877e766fd8b7f1f463e3ed429d870a4d5b"
+  },
+  "limitation": "Audits returned evidence and local original M16; no independent ML/tokenizer rerun or live Qwen validation."
+}

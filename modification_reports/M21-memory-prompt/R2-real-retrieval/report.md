@@ -1,5 +1,22 @@
 # M21-R2：真檢索候選與完整 prompt 隔離驗收
 
+## Spark 成功回傳與原檔審查（M21-R2-06）
+
+使用者 console：PASS、cases=2、max_input_tokens=1129、exit 0；遠端結果目錄 `/home/nclab/Yizhen/runs/M21-R2-retrieval-prompt-6fIklV`。
+已讀本地 [acceptance.json](../../../../runs/m21-r2/acceptance.json)、[counts.json](../../../../runs/m21-r2/counts.json)、[git-commit.txt](../../../../runs/m21-r2/git-commit.txt)，並用 [audit_returned.py](./audit_returned.py) 對照原 M16，exit 0；詳細結果見 [spark-audit.json](./spark-audit.json)。
+
+- commit d3626020622939f6e3074bf131e2dbb6d309002c 與本次驗收實作一致。
+- step 0／35 車 3 來源 hash、原 query、原文字與四欄／額外 source 均符合；top-1 分別為 fixture-0／fixture-1。
+- 實際候選順序分別為 0→1、1→0，不再是 R1 的固定合成順序；兩筆均注入兩筆、零排除。
+- 兩筆完整輸入為 1129／949 tokens，含預留 256 後為 1385／1205，均低於 2048。
+- 六組 2／1／0 筆候選對應 messages hash 與 counts map 完整匹配；可重建 cases 檔 hash，token 計數 receipt 一致。審查只核對回傳計數與算術，未在 Windows 重跑 tokenizer。
+- 兩筆紀錄 manifest／snapshot 相同，snapshot=`24d3717e8019cf575195ffd321945a1d964423444ffe24cb2b2e25a3234c7546`；回傳 oversize_minilm_rejected_without_write=true。
+- 原 prompt 去除加入的記憶段後與本地 M16 一致；極小負 distance -2.22e-16 在既有浮點容差內，score=1，未修改公式或容差。
+
+本節取代以下建立時的「Spark 待驗」狀態；無需重跑 R2。服務 console 與 DB 未回傳，本次不宣稱逐檔審閱這些內容；PASS 依已審查程式與回傳結構的 guard 解讀。此關通過僅代表兩筆真檢索→token 計數→prompt 組合，不是生成、交通效果、全面相關性或 production memory on 完成。
+
+接續關卡：M21-R3 正式配置／生命週期與不步進的最小真 Qwen prompt 驗收；正式 off 預設不變。M22 原版逐車回覆後、env.step 前寫入仍未實作，不能拿目前唯讀測試宣稱完整原版 memory-on 等價。
+
 2026-11-25。程式與本地替身驗證完成，Spark 真模型／tokenizer 跨環境驗收待使用者手動執行。正式 memory off、factory on 拒絕與 M21-R1 fixture-only 限制保持不變；無 Qwen 生成、交通步進或 M22 更新實作。
 
 ## 基線與編號
