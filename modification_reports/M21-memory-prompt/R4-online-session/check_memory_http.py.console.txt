@@ -1,0 +1,17 @@
+test_backend_failure_not_empty_hits_no_sensitive_logging (__main__.Tests.test_backend_failure_not_empty_hits_no_sensitive_logging) ... ok
+test_duplicate_and_readonly_propagate_without_retry (__main__.Tests.test_duplicate_and_readonly_propagate_without_retry) ... ok
+test_framing_and_transport_failure (__main__.Tests.test_framing_and_transport_failure) ... ok
+test_http_to_localmemory_to_chroma_double (__main__.Tests.test_http_to_localmemory_to_chroma_double) ... ok
+test_invalid_inputs (__main__.Tests.test_invalid_inputs) ... ok
+test_manifest_mismatch (__main__.Tests.test_manifest_mismatch) ... ok
+test_no_proxy_redirect_and_size_guards (__main__.Tests.test_no_proxy_redirect_and_size_guards) ... ok
+test_python38_and_no_ml_import (__main__.Tests.test_python38_and_no_ml_import) ... ok
+test_response_corruption_rejected (__main__.Tests.test_response_corruption_rejected) ... ok
+test_roundtrip_empty_source_id_and_original_values (__main__.Tests.test_roundtrip_empty_source_id_and_original_values) ... ok
+test_verified_snapshot_rejects_corrupt_receipts_without_ml (__main__.Tests.test_verified_snapshot_rejects_corrupt_receipts_without_ml) ... ok
+test_wrong_query_hash_duplicate_ids_distance (__main__.Tests.test_wrong_query_hash_duplicate_ids_distance) ... ok
+System.Management.Automation.RemoteException
+----------------------------------------------------------------------
+Ran 12 tests in 5.450s
+System.Management.Automation.RemoteException
+OK

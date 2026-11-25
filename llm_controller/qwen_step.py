@@ -41,8 +41,13 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
         raise ValueError("Unknown parser mode")
     if apply_step and transport.mode != "live":
         raise ValueError("Fixture responses must not be applied to traffic")
-    if memory_prompt is not None and (transport.mode != 'fixture' or apply_step):
-        raise ValueError('M21-R1 memory prompt integration is fixture-only pending Spark validation')
+    if memory_prompt is not None:
+        if apply_step:
+            raise ValueError('Memory retrieval integration is zero-step pending validation')
+        if transport.mode != 'fixture':
+            from .memory_session import OnlineMemorySession
+            if not isinstance(memory_prompt, OnlineMemorySession) or not memory_prompt.active:
+                raise ValueError('Live zero-step memory requires an active configured session')
     if env.spec.id != "intersection-multi-agent-v0":
         raise ValueError("M05 runtime currently supports intersection only")
     if create_memory(env, "off") is not None:
@@ -58,13 +63,17 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
                       {"simulation_id": key, "legacy_label": value} for key, value in names.items()],
                   limitation="Safety formulas/priority unchanged; fixture is not a driving policy")
     if memory_prompt is not None:
-        report.update(memory_mode='retrieval-only-fixture', prompt_version='M21-R1-'+parser_mode,
+        report.update(memory_mode=getattr(memory_prompt, 'mode', 'retrieval-only-fixture'), prompt_version='M21-R1-'+parser_mode,
                       memory_queries=[])
+        if getattr(memory_prompt, 'mode', None) == 'retrieve-only':
+            report['prompt_version'] = 'M21-R4-'+parser_mode
 
     def request(stage, prompt, context):
         entry = {"stage": stage, "messages": [{"role": "system", "content": prompt}],
                  "context": context, "sent_to_model": transport.mode == "live"}
         report["calls"].append(entry)
+        if memory_prompt is not None and hasattr(memory_prompt, 'check_request'):
+            entry['token_budget'] = memory_prompt.check_request(entry['messages'], stage)
         persist(report)
         started = time.perf_counter()
         try:

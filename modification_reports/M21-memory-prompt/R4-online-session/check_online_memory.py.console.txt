@@ -1,0 +1,14 @@
+test_count_hash_and_identity (__main__.Tests.test_count_hash_and_identity) ... ok
+test_disabled_counter_and_bad_messages_stop (__main__.Tests.test_disabled_counter_and_bad_messages_stop) ... ok
+test_large_request_and_step_rejected_before_submission (__main__.Tests.test_large_request_and_step_rejected_before_submission) ... ok
+test_only_memory_port_allowed_in_fixture (__main__.Tests.test_only_memory_port_allowed_in_fixture) ... ok
+test_original_error_preserved_and_client_closed (__main__.Tests.test_original_error_preserved_and_client_closed) ... ok
+test_python38_no_ml (__main__.Tests.test_python38_no_ml) ... ok
+test_scope_open_query_all_requests_close (__main__.Tests.test_scope_open_query_all_requests_close) ... ok
+test_token_overflow_stops_negotiation (__main__.Tests.test_token_overflow_stops_negotiation) ... ok
+test_writable_or_corpus_change_rejected_and_closed (__main__.Tests.test_writable_or_corpus_change_rejected_and_closed) ... ok
+System.Management.Automation.RemoteException
+----------------------------------------------------------------------
+Ran 9 tests in 5.189s
+System.Management.Automation.RemoteException
+OK

@@ -1,0 +1,11 @@
+test_actual_action_builder_does_not_touch_memory (__main__.MemoryOffTests.test_actual_action_builder_does_not_touch_memory) ... llm action: IDLE
+ok
+test_actual_entry_off_assignment_has_zero_dependency_calls (__main__.MemoryOffTests.test_actual_entry_off_assignment_has_zero_dependency_calls) ... ok
+test_memory_on_fails_before_cloud_fallback (__main__.MemoryOffTests.test_memory_on_fails_before_cloud_fallback) ... ok
+test_original_assignment_constructed_memory_each_time (__main__.MemoryOffTests.test_original_assignment_constructed_memory_each_time) ... ok
+test_unknown_mode_is_not_silently_off (__main__.MemoryOffTests.test_unknown_mode_is_not_silently_off) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.007s
+
+OK

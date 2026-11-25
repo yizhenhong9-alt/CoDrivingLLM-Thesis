@@ -8,6 +8,17 @@ from .local_memory import (canonical, validate_manifest, texts_checked, text_has
                            NoRedirect)
 
 LIMIT = 1024 * 1024
+QWEN_TOKENIZER = dict(model='Qwen/Qwen3-30B-A3B-Instruct-2507-FP8',
+                      revision='5a5a776300a41aaa681dd7ff0106608ef2bc90db')
+
+
+def messages_checked(messages):
+    if (not isinstance(messages, list) or len(messages) != 1 or
+            not isinstance(messages[0], dict) or set(messages[0]) != {'role', 'content'} or
+            messages[0]['role'] != 'system' or not isinstance(messages[0]['content'], str) or
+            not messages[0]['content'].strip()):
+        raise ValueError('Expected one complete system message')
+    return messages
 
 
 class MemoryServiceError(RuntimeError):
@@ -72,6 +83,15 @@ class MemoryHTTPClient:
 
     def status(self):
         return self._call('status')
+
+    def count_messages(self, messages):
+        messages_checked(messages)
+        result = self._call('count', messages=messages)
+        if (result.get('tokenizer') != QWEN_TOKENIZER or
+                result.get('messages_sha256') != text_hash(canonical(messages)) or
+                type(result.get('input_tokens')) is not int or result['input_tokens'] < 1):
+            raise ValueError('Tokenizer service receipt mismatch')
+        return result['input_tokens']
 
     def add(self, memory_id, text, metadata):
         id_checked(memory_id)

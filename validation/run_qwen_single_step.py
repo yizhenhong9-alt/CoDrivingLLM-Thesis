@@ -47,7 +47,11 @@ def main():
     parser.add_argument("--timeout", type=float, default=120)
     parser.add_argument("--max-tokens", type=int, default=256)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument('--memory-config', type=Path,
+                        help='Explicit M21-R4 readonly session; zero-step strict validation only')
     args = parser.parse_args()
+    if args.memory_config is not None and (args.apply_step or args.parser != 'strict' or args.max_tokens != 256):
+        parser.error('Memory validation requires strict, max-tokens=256, and no apply-step')
     if args.apply_step and args.mode != "live":
         parser.error("Fixtures cannot be applied to traffic")
     if os.name == "posix":
@@ -63,6 +67,8 @@ def main():
                   model=MODEL, mode=args.mode, parser_mode=args.parser,
                   calls=[], settings=vars(args).copy())
     report["settings"]["output_dir"] = str(args.output_dir.resolve())
+    if args.memory_config is not None:
+        report['settings']['memory_config'] = str(args.memory_config)
     report["source_sha256"] = {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in list((ROOT / "llm_controller").glob("*.py")) + [Path(__file__).resolve()]}
@@ -82,14 +88,24 @@ def main():
                                         allow_nan=False), encoding="utf-8")
         temporary.replace(output)
 
-    transport = None
+    transport, memory_session = None, None
     try:
         with redirect_stdout(console), ExitStack() as stack:
             if args.mode == "fixture":
-                def block_network(*unused, **unused_kwargs):
-                    raise RuntimeError("Network disabled in fixture mode")
-                for target in ("socket.socket.connect", "socket.socket.connect_ex", "socket.create_connection"):
-                    stack.enter_context(patch(target, block_network))
+                if args.memory_config is None:
+                    def block_network(*unused, **unused_kwargs):
+                        raise RuntimeError("Network disabled in fixture mode")
+                    for target in ("socket.socket.connect", "socket.socket.connect_ex", "socket.create_connection"):
+                        stack.enter_context(patch(target, block_network))
+                else:
+                    from llm_controller.memory_session import OnlineMemorySession
+                    memory_session = OnlineMemorySession.from_file(args.memory_config)
+                    allow_memory_only(stack, memory_session.config['port'])
+            if args.memory_config is not None:
+                from llm_controller.memory_session import OnlineMemorySession
+                if memory_session is None:
+                    memory_session = OnlineMemorySession.from_file(args.memory_config)
+                stack.enter_context(memory_session)
             import gym
             import highway_env
             if Path(highway_env.__file__).resolve().parent != ROOT / "highway_env":
@@ -107,11 +123,13 @@ def main():
                 report["model_preflight"] = transport.preflight()
             run_step(env, negotiation_cls(env), action_cls(env), transport, report,
                      parser_mode=args.parser, episode_id=episode_id,
-                     apply_step=args.apply_step, persist=persist)
+                     apply_step=args.apply_step, persist=persist, memory_prompt=memory_session)
     except Exception:
         report.update(status="failed", error=traceback.format_exc())
         exit_code = 1
     finally:
+        if memory_session is not None:
+            report['memory_session'] = memory_session.receipt
         if transport is not None and args.mode == "live":
             report["last_api_response"] = transport.last_response
         report["memory_module_imported"] = "llm_controller.memory" in sys.modules
@@ -130,6 +148,27 @@ def main():
     print("Status: " + report["status"])
     print("Result: " + str(output.resolve()))
     return exit_code
+
+
+def allow_memory_only(stack, port):
+    """Fixture mode may reach only the explicitly configured loopback memory port."""
+    import socket
+    connect, connect_ex, create = socket.socket.connect, socket.socket.connect_ex, socket.create_connection
+    def check(address):
+        if not isinstance(address, tuple) or len(address) < 2 or address[:2] != ('127.0.0.1', port):
+            raise RuntimeError('Fixture networking permits configured memory loopback only')
+    def guarded_connect(sock, address):
+        check(address)
+        return connect(sock, address)
+    def guarded_connect_ex(sock, address):
+        check(address)
+        return connect_ex(sock, address)
+    def guarded_create(address, *args, **kwargs):
+        check(address)
+        return create(address, *args, **kwargs)
+    stack.enter_context(patch('socket.socket.connect', guarded_connect))
+    stack.enter_context(patch('socket.socket.connect_ex', guarded_connect_ex))
+    stack.enter_context(patch('socket.create_connection', guarded_create))
 
 
 if __name__ == "__main__":

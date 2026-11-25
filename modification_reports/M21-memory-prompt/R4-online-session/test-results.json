@@ -1,0 +1,81 @@
+﻿{
+    "python":  "3.13.13",
+    "platform":  "Windows",
+    "spark_executed":  false,
+    "ml_or_tokenizer_loaded":  false,
+    "tests":  [
+                  {
+                      "test":  "check_online_memory.py",
+                      "exit_code":  0,
+                      "output":  "test_count_hash_and_identity (__main__.Tests.test_count_hash_and_identity) ... ok\ntest_disabled_counter_and_bad_messages_stop (__main__.Tests.test_disabled_counter_and_bad_messages_stop) ... ok\ntest_large_request_and_step_rejected_before_submission (__main__.Tests.test_large_request_and_step_rejected_before_submission) ... ok\ntest_only_memory_port_allowed_in_fixture (__main__.Tests.test_only_memory_port_allowed_in_fixture) ... ok\ntest_original_error_preserved_and_client_closed (__main__.Tests.test_original_error_preserved_and_client_closed) ... ok\ntest_python38_no_ml (__main__.Tests.test_python38_no_ml) ... ok\ntest_scope_open_query_all_requests_close (__main__.Tests.test_scope_open_query_all_requests_close) ... ok\ntest_token_overflow_stops_negotiation (__main__.Tests.test_token_overflow_stops_negotiation) ... ok\ntest_writable_or_corpus_change_rejected_and_closed (__main__.Tests.test_writable_or_corpus_change_rejected_and_closed) ... ok\nSystem.Management.Automation.RemoteException\n----------------------------------------------------------------------\nRan 9 tests in 5.189s\nSystem.Management.Automation.RemoteException\nOK"
+                  },
+                  {
+                      "test":  "check_memory_http.py",
+                      "exit_code":  0,
+                      "output":  "test_backend_failure_not_empty_hits_no_sensitive_logging (__main__.Tests.test_backend_failure_not_empty_hits_no_sensitive_logging) ... ok\ntest_duplicate_and_readonly_propagate_without_retry (__main__.Tests.test_duplicate_and_readonly_propagate_without_retry) ... ok\ntest_framing_and_transport_failure (__main__.Tests.test_framing_and_transport_failure) ... ok\ntest_http_to_localmemory_to_chroma_double (__main__.Tests.test_http_to_localmemory_to_chroma_double) ... ok\ntest_invalid_inputs (__main__.Tests.test_invalid_inputs) ... ok\ntest_manifest_mismatch (__main__.Tests.test_manifest_mismatch) ... ok\ntest_no_proxy_redirect_and_size_guards (__main__.Tests.test_no_proxy_redirect_and_size_guards) ... ok\ntest_python38_and_no_ml_import (__main__.Tests.test_python38_and_no_ml_import) ... ok\ntest_response_corruption_rejected (__main__.Tests.test_response_corruption_rejected) ... ok\ntest_roundtrip_empty_source_id_and_original_values (__main__.Tests.test_roundtrip_empty_source_id_and_original_values) ... ok\ntest_verified_snapshot_rejects_corrupt_receipts_without_ml (__main__.Tests.test_verified_snapshot_rejects_corrupt_receipts_without_ml) ... ok\ntest_wrong_query_hash_duplicate_ids_distance (__main__.Tests.test_wrong_query_hash_duplicate_ids_distance) ... ok\nSystem.Management.Automation.RemoteException\n----------------------------------------------------------------------\nRan 12 tests in 5.450s\nSystem.Management.Automation.RemoteException\nOK"
+                  },
+                  {
+                      "test":  "check_memory_prompt.py",
+                      "exit_code":  0,
+                      "output":  "test_bad_original_fields_and_boundary_rejected (__main__.Tests.test_bad_original_fields_and_boundary_rejected) ... ok\ntest_budget_drops_whole_last_candidate_only (__main__.Tests.test_budget_drops_whole_last_candidate_only) ... ok\ntest_empty_still_original_ending_and_zero_recorded (__main__.Tests.test_empty_still_original_ending_and_zero_recorded) ... ok\ntest_fixture_orchestration_negotiation_unchanged_no_step_or_write (__main__.Tests.test_fixture_orchestration_negotiation_unchanged_no_step_or_write) ... ok\ntest_original_query_and_format_exact (__main__.Tests.test_original_query_and_format_exact) ... ok\ntest_oversize_and_invalid_counter_fail (__main__.Tests.test_oversize_and_invalid_counter_fail) ... ok\ntest_python38_no_ml (__main__.Tests.test_python38_no_ml) ... ok\ntest_readonly_manifest_snapshot_and_errors (__main__.Tests.test_readonly_manifest_snapshot_and_errors) ... ok\ntest_saved_prompt_replay_and_source_rejection (__main__.Tests.test_saved_prompt_replay_and_source_rejection) ... ok\nSystem.Management.Automation.RemoteException\n----------------------------------------------------------------------\nRan 9 tests in 0.027s\nSystem.Management.Automation.RemoteException\nOK"
+                  },
+                  {
+                      "test":  "check_retrieval_prompt.py",
+                      "exit_code":  0,
+                      "output":  "test_budget_zero_preserves_base_and_all_attempts (__main__.Tests.test_budget_zero_preserves_base_and_all_attempts) ... ok\ntest_changed_candidates_or_unknown_message_hash_stop (__main__.Tests.test_changed_candidates_or_unknown_message_hash_stop) ... ok\ntest_encoder_failure_stops_no_write (__main__.Tests.test_encoder_failure_stops_no_write) ... ok\ntest_http_and_text_limits_reject_without_writing (__main__.Tests.test_http_and_text_limits_reject_without_writing) ... ok\ntest_http_chroma_candidates_to_count_map_to_prompt (__main__.Tests.test_http_chroma_candidates_to_count_map_to_prompt) ... ok\ntest_syntax_and_imports (__main__.Tests.test_syntax_and_imports) ... ok\nSystem.Management.Automation.RemoteException\n----------------------------------------------------------------------\nRan 6 tests in 3.685s\nSystem.Management.Automation.RemoteException\nOK"
+                  },
+                  {
+                      "test":  "check_qwen_single_step.py",
+                      "exit_code":  0,
+                      "output":  "test_fixture_cannot_be_applied (__main__.FlowTests.test_fixture_cannot_be_applied) ... ok\ntest_invalid_action_blocks_step_and_keeps_raw (__main__.FlowTests.test_invalid_action_blocks_step_and_keeps_raw) ... ok\ntest_legacy_parser_uses_actual_original_methods (__main__.FlowTests.test_legacy_parser_uses_actual_original_methods) ... ok\ntest_live_test_double_steps_once_after_validation_saved (__main__.FlowTests.test_live_test_double_steps_once_after_validation_saved) ... ok\ntest_missing_negotiation_blocks_action_calls (__main__.FlowTests.test_missing_negotiation_blocks_action_calls) ... ok\ntest_step_records_ticks_and_environment_action_separately (__main__.FlowTests.test_step_records_ticks_and_environment_action_separately) ... ok\ntest_strict_fixture_validates_but_never_steps (__main__.FlowTests.test_strict_fixture_validates_but_never_steps) ... ok\ntest_timeout_is_not_retried_or_replaced_with_idle (__main__.FlowTests.test_timeout_is_not_retried_or_replaced_with_idle) ... ok\ntest_wrong_execution_mapping_is_rejected (__main__.FlowTests.test_wrong_execution_mapping_is_rejected) ... ok\ntest_fixed_model_and_loopback (__main__.TransportTests.test_fixed_model_and_loopback) ... ok\ntest_incomplete_response_rejected_but_retained (__main__.TransportTests.test_incomplete_response_rejected_but_retained) ... ok\ntest_python38_syntax (__main__.TransportTests.test_python38_syntax) ... ok\ntest_source_hash_record_accepts_relative_script_path (__main__.TransportTests.test_source_hash_record_accepts_relative_script_path) ... ok\ntest_wrong_model_preflight (__main__.TransportTests.test_wrong_model_preflight) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 0.072s\n\nOK"
+                  },
+                  {
+                      "test":  "check_memory_off.py",
+                      "exit_code":  0,
+                      "output":  "test_actual_action_builder_does_not_touch_memory (__main__.MemoryOffTests.test_actual_action_builder_does_not_touch_memory) ... llm action: IDLE\nok\ntest_actual_entry_off_assignment_has_zero_dependency_calls (__main__.MemoryOffTests.test_actual_entry_off_assignment_has_zero_dependency_calls) ... ok\ntest_memory_on_fails_before_cloud_fallback (__main__.MemoryOffTests.test_memory_on_fails_before_cloud_fallback) ... ok\ntest_original_assignment_constructed_memory_each_time (__main__.MemoryOffTests.test_original_assignment_constructed_memory_each_time) ... ok\ntest_unknown_mode_is_not_silently_off (__main__.MemoryOffTests.test_unknown_mode_is_not_silently_off) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.007s\n\nOK"
+                  },
+                  {
+                      "test":  "check_project_entry.py",
+                      "exit_code":  0,
+                      "output":  "test_changed_python_files_accept_python38_grammar (__main__.ProjectEntryTests.test_changed_python_files_accept_python38_grammar) ... ok\ntest_cloud_sdk_is_loaded_only_when_legacy_client_is_called (__main__.ProjectEntryTests.test_cloud_sdk_is_loaded_only_when_legacy_client_is_called) ... ok\ntest_deadline_blocks_request (__main__.ProjectEntryTests.test_deadline_blocks_request) ... ok\ntest_entry_import_is_free_of_cloud_simulator_and_execution (__main__.ProjectEntryTests.test_entry_import_is_free_of_cloud_simulator_and_execution) ... ok\ntest_fixture_cannot_advance_production_loop (__main__.ProjectEntryTests.test_fixture_cannot_advance_production_loop) ... ok\ntest_http_error_is_not_counted_as_valid_response (__main__.ProjectEntryTests.test_http_error_is_not_counted_as_valid_response) ... ok\ntest_legacy_counts_use_selected_parser (__main__.ProjectEntryTests.test_legacy_counts_use_selected_parser) ... ok\ntest_second_step_bad_vehicle_stops_and_preserves_raw (__main__.ProjectEntryTests.test_second_step_bad_vehicle_stops_and_preserves_raw) ... Step 0: single_step_complete; actions=[{\u0027vehicle_id\u0027: 3, \u0027action_id\u0027: 1}, {\u0027vehicle_id\u0027: 4, \u0027action_id\u0027: 1}]\nok\ntest_terminal_stops_without_extra_request (__main__.ProjectEntryTests.test_terminal_stops_without_extra_request) ... Step 0: single_step_complete; actions=[{\u0027vehicle_id\u0027: 3, \u0027action_id\u0027: 1}, {\u0027vehicle_id\u0027: 4, \u0027action_id\u0027: 1}]\nok\ntest_three_real_loop_iterations_stop_at_limit (__main__.ProjectEntryTests.test_three_real_loop_iterations_stop_at_limit) ... Step 0: single_step_complete; actions=[{\u0027vehicle_id\u0027: 3, \u0027action_id\u0027: 1}, {\u0027vehicle_id\u0027: 4, \u0027action_id\u0027: 1}]\nStep 1: single_step_complete; actions=[{\u0027vehicle_id\u0027: 3, \u0027action_id\u0027: 1}, {\u0027vehicle_id\u0027: 4, \u0027action_id\u0027: 1}]\nStep 2: single_step_complete; actions=[{\u0027vehicle_id\u0027: 3, \u0027action_id\u0027: 1}, {\u0027vehicle_id\u0027: 4, \u0027action_id\u0027: 1}]\nok\ntest_wrapper_targets_actual_main_file (__main__.ProjectEntryTests.test_wrapper_targets_actual_main_file) ... ok\n\n----------------------------------------------------------------------\nRan 11 tests in 0.151s\n\nOK"
+                  }
+              ],
+    "source_hashes":  [
+                          {
+                              "file":  "llm_controller/memory_http.py",
+                              "sha256":  "f202b7cb5e9df6bf75d7dfb45c8fb801a6e0abe4a352696ed2ea260d4c3ebbaa"
+                          },
+                          {
+                              "file":  "llm_controller/memory_session.py",
+                              "sha256":  "76d9cb2ad871a5d83c1aef93e7dc941f6011c4e4c741ff4daf2f45976c827c71"
+                          },
+                          {
+                              "file":  "llm_controller/qwen_step.py",
+                              "sha256":  "8c922b20f9cdc9fe548bf1cd183820aa93374b78f16d6334468ecb963514047f"
+                          },
+                          {
+                              "file":  "validation/serve_local_memory.py",
+                              "sha256":  "7088800c6a919468d7a4283b50e2714ee0bd750c65aa5a895060d00416660752"
+                          },
+                          {
+                              "file":  "validation/run_qwen_single_step.py",
+                              "sha256":  "0612efc94e5ec20d4367b486f922b13986cc66756b97eba9fbf3624cbaeb9a3d"
+                          },
+                          {
+                              "file":  "validation/memory_service_session.py",
+                              "sha256":  "80eb6a2635817ff9175938e2bd23f7cb3743818e166cb640e676958f27349372"
+                          },
+                          {
+                              "file":  "validation/accept_online_memory.py",
+                              "sha256":  "cdaed3aa9eedb2099d1cb25fb92f511a5569759c2fe702746fa756b4c64c75e3"
+                          },
+                          {
+                              "file":  "validation/accept_online_memory.sh",
+                              "sha256":  "9eb6930c3f100111226c4fb5bb8a1d8361869f0c9722d2c7cf229ff10357e3a1"
+                          },
+                          {
+                              "file":  "validation/check_online_memory.py",
+                              "sha256":  "7fd14fd5bb7cdd34912b0f30c8a259ee67235c88fc22ede4f801fbe8c0cc6d3f"
+                          }
+                      ]
+}

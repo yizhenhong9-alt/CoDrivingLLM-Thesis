@@ -26,7 +26,7 @@ def offline_env(folder):
 
 
 @contextmanager
-def memory_service(folder, database, expected, port, create=False):
+def memory_service(folder, database, expected, port, create=False, qwen_tokenizer=False):
     folder = personal_path(folder)
     folder.mkdir()
     command = ['/home/nclab/Yizhen/envs/memory-chroma0415-py312/bin/python',
@@ -35,6 +35,8 @@ def memory_service(folder, database, expected, port, create=False):
                '--port', str(port)]
     if create:
         command.append('--create')
+    if qwen_tokenizer:
+        command.append('--qwen-tokenizer')
     with (folder/'service-console.txt').open('x', encoding='utf-8') as output:
         process = subprocess.Popen(command, env=offline_env(folder), stdout=output, stderr=subprocess.STDOUT)
         try:

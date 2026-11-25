@@ -58,3 +58,5 @@ M21-R2 最新審查：Spark PASS／exit 0，回傳三份原檔已核對；兩筆
 M21-R3：[真檢索 prompt 的零步進 Qwen 回答驗收](./M21-memory-prompt/R3-qwen-replay/report.md)；固定 R2 證據配置與 fresh tokenizer preflight、兩次 strict 回答及原啟停管理器分支已實作，本地替身通過，Spark 待手動執行。是凍結真檢索 prompt 重播，非即時 memory-on／M22 更新；正式 off 維持。
 
 M21-R3 最新審查：Spark responses_validated／exit 0，五份回傳原檔已核對；兩次 prompt 與 R2 一致，SLOWER／FASTER strict 通過，API input 1129／949 與 tokenizer 相同，0 步進，停服 clean_observation=true。未完成即時檢索／M22 更新或證明交通改善。
+
+M21-R4：[即時唯讀 session 與 prompt 計數](./M21-memory-prompt/R4-online-session/report.md)；明確設定／scope開關、同一memory服務載tokenizer並提供/count、目前模擬情境四次即時檢索的零步進fixture驗收已實作，本地66項通過，Spark待手動執行。主入口仍off，未完成正式episode或M22更新。

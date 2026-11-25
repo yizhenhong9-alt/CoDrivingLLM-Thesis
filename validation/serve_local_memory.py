@@ -11,10 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from llm_controller.local_memory import (canonical, manifest, personal_path,
                                          text_hash, texts_checked, REVISION)
-from llm_controller.memory_http import LIMIT, metadata_checked, id_checked, k_checked
+from llm_controller.memory_http import (LIMIT, metadata_checked, id_checked, k_checked,
+                                        messages_checked, QWEN_TOKENIZER)
 
 
-def make_handler(expected, memory):
+def make_handler(expected, memory, count_messages=None):
     class Handler(BaseHTTPRequestHandler):
         def setup(self):
             super().setup()
@@ -41,6 +42,16 @@ def make_handler(expected, memory):
                 if self.path == '/status':
                     body.update(writable=memory.store.writable,
                                 snapshot_sha256=memory.store.snapshot_sha256())
+                    body['tokenizer'] = QWEN_TOKENIZER if count_messages is not None else None
+                elif self.path == '/count':
+                    if count_messages is None:
+                        raise ValueError('Qwen tokenizer not enabled')
+                    messages = messages_checked(request.get('messages'))
+                    count = count_messages(messages)
+                    if type(count) is not int or count < 1:
+                        raise ValueError('Invalid complete-message token count')
+                    body.update(tokenizer=QWEN_TOKENIZER, input_tokens=count,
+                                messages_sha256=text_hash(canonical(messages)))
                 elif self.path == '/retrieve':
                     query = texts_checked([request.get('query')])[0]
                     k = k_checked(request.get('top_k'))
@@ -95,6 +106,26 @@ def verified_snapshot(run):
     return snapshot
 
 
+def load_qwen_counter():
+    """Tokenizer only in memory env; environment already offline/personal."""
+    model = personal_path(Path('/home/nclab/Yizhen/models/Qwen3-30B-A3B-Instruct-2507-FP8-5a5a776300a4'))
+    for path in model.rglob('*'):
+        personal_path(path)
+    from unittest.mock import patch
+    def block(*args, **kwargs):
+        raise RuntimeError('Offline tokenizer load: network disabled')
+    with patch('socket.socket.connect', block), patch('socket.socket.connect_ex', block):
+        from transformers import AutoTokenizer
+        tokenizer = AutoTokenizer.from_pretrained(str(model), local_files_only=True, trust_remote_code=False)
+    def count(messages):
+        rendered = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        ids = tokenizer.encode(rendered, add_special_tokens=False)
+        if not isinstance(ids, list) or any(type(item) is not int for item in ids):
+            raise ValueError('Expected flat tokenizer IDs')
+        return len(ids)
+    return count
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-dir', type=Path, required=True)
@@ -103,6 +134,8 @@ def main():
     parser.add_argument('--port', type=int, default=18082)
     parser.add_argument('--create', action='store_true')
     parser.add_argument('--writable', action='store_true')
+    parser.add_argument('--qwen-tokenizer', action='store_true',
+                        help='Load local tokenizer only for complete prompt counting; never Qwen weights')
     args = parser.parse_args()
     if (sys.platform != 'linux' or platform.machine() != 'aarch64' or
             Path(sys.prefix) != Path('/home/nclab/Yizhen/envs/memory-chroma0415-py312')):
@@ -145,7 +178,8 @@ def main():
         encoder = Encoder()
         encoder.encode = encode
         store = ChromaMemoryStore(database, expected, create=args.create, writable=args.writable)
-        server.RequestHandlerClass = make_handler(expected, LocalMemory(store, encoder))
+        counter = load_qwen_counter() if args.qwen_tokenizer else None
+        server.RequestHandlerClass = make_handler(expected, LocalMemory(store, encoder), counter)
         (run/'ready.json').write_text(canonical(dict(manifest=expected, port=args.port,
                                                     writable=store.writable))+'\n', encoding='utf-8')
         print('M20-R7 memory ready: 127.0.0.1:{}'.format(args.port), flush=True)
