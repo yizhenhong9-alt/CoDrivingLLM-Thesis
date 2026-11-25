@@ -54,3 +54,5 @@ M21-R1 最新審查：回傳原檔已核對，101 份 M16 source hash／404 份 
 M21-R2：[真檢索→完整 prompt 隔離驗收](./M21-memory-prompt/R2-real-retrieval/report.md)；新 schema 測試庫、實際 MiniLM／Chroma 候選與 Qwen tokenizer 跨環境計數腳本已實作，本地替身通過，Spark 待手動驗收。正式 off／fixture-only gate／M22 更新未改。
 
 M21-R2 最新審查：Spark PASS／exit 0，回傳三份原檔已核對；兩筆真檢索順序、原 metadata、六組 messages hash／token count 對應一致；輸入 1129／949 tokens、均保留兩筆。可進 M21-R3 最小真 Qwen prompt 驗收準備，尚未生成／步進或完成 M22 更新。
+
+M21-R3：[真檢索 prompt 的零步進 Qwen 回答驗收](./M21-memory-prompt/R3-qwen-replay/report.md)；固定 R2 證據配置與 fresh tokenizer preflight、兩次 strict 回答及原啟停管理器分支已實作，本地替身通過，Spark 待手動執行。是凍結真檢索 prompt 重播，非即時 memory-on／M22 更新；正式 off 維持。

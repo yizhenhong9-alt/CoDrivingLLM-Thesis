@@ -153,7 +153,12 @@ def parent_only_stop(proc, wait_seconds=120):
 
 
 def traffic_args(folder, parser_mode, seed, *, apply_step=False, project_entry=False,
-                 max_steps=1, wall_seconds=1800):
+                 max_steps=1, wall_seconds=1800, memory_replay_config=None):
+    if memory_replay_config is not None:
+        if apply_step or project_entry or parser_mode != 'strict':
+            raise ValueError('Memory replay is strict and never steps')
+        return [str(SIMULATION), '-B', str(ROOT/'validation/run_memory_prompt_replay.py'),
+                '--config', str(memory_replay_config), '--output-dir', str(folder/'traffic')]
     if project_entry:
         if apply_step:
             raise ValueError("Project entry applies steps itself; omit --apply-step")
@@ -233,7 +238,14 @@ def main():
                         help="Run Run_multi_CAV_LLM.py instead of single-step validation")
     parser.add_argument("--max-steps", type=int, default=1)
     parser.add_argument("--wall-seconds", type=float, default=1800)
+    parser.add_argument('--memory-replay-config', type=Path,
+                        help='M21-R3 frozen test prompts only; no simulator/step')
     args = parser.parse_args()
+    if args.memory_replay_config is not None:
+        if args.project_entry or args.apply_step or args.parser != 'strict':
+            parser.error('Memory replay requires strict parser and zero-step mode')
+        from llm_controller.memory_replay import load_config
+        load_config(args.memory_replay_config)
     if args.project_entry and args.apply_step:
         parser.error("--project-entry applies steps; do not combine with --apply-step")
     if args.max_steps < 1 or not math.isfinite(args.wall_seconds) or args.wall_seconds <= 0:
@@ -257,6 +269,9 @@ def main():
                   apply_step=args.apply_step, observed_environment_steps=None,
                   seed=args.seed, parser_mode=args.parser, model_started=False)
     report["project_entry"] = args.project_entry
+    if args.memory_replay_config is not None:
+        report['scope'] = 'M21-R3 two frozen real-retrieval prompts; no simulator or env.step'
+        report['memory_replay_config'] = str(args.memory_replay_config)
     if args.project_entry:
         report["scope"] = "original project entry, bounded episode"
         report["max_steps"] = args.max_steps
@@ -285,7 +300,7 @@ def main():
         if '"--shutdown-timeout"' not in source.read_text(encoding="utf-8"):
             raise RuntimeError("Installed shutdown-timeout option is absent")
         report["before"] = system_snapshot()
-        revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=str(ROOT),
+        revision = subprocess.run(["git", "-c", "safe.directory="+str(ROOT), "rev-parse", "HEAD"], cwd=str(ROOT),
                                   capture_output=True, text=True, check=True)
         report["git_commit"] = revision.stdout.strip()
         memory = report["before"]["memory"]
@@ -341,14 +356,14 @@ def main():
             print("Model ready; validating traffic replies; apply-step=" + str(args.apply_step), flush=True)
             command = traffic_args(folder, args.parser, args.seed, apply_step=args.apply_step,
                                    project_entry=args.project_entry, max_steps=args.max_steps,
-                                   wall_seconds=args.wall_seconds)
+                                   wall_seconds=args.wall_seconds, memory_replay_config=args.memory_replay_config)
             report["traffic_command"] = command
             with (folder / "traffic-console.txt").open("w", encoding="utf-8") as traffic_console:
                 client = subprocess.Popen(command, cwd=str(ROOT), env=env,
                                           stdout=traffic_console, stderr=subprocess.STDOUT)
                 client_deadline = time.monotonic()+args.wall_seconds+60
                 while client.poll() is None:
-                    if args.project_entry and time.monotonic() > client_deadline:
+                    if (args.project_entry or args.memory_replay_config is not None) and time.monotonic() > client_deadline:
                         raise TimeoutError("Project client exceeded wall-time plus cleanup allowance")
                     if proc.poll() is not None:
                         raise RuntimeError("Model exited while traffic was running")
@@ -361,7 +376,13 @@ def main():
             traffic = json.loads(files[0].read_text(encoding="utf-8"))
             report["traffic_report"] = str(files[0])
             report["observed_environment_steps"] = traffic.get("actual_environment_steps")
-            if args.project_entry:
+            if args.memory_replay_config is not None:
+                from llm_controller.memory_replay import validate_result
+                if client.returncode != 0:
+                    raise RuntimeError('Memory replay client failed; retain raw replies')
+                validate_result(traffic)
+                report['status'] = 'responses_validated'
+            elif args.project_entry:
                 if (client.returncode != 0 or traffic.get("status") not in
                         ("step_limit_reached", "episode_terminal") or
                         not 1 <= traffic.get("actual_environment_steps", 0) <= args.max_steps or
