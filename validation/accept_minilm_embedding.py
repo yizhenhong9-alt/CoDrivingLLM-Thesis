@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from llm_controller.local_memory import MODEL, REVISION, manifest, personal_path, vector
 
-FILES = ('config.json', 'model.safetensors', 'tokenizer.json',
+FILES = ('config.json', 'pytorch_model.bin', 'tokenizer.json',
          'tokenizer_config.json', 'special_tokens_map.json', 'vocab.txt',
          'sentence_bert_config.json', '1_Pooling/config.json', 'modules.json')
 
@@ -26,7 +26,9 @@ def select_files(info):
     siblings = {item['rfilename']: item for item in info['siblings']}
     selected = {}
     for name in FILES:
-        item = siblings[name]  # Missing safetensors/config stops; no main/pickle fallback.
+        if name not in siblings:
+            raise ValueError('Pinned model is missing required source file: '+name)
+        item = siblings[name]
         lfs = item.get('lfs')
         size = lfs['size'] if lfs else item['size']
         digest = lfs['sha256'] if lfs else item['blobId']
@@ -73,8 +75,8 @@ def download(snapshot, run):
     if len(raw) > 4*1024*1024:
         raise ValueError('Oversized metadata')
     info = json.loads(raw)
-    selected = select_files(info)
     (run/'source-api.json').write_bytes(raw)
+    selected = select_files(info)
     snapshot.mkdir(parents=True, exist_ok=True)
     hashes = {}
     for name, expected in selected.items():
@@ -103,6 +105,38 @@ def download(snapshot, run):
     return receipt
 
 
+def convert_verified_weights(snapshot, run, expected):
+    """Only verified pinned tensors; never unrestricted pickle or remote code."""
+    source = snapshot/'pytorch_model.bin'
+    source_sha256 = verify_file(source, expected)
+    import torch
+    from safetensors.torch import save_file
+    state = torch.load(str(source), map_location='cpu', weights_only=True)
+    if (not isinstance(state, dict) or not state or
+            any(not isinstance(key, str) or not isinstance(value, torch.Tensor)
+                for key, value in state.items())):
+        raise ValueError('Expected a nonempty string-to-tensor state dictionary')
+    # Sorted keys and fixed metadata make reruns comparable without replacing files.
+    tensors = {key: value.detach().cpu().contiguous().clone() for key, value in sorted(state.items())}
+    partial = run/'converted-model.safetensors'
+    if partial.exists():
+        raise ValueError('Conversion output already exists; use a fresh run directory')
+    save_file(tensors, str(partial), metadata={'format': 'pt'})
+    derived_sha256 = hashlib.sha256(partial.read_bytes()).hexdigest()
+    target = snapshot/'model.safetensors'
+    derived = dict(size=partial.stat().st_size, algorithm='sha256', digest=derived_sha256)
+    if target.exists():
+        verify_file(target, derived)
+    else:
+        os.link(partial, target)
+    record = dict(source='pytorch_model.bin', source_sha256=source_sha256,
+                  derived='model.safetensors', derived_sha256=derived_sha256,
+                  weights_only=True, map_location='cpu', tensor_count=len(tensors),
+                  torch=torch.__version__)
+    (run/'conversion.json').write_text(json.dumps(record, indent=2)+'\n', encoding='utf-8')
+    return record
+
+
 def acceptance(snapshot, run, receipt):
     for name, expected in receipt['files'].items():
         if verify_file(snapshot/name, expected) != receipt['sha256'][name]:
@@ -120,6 +154,7 @@ def acceptance(snapshot, run, receipt):
     torch.set_num_threads(1)
     if torch.version.cuda is not None:
         raise ValueError('CPU build required')
+    conversion = convert_verified_weights(snapshot, run, receipt['files']['pytorch_model.bin'])
     from validation.serve_local_embedding import load_encoder
     from llm_controller.chroma_memory import ChromaMemoryStore
     expected = manifest('m20-r6-original-fixtures-v1')
@@ -171,7 +206,7 @@ def acceptance(snapshot, run, receipt):
             started = time.perf_counter()
             store.search(vector(encode([rows[0]['query']])[0], 384), top_k=2)
             latency.append((time.perf_counter()-started)*1000)
-    result = dict(status='PASS', cold_load_seconds=cold_seconds,
+    result = dict(status='PASS', conversion=conversion, cold_load_seconds=cold_seconds,
                   batch_single_max_absolute_error=max_batch_error,
                   warm_encode_and_retrieve_ms=latency,
                   warm_median_ms=statistics.median(latency),
