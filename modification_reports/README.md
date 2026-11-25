@@ -66,3 +66,5 @@ M21-R4 最新審查：Spark PASS／exit0，四份回傳檔核對通過；四次�
 M22-R1：[原版逐車步前更新與off/on CLI](./M22-original-memory/R1-cli-and-update/report.md)；依使用者選擇只保留正式--memory off/on，on=檢索＋原方法四欄／評語＋逐車步前寫入、跨episode共用，不提供--memory-write。程式及本地替身已接線，Spark空庫／兩scope時序驗收待手動執行；正式預設off，未自動跑實驗。
 
 M22-R1 最新審查：Spark PASS／exit0，五份回傳檔離線核對通過；空庫起始，逐車查詢前筆數0–7，八次寫入與候選來源／receipt hash／跨scope快照鏈一致，最大1107＋256=1363 tokens。fixture、零Qwen／零步進；尚未正式memory-on seeds。
+
+M22-R2：[真正Qwen＋memory on單步聯測](./M22-original-memory/R2-live-one-step/report.md)；全新空測試庫、seed0、最多一步，沿用原逐車寫入與既有啟停管理器，本地29項通過，Spark待手動執行。未開始正式seeds，預設off維持。
