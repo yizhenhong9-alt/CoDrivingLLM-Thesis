@@ -38,3 +38,9 @@ M20-R3：[原格式欄位對照與 Chroma 驗收準備](./M20-local-memory/R3-ch
 M20-R4：[MiniLM CPU 相依規劃](./M20-local-memory/R4-minilm-runtime-plan/report.md)；R3 已在 Spark 14/14 通過，現在以完整已驗證版本清單約束新相依，只做 dry-run；MiniLM 尚未下載／載入。
 
 M20-R5：[MiniLM CPU runtime 安裝與回歸準備](./M20-local-memory/R5-minilm-runtime-install/report.md)；R4 已解析通過，固定 9 個新增套件，驗證 CPU imports／tensor 與 Chroma 回歸；Spark 待執行，無模型下載／載入。
+
+M20 最新狀態（歷史段落保留）：R5 已在 Spark 通過，89 套件基線固定。
+
+M20-R6：[固定 MiniLM 真向量驗收](./M20-local-memory/R6-minilm-embedding-acceptance/report.md)；e267270 Spark PASS／exit 0，來源 hash、受限 CPU 轉換、兩筆原模板 metadata／top-1／same-process reopen 通過；不代表全面交通語意或 production on 完成。
+
+M20-R7：[跨環境 localhost memory HTTP](./M20-local-memory/R7-memory-http/report.md)；單一 encode→Chroma 服務與 Python 3.8 stdlib client、隔離跨程序驗收已實作，本地替身通過；Spark 手動驗收待執行，正式 memory off／M21／M22 尚未改。

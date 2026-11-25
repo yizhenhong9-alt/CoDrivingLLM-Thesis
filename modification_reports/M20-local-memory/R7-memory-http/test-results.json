@@ -1,0 +1,55 @@
+﻿{
+    "python":  "3.13.13",
+    "platform":  "Windows",
+    "real_model_loaded":  false,
+    "spark_executed":  false,
+    "tests":  [
+                  {
+                      "test":  "check_memory_http.py",
+                      "exit_code":  0,
+                      "output":  "test_backend_failure_not_empty_hits_no_sensitive_logging (__main__.Tests.test_backend_failure_not_empty_hits_no_sensitive_logging) ... ok\ntest_duplicate_and_readonly_propagate_without_retry (__main__.Tests.test_duplicate_and_readonly_propagate_without_retry) ... ok\ntest_framing_and_transport_failure (__main__.Tests.test_framing_and_transport_failure) ... ok\ntest_http_to_localmemory_to_chroma_double (__main__.Tests.test_http_to_localmemory_to_chroma_double) ... ok\ntest_invalid_inputs (__main__.Tests.test_invalid_inputs) ... ok\ntest_manifest_mismatch (__main__.Tests.test_manifest_mismatch) ... ok\ntest_no_proxy_redirect_and_size_guards (__main__.Tests.test_no_proxy_redirect_and_size_guards) ... ok\ntest_python38_and_no_ml_import (__main__.Tests.test_python38_and_no_ml_import) ... ok\ntest_response_corruption_rejected (__main__.Tests.test_response_corruption_rejected) ... ok\ntest_roundtrip_empty_source_id_and_original_values (__main__.Tests.test_roundtrip_empty_source_id_and_original_values) ... ok\ntest_verified_snapshot_rejects_corrupt_receipts_without_ml (__main__.Tests.test_verified_snapshot_rejects_corrupt_receipts_without_ml) ... ok\ntest_wrong_query_hash_duplicate_ids_distance (__main__.Tests.test_wrong_query_hash_duplicate_ids_distance) ... ok\nSystem.Management.Automation.RemoteException\n----------------------------------------------------------------------\nRan 12 tests in 5.359s\nSystem.Management.Automation.RemoteException\nOK"
+                  },
+                  {
+                      "test":  "check_local_memory.py",
+                      "exit_code":  0,
+                      "output":  "test_config_and_text_validation (__main__.ClientTests.test_config_and_text_validation) ... ok\ntest_python38_syntax_and_no_ml_imports (__main__.ClientTests.test_python38_syntax_and_no_ml_imports) ... ok\ntest_real_loopback_http_with_fake_encoder (__main__.ClientTests.test_real_loopback_http_with_fake_encoder) ... ok\ntest_redirect_and_proxy_policy (__main__.ClientTests.test_redirect_and_proxy_policy) ... ok\ntest_response_checks (__main__.ClientTests.test_response_checks) ... ok\ntest_corrupt_vector_rejected_on_search (__main__.StoreTests.test_corrupt_vector_rejected_on_search) ... ok\ntest_create_refuses_existing (__main__.StoreTests.test_create_refuses_existing) ... ok\ntest_database_manifest_mismatch (__main__.StoreTests.test_database_manifest_mismatch) ... ok\ntest_duplicate_is_not_overwritten (__main__.StoreTests.test_duplicate_is_not_overwritten) ... ok\ntest_empty_and_invalid_k (__main__.StoreTests.test_empty_and_invalid_k) ... ok\ntest_invalid_vectors_and_metadata_never_write (__main__.StoreTests.test_invalid_vectors_and_metadata_never_write) ... ok\ntest_path_escape_and_relative_rejected (__main__.StoreTests.test_path_escape_and_relative_rejected) ... ok\ntest_readonly_and_no_implicit_creation (__main__.StoreTests.test_readonly_and_no_implicit_creation) ... ok\ntest_roundtrip_cosine_order_source_and_snapshot (__main__.StoreTests.test_roundtrip_cosine_order_source_and_snapshot) ... ok\ntest_symlink_escape (__main__.StoreTests.test_symlink_escape) ... skipped \"OS does not permit symlink creation: [WinError 1314] �Τ�ݨS���o���S���v���C: \u0027C:\\\\\\\\Users\\\\\\\\user\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\vscode-agent-codex-sandbox-AJ3d6s\u0027 -\u003e \u0027C:\\\\\\\\Users\\\\\\\\user\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\vscode-agent-codex-sandbox-AJ3d6s\\\\\\\\tmpqgup9zds\\\\\\\\escape\u0027\"\ntest_text_adapter_and_manifest_guard (__main__.StoreTests.test_text_adapter_and_manifest_guard) ... ok\n\n----------------------------------------------------------------------\nRan 16 tests in 0.286s\n\nOK (skipped=1)"
+                  },
+                  {
+                      "test":  "check_chroma_memory.py",
+                      "exit_code":  0,
+                      "output":  "test_backend_failure_releases_owned_lock (__main__.ChromaTests.test_backend_failure_releases_owned_lock) ... ok\ntest_duplicate_is_rejected_before_backend_add (__main__.ChromaTests.test_duplicate_is_rejected_before_backend_add) ... ok\ntest_empty_small_corpus_and_invalid_inputs (__main__.ChromaTests.test_empty_small_corpus_and_invalid_inputs) ... ok\ntest_invalid_query_response_is_rejected (__main__.ChromaTests.test_invalid_query_response_is_rejected) ... ok\ntest_lazy_import_python38_and_path_boundary (__main__.ChromaTests.test_lazy_import_python38_and_path_boundary) ... ok\ntest_manifest_and_metric_mismatch (__main__.ChromaTests.test_manifest_and_metric_mismatch) ... ok\ntest_no_overwrite_and_missing_path (__main__.ChromaTests.test_no_overwrite_and_missing_path) ... ok\ntest_original_fields_survive_metadata_envelope (__main__.ChromaTests.test_original_fields_survive_metadata_envelope) ... ok\ntest_readonly_is_adapter_guard (__main__.ChromaTests.test_readonly_is_adapter_guard) ... ok\ntest_real_chroma_persistence_with_synthetic_vectors (__main__.ChromaTests.test_real_chroma_persistence_with_synthetic_vectors) ... skipped \u0027Real Chroma test is manual Spark-only; use --real-chroma\u0027\ntest_roundtrip_and_explicit_embeddings (__main__.ChromaTests.test_roundtrip_and_explicit_embeddings) ... ok\ntest_sqlite_candidate_parity_for_fixture (__main__.ChromaTests.test_sqlite_candidate_parity_for_fixture) ... ok\ntest_text_adapter_uses_local_encoder (__main__.ChromaTests.test_text_adapter_uses_local_encoder) ... ok\ntest_writer_lock_and_closed_guard (__main__.ChromaTests.test_writer_lock_and_closed_guard) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 0.121s\n\nOK (skipped=1)"
+                  },
+                  {
+                      "test":  "check_memory_off.py",
+                      "exit_code":  0,
+                      "output":  "test_actual_action_builder_does_not_touch_memory (__main__.MemoryOffTests.test_actual_action_builder_does_not_touch_memory) ... llm action: IDLE\nok\ntest_actual_entry_off_assignment_has_zero_dependency_calls (__main__.MemoryOffTests.test_actual_entry_off_assignment_has_zero_dependency_calls) ... ok\ntest_memory_on_fails_before_cloud_fallback (__main__.MemoryOffTests.test_memory_on_fails_before_cloud_fallback) ... ok\ntest_original_assignment_constructed_memory_each_time (__main__.MemoryOffTests.test_original_assignment_constructed_memory_each_time) ... ok\ntest_unknown_mode_is_not_silently_off (__main__.MemoryOffTests.test_unknown_mode_is_not_silently_off) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.010s\n\nOK"
+                  },
+                  {
+                      "test":  "check_vehicle_actions.py",
+                      "exit_code":  0,
+                      "output":  "test_changed_controlled_order (__main__.BatchTests.test_changed_controlled_order) ... ok\ntest_duplicate_reply_blocks_entire_batch (__main__.BatchTests.test_duplicate_reply_blocks_entire_batch) ... ok\ntest_duplicate_simulation_id (__main__.BatchTests.test_duplicate_simulation_id) ... ok\ntest_invalid_reply_does_not_select_fallback (__main__.BatchTests.test_invalid_reply_does_not_select_fallback) ... ok\ntest_original_zip_truncates_missing_action (__main__.BatchTests.test_original_zip_truncates_missing_action) ... ok\ntest_out_of_order_replies (__main__.BatchTests.test_out_of_order_replies) ... ok\ntest_replaced_object_is_not_same_vehicle (__main__.BatchTests.test_replaced_object_is_not_same_vehicle) ... ok\ntest_stale_metadata (__main__.BatchTests.test_stale_metadata) ... ok\ntest_unknown_reply (__main__.BatchTests.test_unknown_reply) ... ok\ntest_wrong_vehicle_in_response (__main__.BatchTests.test_wrong_vehicle_in_response) ... ok\ntest_original_ids (__main__.SceneTests.test_original_ids) ... ok\ntest_returned_mapping_is_independent (__main__.SceneTests.test_returned_mapping_is_independent) ... ok\ntest_scene_restrictions (__main__.SceneTests.test_scene_restrictions) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 0.001s\n\nOK"
+                  }
+              ],
+    "source_hashes":  [
+                          {
+                              "file":  "llm_controller/memory_http.py",
+                              "sha256":  "c08a7d4ac44a7b1039212e87fdbc7a0874eae9e5b8b126431a5949c1d48a1ec0"
+                          },
+                          {
+                              "file":  "validation/serve_local_memory.py",
+                              "sha256":  "f18214cae1f03ec1936e12d3f1e598072fb877fadca7457c12f2498d4d349d8b"
+                          },
+                          {
+                              "file":  "validation/accept_memory_http.py",
+                              "sha256":  "6db3d18ac336bbff21cc9529fbb1ff0deadc23db5bd6be5e60aba69dbe89ecba"
+                          },
+                          {
+                              "file":  "validation/accept_memory_http.sh",
+                              "sha256":  "c430b05f90ad6874737f9c44e1ea4227ec4787c6deb0a684a1c31ff4d533e730"
+                          },
+                          {
+                              "file":  "validation/check_memory_http.py",
+                              "sha256":  "a3059041e4ec95c2e99e8fa60f262819eabb18a9503951b9aa3b46e2e1370bd0"
+                          }
+                      ]
+}

@@ -1,5 +1,24 @@
 # M20-R6：固定 MiniLM 下載與真實向量驗收
 
+## Spark 成功回傳補記（M20-R6-07，2026-11-25）
+
+以下成功證據取代本頁歷史段落的「待執行」狀態，原失敗紀錄保留。
+來源：[step6 console](../../../../spark相關console/memory%20on前置作業%20step6%20console.txt)，
+實測 commit e26727047ca76719f14f7bf43d218441762ed337，PASS、exit 0；
+結果目錄 `/home/nclab/Yizhen/runs/M20-R6-minilm-acceptance-tNg6E3`。
+
+- 原始 pytorch_model.bin SHA256：`c3a85f238711653950f6a79ece63eb0ea93d76f6a6284be04019c53733baf256`。
+- 衍生 model.safetensors SHA256：`53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db`。
+- torch 2.9.1+cpu、weights_only=true、map_location=cpu，104 tensors。
+- 冷載入 2.500046 秒；batch/single 最大絕對差 9.685754776e-08。
+- 五次 encode＋retrieve 為 39.3065／18.2067／13.4914／13.4542／13.4119 ms，中位 13.491448 ms；不含 HTTP。
+- 兩筆 R2 原模板 top-1 對應正確、原四欄與額外 source 保存，same-process reopen 通過。
+- 邏輯快照 SHA256：`3bbee44fb39840699d771eb35183a6c3e3898ce54a956a8b3a9a634c5e188d52`。
+
+當時共用 RAM 119 GiB、available 92 GiB、磁碟可用 2.3 TiB，僅是快照。
+此結果不能證明全面交通語意相關性、安全改善或 production memory on 完成。
+跨環境 HTTP 與真實向量跨服務程序重開交由 R7 驗收，不重做權重下載／轉換或套件安裝。
+
 ## R6-06 修正：固定版本的權重格式（2026-11-25）
 
 使用者 Spark 執行 `44abed3` 於 `M20-R6-minilm-acceptance-T2QUMs` 失敗，exit 1、`KeyError: model.safetensors`。失敗在 API 清單選取，尚未下載權重或執行 embedding；當時 available RAM 92 GiB、磁碟 2.3 TiB，不是資源不足。
