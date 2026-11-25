@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "commit": "cd9eef4e396babe7db59720e1bd6f5bb67804bdb",
+  "qwen_calls": 2,
+  "actual_environment_steps": 0,
+  "cases": [
+    {
+      "case": 0,
+      "vehicle_id": 3,
+      "decision": "SLOWER",
+      "action_id": 4,
+      "usage": {
+        "prompt_tokens": 1129,
+        "total_tokens": 1141,
+        "completion_tokens": 12,
+        "completion_tokens_details": null
+      },
+      "finish_reason": "stop",
+      "prompt_sha256": "36197af1e72161bbed075ad5b9f98e8f0df39a4d46fac9986dc2f65c844b7639"
+    },
+    {
+      "case": 1,
+      "vehicle_id": 3,
+      "decision": "FASTER",
+      "action_id": 3,
+      "usage": {
+        "prompt_tokens": 949,
+        "total_tokens": 961,
+        "completion_tokens": 12,
+        "completion_tokens_details": null
+      },
+      "finish_reason": "stop",
+      "prompt_sha256": "a250b0183f7d34e63d166c9bbad0eb9f14dad27b4b561601a97b566f5e3cfb31"
+    }
+  ],
+  "shutdown": {
+    "exited": true,
+    "exit_code": 0,
+    "signal_target": "API parent only",
+    "remaining_known_processes": [],
+    "port_closed": true,
+    "warnings": [],
+    "clean_observation": true
+  },
+  "snapshot_sha256": "24d3717e8019cf575195ffd321945a1d964423444ffe24cb2b2e25a3234c7546",
+  "evidence_sha256": {
+    "git-commit.txt": "aede4f80627fa37d6f46dec4fcf9436217cefe17efdde5efcf322e05f8296d60",
+    "preflight.json": "d223c2e73bb11de44961f5bf564b6c93fc85523fa3fd9f4c132f792072fecfbd",
+    "replay-config.json": "12620027c29d374ec9ca5b1b99ad2c30b865620e25e3fe697d6e4d7e2d1048b5",
+    "live/result.json": "e6af90055d69b40bc7540cec0fbe5a9c517a67dc8b9a64f6bc5d3f74f50b98f9",
+    "live/traffic/result.json": "00ffb14b39d90180ef687561908858a31091712768c032ce207109dd8a24987e"
+  },
+  "limitation": "Two frozen real retrieval prompts; no online retrieval or traffic/safety validation. Shutdown fields verified in result.json, raw server console not supplied."
+}

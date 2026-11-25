@@ -1,5 +1,24 @@
 # M21-R3：兩筆真檢索 prompt 的零步進 Qwen 回答驗收
 
+## Spark 成功回傳與原檔審查（M21-R3-06）
+
+使用者 console：tokenizer preflight PASS [1129,949]、responses_validated、exit 0。
+結果根目錄 `/home/nclab/Yizhen/runs/M21-R3-memory-qwen-I5UuWn`，live run `20261125T064939Z-64014598`。
+已審閱本地 [五份回傳檔案](../../../../runs/m21-r3/)，使用 [audit_returned.py](./audit_returned.py) 核對，exit 0；詳細證據 SHA256 見 [spark-audit.json](./spark-audit.json)。
+
+- commit：cd9eef4e396babe7db59720e1bd6f5bb67804bdb，外層與根目錄紀錄一致。
+- 配置三份 R2 證據 hash 與先前已審查原檔一致；config hash 與 preflight／traffic 紀錄一致。
+- 兩次 messages／memory_receipt 與 R2 原紀錄逐字一致；原 M16 來源 hash、vehicle_id=3 及當時 available_actions 亦核對相同。
+- 案例 0：SLOWER、action_id=4；strict 重解析相符。API usage input=1129、output=12、total=1141。
+- 案例 1：FASTER、action_id=3；strict 重解析相符。API usage input=949、output=12、total=961；該案例 available_actions 僅 IDLE／FASTER，回答合法。
+- 兩次模型名稱均為指定官方 Qwen3-30B-A3B-Instruct-2507-FP8，finish_reason=stop、無 refusal，API message.content 與 raw_response 相同。API prompt_tokens 與 fresh tokenizer 完整計數一致。
+- 外層 responses_validated、traffic memory_responses_validated、qwen_calls=2、actual_environment_steps=0；無 apply-step／project-entry，啟動參數與既有基線一致。
+- shutdown：exited=true、exit_code=0、signal_target=API parent only、remaining_known_processes=[]、port_closed=true、warnings=[]、clean_observation=true。
+
+本地 audit 初次因 Windows Path 將 Linux 常數轉為反斜線，導致 launch args 比較不符；已僅在 audit 的預期 path 字串轉回 `/`，未改 Spark 命令或放寬啟動參數。最終 audit 通過。原 server-console 未回傳，以上停服結論依 result.json 中管理器的觀察欄位，不宣稱已獨立逐行審查伺服器 log。
+
+本節取代以下建立時「Spark 待執行」狀態。本關證據齊全，不需再補檔或重跑。SLOWER／FASTER 與原 off fixture 動作相同也不能證明記憶有效或無效：沒有控制對照、交通步進或因果辨認。下一步應接正式即時檢索的配置／每回合生命週期與完整 token 檢查，再處理 M22 原版逐車步前更新；本次未自動開放 production on。
+
 2026-11-25。配置、來源 guard、tokenizer preflight、真回答驗收入口及本地替身測試已實作；Spark 尚待使用者手動執行。正式 memory off、factory on 拒絕、run_step fixture-only gate 均未修改；未接 M22 更新。
 
 ## 基線與編號
