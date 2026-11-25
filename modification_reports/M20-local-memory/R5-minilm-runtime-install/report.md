@@ -2,6 +2,19 @@
 
 日期：2026-11-25。狀態：安裝／驗收腳本與本地 guard 測試完成；Spark 安裝與 imports／CPU tensor／Chroma 回歸尚待使用者手動執行。沒有下載／載入 MiniLM，沒有進入 M21。
 
+## Spark 實測補記（M20-R5-04）
+
+建立報告時的待執行項目，已由 [使用者 step5 console](../../../../spark相關console/memory%20on前置作業%20step5%20console.txt) 驗證。Spark 版本 6372f98eb068d5f9a7774b4f1d0e56ff4904173b；結果目錄 /home/nclab/Yizhen/runs/M20-R5-minilm-runtime-jhL8nq。
+
+- before／after／runtime 三階段 status=PASS；原 80 個套件版本保持不變，新增固定 9 個套件。
+- pip check：Checked 89 packages，All installed packages are compatible。
+- torch=2.9.1+cpu，cuda_build=null，device=cpu；2×2 tensor 結果 [[7.0,10.0],[15.0,22.0]] 正確。
+- AutoModel／AutoTokenizer／BertModel／safetensors 匯入成功；沒有實例化 pretrained 模型。
+- Chroma 回歸 14/14 全部通過（1.955 秒），含跨程序重開及原 metadata 欄位對照。最後 runtime: PASS，exit 0。
+- MiniLM 權重仍未下載／載入，沒有 CPU embedding 延遲與真實文字檢索品質證據。當時 RAM available 約 92 GiB、磁碟可用約 2.3 TiB，僅快照。
+
+環境建置階段到此通過，不再重做相同安裝。M20 剩餘兩個驗收範圍為：固定 revision 權重核驗＋真 embedding／Chroma 原模板往返與相關性，以及跨環境 memory service HTTP 接線驗證。前者可合併下載後的離線測試，後者需程式實作；不能把現有 embedding-only HTTP 誤稱已完成 memory service。M21 prompt 注入、M22 更新流程及 M23 真 Qwen 短程驗收仍未完成。
+
 ## 基線與編號
 
 R4 step4 console 已確認 dry-run 成功、80 個 Chroma baseline 套件維持原版本，新增 9 個套件相依可解析。遠端規劃目錄 /home/nclab/Yizhen/runs/M20-R4-minilm-plan-EbHo7u。本次不重新選版本、不重做 HNSW 編譯。
