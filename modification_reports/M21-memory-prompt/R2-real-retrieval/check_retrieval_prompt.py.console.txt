@@ -1,0 +1,11 @@
+test_budget_zero_preserves_base_and_all_attempts (__main__.Tests.test_budget_zero_preserves_base_and_all_attempts) ... ok
+test_changed_candidates_or_unknown_message_hash_stop (__main__.Tests.test_changed_candidates_or_unknown_message_hash_stop) ... ok
+test_encoder_failure_stops_no_write (__main__.Tests.test_encoder_failure_stops_no_write) ... ok
+test_http_and_text_limits_reject_without_writing (__main__.Tests.test_http_and_text_limits_reject_without_writing) ... ok
+test_http_chroma_candidates_to_count_map_to_prompt (__main__.Tests.test_http_chroma_candidates_to_count_map_to_prompt) ... ok
+test_syntax_and_imports (__main__.Tests.test_syntax_and_imports) ... ok
+System.Management.Automation.RemoteException
+----------------------------------------------------------------------
+Ran 6 tests in 3.144s
+System.Management.Automation.RemoteException
+OK

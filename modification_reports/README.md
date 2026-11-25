@@ -50,3 +50,5 @@ M20-R7：[跨環境 localhost memory HTTP](./M20-local-memory/R7-memory-http/rep
 M21-R1：[原格式 CAV 記憶注入接點](./M21-memory-prompt/R1-reference-injection/report.md)；fixture-only 檢索接點、原呈現文字與完整 token 預算，本地 39 項通過；Spark tokenizer-only 保存 prompt 重播待驗。正式 off／factory on 拒絕維持，未實作 M22 更新。
 
 M21-R1 最新審查：回傳原檔已核對，101 份 M16 source hash／404 份 action prompt 全部一致；404/404 保留兩筆合成記憶、零排除，最大 1129＋256=1385 tokens。Spark tokenizer-only PASS，不代表真檢索或 live memory on 完成。
+
+M21-R2：[真檢索→完整 prompt 隔離驗收](./M21-memory-prompt/R2-real-retrieval/report.md)；新 schema 測試庫、實際 MiniLM／Chroma 候選與 Qwen tokenizer 跨環境計數腳本已實作，本地替身通過，Spark 待手動驗收。正式 off／fixture-only gate／M22 更新未改。

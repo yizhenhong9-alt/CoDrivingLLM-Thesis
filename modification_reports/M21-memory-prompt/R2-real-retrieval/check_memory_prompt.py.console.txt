@@ -1,0 +1,14 @@
+test_bad_original_fields_and_boundary_rejected (__main__.Tests.test_bad_original_fields_and_boundary_rejected) ... ok
+test_budget_drops_whole_last_candidate_only (__main__.Tests.test_budget_drops_whole_last_candidate_only) ... ok
+test_empty_still_original_ending_and_zero_recorded (__main__.Tests.test_empty_still_original_ending_and_zero_recorded) ... ok
+test_fixture_orchestration_negotiation_unchanged_no_step_or_write (__main__.Tests.test_fixture_orchestration_negotiation_unchanged_no_step_or_write) ... ok
+test_original_query_and_format_exact (__main__.Tests.test_original_query_and_format_exact) ... ok
+test_oversize_and_invalid_counter_fail (__main__.Tests.test_oversize_and_invalid_counter_fail) ... ok
+test_python38_no_ml (__main__.Tests.test_python38_no_ml) ... ok
+test_readonly_manifest_snapshot_and_errors (__main__.Tests.test_readonly_manifest_snapshot_and_errors) ... ok
+test_saved_prompt_replay_and_source_rejection (__main__.Tests.test_saved_prompt_replay_and_source_rejection) ... ok
+System.Management.Automation.RemoteException
+----------------------------------------------------------------------
+Ran 9 tests in 0.023s
+System.Management.Automation.RemoteException
+OK
