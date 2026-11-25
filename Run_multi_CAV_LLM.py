@@ -127,6 +127,8 @@ def main(argv=None):
     parser.add_argument("--max-steps", type=int, default=1)
     parser.add_argument("--wall-seconds", type=float, default=1800)
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument('--memory', choices=('off', 'on'), default='off')
+    parser.add_argument('--memory-config', type=Path)
     args = parser.parse_args(argv)
     if args.backend == "legacy":
         # Preserve original 100-episode cloud/video/Excel behavior.
@@ -140,6 +142,10 @@ def main(argv=None):
         return legacy_main()
     if args.output_dir is None:
         parser.error("Qwen requires --output-dir under /home/nclab/Yizhen")
+    if args.memory == 'on' and (args.memory_config is None or args.parser != 'strict'):
+        parser.error('memory on requires explicit --memory-config and strict parser')
+    if args.memory == 'off' and args.memory_config is not None:
+        parser.error('Omit --memory-config with memory off')
     from llm_controller.qwen_episode import main as qwen_main
     return qwen_main(args)
 

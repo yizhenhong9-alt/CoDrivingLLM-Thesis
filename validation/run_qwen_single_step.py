@@ -49,9 +49,13 @@ def main():
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument('--memory-config', type=Path,
                         help='Explicit M21-R4 readonly session; zero-step strict validation only')
+    parser.add_argument('--memory', choices=('off', 'on'), default='off',
+                        help='on follows original retrieval and per-vehicle pre-step update')
     args = parser.parse_args()
     if args.memory_config is not None and (args.apply_step or args.parser != 'strict' or args.max_tokens != 256):
         parser.error('Memory validation requires strict, max-tokens=256, and no apply-step')
+    if args.memory == 'on' and args.memory_config is None:
+        parser.error('memory on requires --memory-config')
     if args.apply_step and args.mode != "live":
         parser.error("Fixtures cannot be applied to traffic")
     if os.name == "posix":
@@ -98,13 +102,21 @@ def main():
                     for target in ("socket.socket.connect", "socket.socket.connect_ex", "socket.create_connection"):
                         stack.enter_context(patch(target, block_network))
                 else:
-                    from llm_controller.memory_session import OnlineMemorySession
-                    memory_session = OnlineMemorySession.from_file(args.memory_config)
+                    if args.memory == 'on':
+                        from llm_controller.original_memory import OriginalMemorySession
+                        memory_session = OriginalMemorySession.from_file(args.memory_config)
+                    else:
+                        from llm_controller.memory_session import OnlineMemorySession
+                        memory_session = OnlineMemorySession.from_file(args.memory_config)
                     allow_memory_only(stack, memory_session.config['port'])
             if args.memory_config is not None:
                 from llm_controller.memory_session import OnlineMemorySession
                 if memory_session is None:
-                    memory_session = OnlineMemorySession.from_file(args.memory_config)
+                    if args.memory == 'on':
+                        from llm_controller.original_memory import OriginalMemorySession
+                        memory_session = OriginalMemorySession.from_file(args.memory_config)
+                    else:
+                        memory_session = OnlineMemorySession.from_file(args.memory_config)
                 stack.enter_context(memory_session)
             import gym
             import highway_env

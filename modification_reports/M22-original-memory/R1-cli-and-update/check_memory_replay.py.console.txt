@@ -1,0 +1,15 @@
+test_artifact_path_escape_rejected (__main__.Tests.test_artifact_path_escape_rejected) ... ok
+test_bad_response_preserved_stops_no_retry (__main__.Tests.test_bad_response_preserved_stops_no_retry) ... ok
+test_bundle_two_exact_requests_strict_actions_zero_steps (__main__.Tests.test_bundle_two_exact_requests_strict_actions_zero_steps) ... ok
+test_hash_or_manifest_changed_rejected (__main__.Tests.test_hash_or_manifest_changed_rejected) ... ok
+test_python38_and_no_ml (__main__.Tests.test_python38_and_no_ml) ... ok
+test_replay_command_strict_no_step_only (__main__.Tests.test_replay_command_strict_no_step_only) ... ok
+test_result_cannot_claim_steps_or_missing_parsing (__main__.Tests.test_result_cannot_claim_steps_or_missing_parsing) ... ok
+test_source_changed_rejected (__main__.Tests.test_source_changed_rejected) ... ok
+test_token_count_changed_rejected (__main__.Tests.test_token_count_changed_rejected) ... ok
+test_transport_timeout_stops_without_second_request (__main__.Tests.test_transport_timeout_stops_without_second_request) ... ok
+System.Management.Automation.RemoteException
+----------------------------------------------------------------------
+Ran 10 tests in 0.196s
+System.Management.Automation.RemoteException
+OK

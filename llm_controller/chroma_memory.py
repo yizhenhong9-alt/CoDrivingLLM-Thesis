@@ -157,6 +157,13 @@ class ChromaMemoryStore:
         # Deterministic order within returned candidates; HNSW boundary ties may differ.
         return sorted(rows, key=lambda row: (-row['score'], row['id']))
 
+    def count(self):
+        self._check()
+        count = self.collection.count()
+        if type(count) is not int or count < 0:
+            raise ValueError('Invalid Chroma record count')
+        return count
+
     def snapshot_sha256(self):
         """Logical snapshot; stop writers before calling for experiment evidence."""
         self._check()

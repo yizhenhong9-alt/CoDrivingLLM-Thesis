@@ -43,6 +43,9 @@ def make_handler(expected, memory, count_messages=None):
                     body.update(writable=memory.store.writable,
                                 snapshot_sha256=memory.store.snapshot_sha256())
                     body['tokenizer'] = QWEN_TOKENIZER if count_messages is not None else None
+                    path = getattr(memory.store, 'path', None)
+                    body['store_path_sha256'] = text_hash(path.as_posix()) if path is not None else None
+                    body['count'] = memory.store.count() if hasattr(memory.store, 'count') else None
                 elif self.path == '/count':
                     if count_messages is None:
                         raise ValueError('Qwen tokenizer not enabled')

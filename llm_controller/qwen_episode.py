@@ -6,6 +6,7 @@ import subprocess
 import sys
 import time
 import traceback
+from contextlib import ExitStack
 from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
@@ -86,13 +87,15 @@ class BudgetTransport:
 
 def run_episode(env, negotiation_cls, action_cls, transport, folder, *,
                 parser_mode, episode_id, max_steps, persist_summary, summary,
-                snapshot=state):
+                snapshot=state, memory_prompt=None):
     """Production loop, also exercised using test doubles without GPU/simulator."""
     steps = []
     summary.update(status="running", actual_environment_steps=0, step_files=[])
     for index in range(max_steps):
         step = dict(episode_id=episode_id, step_id=index, status="initializing",
                     initial_vehicles=snapshot(env), calls=[])
+        if memory_prompt is not None:
+            step['git_commit'] = summary.get('git_commit', 'unavailable')
         steps.append(step)
         path = folder / ("step-{:04d}.json".format(index))
         summary["step_files"].append(path.name)
@@ -100,7 +103,7 @@ def run_episode(env, negotiation_cls, action_cls, transport, folder, *,
         try:
             run_step(env, negotiation_cls(env), action_cls(env), transport, step,
                      parser_mode=parser_mode, episode_id=episode_id, step_id=index,
-                     apply_step=True, persist=lambda value: save(path, value))
+                     apply_step=True, persist=lambda value: save(path, value), memory_prompt=memory_prompt)
         except BaseException:
             step.update(status="failed", error=traceback.format_exc())
             summary["status"] = "failed"
@@ -154,6 +157,8 @@ def main(args):
                    entry_point="Run_multi_CAV_LLM.py", seed=args.seed,
                    parser_mode=args.parser, memory_mode="off", settings=vars(args).copy())
     summary["settings"]["output_dir"] = str(args.output_dir)
+    if getattr(args, 'memory_config', None) is not None:
+        summary['settings']['memory_config'] = str(args.memory_config)
     sources = list((ROOT/"llm_controller").glob("*.py"))+[ROOT/"Run_multi_CAV_LLM.py"]
     summary["source_sha256"] = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                                 for p in sources}
@@ -162,9 +167,15 @@ def main(args):
                                       cwd=str(ROOT), capture_output=True, text=True, check=True).stdout.strip()
     persist = lambda value: save(folder/"result.json", value)
     persist(summary)
-    env = None
+    env, memory_session = None, None
+    memory_scope = ExitStack()
     code = 0
     try:
+        if getattr(args, 'memory', 'off') == 'on':
+            from .memory_mode import create_memory
+            memory_session = memory_scope.enter_context(create_memory(None, 'on', args.memory_config))
+            summary.update(memory_mode='on', memory_session=memory_session.receipt,
+                           memory_method='original-per-vehicle-pre-step')
         # Preflight before constructing a simulation or calling an agent.
         transport = BudgetTransport(LocalQwen(), args.wall_seconds)
         summary["model_preflight"] = transport.preflight()
@@ -181,11 +192,17 @@ def main(args):
         summary["config"] = json_value(env.config)
         run_episode(env, LlmAgent_negotiation_module, LlmAgent_action_module,
                     transport, folder, parser_mode=args.parser, episode_id=episode,
-                    max_steps=args.max_steps, persist_summary=persist, summary=summary)
+                    max_steps=args.max_steps, persist_summary=persist, summary=summary,
+                    memory_prompt=memory_session)
     except (Exception, KeyboardInterrupt):
         summary.update(status="failed", error=traceback.format_exc())
         code = 1
     finally:
+        try:
+            memory_scope.close()
+        except Exception:
+            summary.update(status='failed', memory_close_error=traceback.format_exc())
+            code = 1
         summary["memory_module_imported"] = "llm_controller.memory" in sys.modules
         if env is not None:
             summary["actual_environment_steps"] = env.steps

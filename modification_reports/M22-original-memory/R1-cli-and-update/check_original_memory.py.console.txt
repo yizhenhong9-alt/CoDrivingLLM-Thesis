@@ -1,0 +1,41 @@
+test_all_writes_before_env_step (__main__.Tests.test_all_writes_before_env_step) ... ok
+test_bad_relation_rejects_before_write (__main__.Tests.test_bad_relation_rejects_before_write) ... ok
+test_cli_only_off_on_and_no_write_switch (__main__.Tests.test_cli_only_off_on_and_no_write_switch) ... usage: check_original_memory.py [-h] --backend {qwen,legacy}
+                                [--parser {strict,legacy}] [--seed SEED]
+                                [--max-steps MAX_STEPS]
+                                [--wall-seconds WALL_SECONDS]
+                                [--output-dir OUTPUT_DIR] [--memory {off,on}]
+                                [--memory-config MEMORY_CONFIG]
+check_original_memory.py: error: memory on requires explicit --memory-config and strict parser
+usage: check_original_memory.py [-h] --backend {qwen,legacy}
+                                [--parser {strict,legacy}] [--seed SEED]
+                                [--max-steps MAX_STEPS]
+                                [--wall-seconds WALL_SECONDS]
+                                [--output-dir OUTPUT_DIR] [--memory {off,on}]
+                                [--memory-config MEMORY_CONFIG]
+check_original_memory.py: error: Omit --memory-config with memory off
+usage: check_original_memory.py [-h] --backend {qwen,legacy}
+                                [--parser {strict,legacy}] [--seed SEED]
+                                [--max-steps MAX_STEPS]
+                                [--wall-seconds WALL_SECONDS]
+                                [--output-dir OUTPUT_DIR] [--memory {off,on}]
+                                [--memory-config MEMORY_CONFIG]
+check_original_memory.py: error: unrecognized arguments: --memory-write off
+ok
+test_duplicate_id_fails_without_overwriting (__main__.Tests.test_duplicate_id_fails_without_overwriting) ... ok
+test_empty_then_same_step_visibility_and_shared_next_episode (__main__.Tests.test_empty_then_same_step_visibility_and_shared_next_episode) ... ok
+Step 0: single_step_complete; actions=[{'vehicle_id': 3, 'action_id': 1}, {'vehicle_id': 4, 'action_id': 1}]
+Step 1: single_step_complete; actions=[{'vehicle_id': 3, 'action_id': 1}, {'vehicle_id': 4, 'action_id': 1}]
+test_episode_uses_one_session_across_steps (__main__.Tests.test_episode_uses_one_session_across_steps) ... ok
+test_fixture_cannot_write_production_store (__main__.Tests.test_fixture_cannot_write_production_store) ... ok
+test_four_vehicle_acceptance_validator_and_two_scopes (__main__.Tests.test_four_vehicle_acceptance_validator_and_two_scopes) ... ok
+test_later_invalid_reply_keeps_prior_write_no_step (__main__.Tests.test_later_invalid_reply_keeps_prior_write_no_step) ... ok
+test_original_metadata_and_heuristic_preserved (__main__.Tests.test_original_metadata_and_heuristic_preserved) ... ok
+test_payload_matches_original_r2 (__main__.Tests.test_payload_matches_original_r2) ... ok
+test_python38_no_ml (__main__.Tests.test_python38_no_ml) ... ok
+test_write_failure_not_success_or_retried (__main__.Tests.test_write_failure_not_success_or_retried) ... ok
+System.Management.Automation.RemoteException
+----------------------------------------------------------------------
+Ran 13 tests in 8.465s
+System.Management.Automation.RemoteException
+OK

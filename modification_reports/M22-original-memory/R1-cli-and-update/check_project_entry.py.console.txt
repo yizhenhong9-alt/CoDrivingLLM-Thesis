@@ -1,0 +1,21 @@
+test_changed_python_files_accept_python38_grammar (__main__.ProjectEntryTests.test_changed_python_files_accept_python38_grammar) ... ok
+test_cloud_sdk_is_loaded_only_when_legacy_client_is_called (__main__.ProjectEntryTests.test_cloud_sdk_is_loaded_only_when_legacy_client_is_called) ... ok
+test_deadline_blocks_request (__main__.ProjectEntryTests.test_deadline_blocks_request) ... ok
+test_entry_import_is_free_of_cloud_simulator_and_execution (__main__.ProjectEntryTests.test_entry_import_is_free_of_cloud_simulator_and_execution) ... ok
+test_fixture_cannot_advance_production_loop (__main__.ProjectEntryTests.test_fixture_cannot_advance_production_loop) ... ok
+test_http_error_is_not_counted_as_valid_response (__main__.ProjectEntryTests.test_http_error_is_not_counted_as_valid_response) ... ok
+test_legacy_counts_use_selected_parser (__main__.ProjectEntryTests.test_legacy_counts_use_selected_parser) ... ok
+test_second_step_bad_vehicle_stops_and_preserves_raw (__main__.ProjectEntryTests.test_second_step_bad_vehicle_stops_and_preserves_raw) ... Step 0: single_step_complete; actions=[{'vehicle_id': 3, 'action_id': 1}, {'vehicle_id': 4, 'action_id': 1}]
+ok
+test_terminal_stops_without_extra_request (__main__.ProjectEntryTests.test_terminal_stops_without_extra_request) ... Step 0: single_step_complete; actions=[{'vehicle_id': 3, 'action_id': 1}, {'vehicle_id': 4, 'action_id': 1}]
+ok
+test_three_real_loop_iterations_stop_at_limit (__main__.ProjectEntryTests.test_three_real_loop_iterations_stop_at_limit) ... Step 0: single_step_complete; actions=[{'vehicle_id': 3, 'action_id': 1}, {'vehicle_id': 4, 'action_id': 1}]
+Step 1: single_step_complete; actions=[{'vehicle_id': 3, 'action_id': 1}, {'vehicle_id': 4, 'action_id': 1}]
+Step 2: single_step_complete; actions=[{'vehicle_id': 3, 'action_id': 1}, {'vehicle_id': 4, 'action_id': 1}]
+ok
+test_wrapper_targets_actual_main_file (__main__.ProjectEntryTests.test_wrapper_targets_actual_main_file) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.143s
+
+OK

@@ -153,24 +153,34 @@ def parent_only_stop(proc, wait_seconds=120):
 
 
 def traffic_args(folder, parser_mode, seed, *, apply_step=False, project_entry=False,
-                 max_steps=1, wall_seconds=1800, memory_replay_config=None):
+                 max_steps=1, wall_seconds=1800, memory_replay_config=None,
+                 memory='off', memory_config=None):
+    if memory not in ('off', 'on') or (memory == 'on' and (memory_config is None or parser_mode != 'strict')):
+        raise ValueError('Explicit original memory on configuration required')
+    if memory == 'off' and memory_config is not None:
+        raise ValueError('memory off must omit memory config')
     if memory_replay_config is not None:
-        if apply_step or project_entry or parser_mode != 'strict':
+        if apply_step or project_entry or parser_mode != 'strict' or memory != 'off':
             raise ValueError('Memory replay is strict and never steps')
         return [str(SIMULATION), '-B', str(ROOT/'validation/run_memory_prompt_replay.py'),
                 '--config', str(memory_replay_config), '--output-dir', str(folder/'traffic')]
     if project_entry:
         if apply_step:
             raise ValueError("Project entry applies steps itself; omit --apply-step")
-        return [str(SIMULATION), "-B", str(ROOT / "Run_multi_CAV_LLM.py"),
+        command = [str(SIMULATION), "-B", str(ROOT / "Run_multi_CAV_LLM.py"),
                 "--backend", "qwen", "--parser", parser_mode, "--seed", str(seed),
                 "--max-steps", str(max_steps), "--wall-seconds", str(wall_seconds),
                 "--output-dir", str(folder / "traffic")]
+        if memory == 'on':
+            command += ['--memory', 'on', '--memory-config', str(memory_config)]
+        return command
     command = [str(SIMULATION), "-B", str(ROOT / "validation/run_qwen_single_step.py"),
             "--mode", "live", "--parser", parser_mode, "--seed", str(seed),
             "--output-dir", str(folder / "traffic"), "--max-tokens", "256"]
     if apply_step:
         command.append("--apply-step")
+    if memory == 'on':
+        command += ['--memory', 'on', '--memory-config', str(memory_config)]
     return command
 
 
@@ -240,7 +250,17 @@ def main():
     parser.add_argument("--wall-seconds", type=float, default=1800)
     parser.add_argument('--memory-replay-config', type=Path,
                         help='M21-R3 frozen test prompts only; no simulator/step')
+    parser.add_argument('--memory', choices=('off', 'on'), default='off')
+    parser.add_argument('--memory-config', type=Path)
     args = parser.parse_args()
+    if args.memory == 'on':
+        if args.memory_config is None or args.parser != 'strict' or args.memory_replay_config is not None or args.apply_step:
+            parser.error('Original memory on requires config/strict; use zero-step or bounded project entry')
+        from llm_controller.original_memory import OriginalMemorySession
+        # Validate configuration before model start, without writing or opening a scope.
+        OriginalMemorySession.from_file(args.memory_config).close()
+    elif args.memory_config is not None:
+        parser.error('Omit memory config with memory off')
     if args.memory_replay_config is not None:
         if args.project_entry or args.apply_step or args.parser != 'strict':
             parser.error('Memory replay requires strict parser and zero-step mode')
@@ -269,6 +289,9 @@ def main():
                   apply_step=args.apply_step, observed_environment_steps=None,
                   seed=args.seed, parser_mode=args.parser, model_started=False)
     report["project_entry"] = args.project_entry
+    report['memory_mode'] = args.memory
+    if args.memory == 'on' and not args.project_entry:
+        report['scope'] = 'M22 original per-vehicle retrieval and writes; real replies, no env.step'
     if args.memory_replay_config is not None:
         report['scope'] = 'M21-R3 two frozen real-retrieval prompts; no simulator or env.step'
         report['memory_replay_config'] = str(args.memory_replay_config)
@@ -357,6 +380,10 @@ def main():
             command = traffic_args(folder, args.parser, args.seed, apply_step=args.apply_step,
                                    project_entry=args.project_entry, max_steps=args.max_steps,
                                    wall_seconds=args.wall_seconds, memory_replay_config=args.memory_replay_config)
+            if args.memory == 'on':
+                command = traffic_args(folder, args.parser, args.seed, project_entry=args.project_entry,
+                    max_steps=args.max_steps, wall_seconds=args.wall_seconds,
+                    memory='on', memory_config=args.memory_config)
             report["traffic_command"] = command
             with (folder / "traffic-console.txt").open("w", encoding="utf-8") as traffic_console:
                 client = subprocess.Popen(command, cwd=str(ROOT), env=env,
@@ -376,6 +403,15 @@ def main():
             traffic = json.loads(files[0].read_text(encoding="utf-8"))
             report["traffic_report"] = str(files[0])
             report["observed_environment_steps"] = traffic.get("actual_environment_steps")
+            if args.memory == 'on':
+                session = traffic.get('memory_session', {})
+                writes = session.get('writes', 0)
+                if (traffic.get('memory_mode') != 'on' or session.get('closed') is not True or
+                        session.get('final_snapshot_verified') is not True or writes < 1 or
+                        writes != session.get('queries') or
+                        session.get('final_count') != session.get('initial_count', 0)+writes):
+                    raise RuntimeError('Original memory-on session/write verification failed')
+                report['memory_session'] = session
             if args.memory_replay_config is not None:
                 from llm_controller.memory_replay import validate_result
                 if client.returncode != 0:

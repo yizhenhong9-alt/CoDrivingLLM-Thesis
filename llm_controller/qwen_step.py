@@ -42,7 +42,12 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
     if apply_step and transport.mode != "live":
         raise ValueError("Fixture responses must not be applied to traffic")
     if memory_prompt is not None:
-        if apply_step:
+        from .original_memory import OriginalMemorySession
+        original_memory = isinstance(memory_prompt, OriginalMemorySession)
+        if original_memory and (not memory_prompt.active or
+                (transport.mode == 'fixture' and not memory_prompt.config['test_only'])):
+            raise ValueError('Active original session required; fixtures may write only test-only stores')
+        if apply_step and not original_memory:
             raise ValueError('Memory retrieval integration is zero-step pending validation')
         if transport.mode != 'fixture':
             from .memory_session import OnlineMemorySession
@@ -67,6 +72,8 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
                       memory_queries=[])
         if getattr(memory_prompt, 'mode', None) == 'retrieve-only':
             report['prompt_version'] = 'M21-R4-'+parser_mode
+        if getattr(memory_prompt, 'mode', None) == 'on':
+            report.update(prompt_version='M22-original-'+parser_mode, memory_updates=[])
 
     def request(stage, prompt, context):
         entry = {"stage": stage, "messages": [{"role": "system", "content": prompt}],
@@ -189,6 +196,16 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
             raise OutputValidationError("Action rejected: " + selected["error"])
         batch.add(json.dumps({key: selected["value"][key] for key in ("vehicle_id", "decision")}),
                   episode_id=episode_id, step_id=step_id, expected_vehicle_id=vehicle.id)
+        if memory_prompt is not None and getattr(memory_prompt, 'mode', None) == 'on':
+            update = memory_prompt.make_update(action, scenario, selected['value']['action_id'],
+                episode_id=episode_id, step_id=step_id, vehicle_id=vehicle.id,
+                code_commit=report.get('git_commit', 'unavailable'))
+            report['memory_updates'].append(update)
+            persist(report)
+            try:
+                memory_prompt.commit_update(update)
+            finally:
+                persist(report)
     result = batch.finalize(env.controlled_vehicles)
     report["validated_actions"] = result
     report["status"] = "validated_not_applied"
