@@ -68,3 +68,5 @@ M22-R1：[原版逐車步前更新與off/on CLI](./M22-original-memory/R1-cli-an
 M22-R1 最新審查：Spark PASS／exit0，五份回傳檔離線核對通過；空庫起始，逐車查詢前筆數0–7，八次寫入與候選來源／receipt hash／跨scope快照鏈一致，最大1107＋256=1363 tokens。fixture、零Qwen／零步進；尚未正式memory-on seeds。
 
 M22-R2：[真正Qwen＋memory on單步聯測](./M22-original-memory/R2-live-one-step/report.md)；全新空測試庫、seed0、最多一步，沿用原逐車寫入與既有啟停管理器，本地29項通過，Spark待手動執行。未開始正式seeds，預設off維持。
+
+M22-R2 回傳審查：Spark PASS／exit0；真Qwen五次回答、四筆逐車寫入與一次0.2秒步進可得證據核對通過，該步無碰撞，最大1087＋256=1343 tokens。尚缺manager result.json供完整停服與啟動設定審查；不需重跑，未作交通效果結論。
