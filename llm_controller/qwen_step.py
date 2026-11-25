@@ -35,11 +35,14 @@ def _legacy_orders(agent, raw, vehicles, pairs, names):
 
 
 def run_step(env, negotiation, action, transport, report, *, parser_mode,
-             episode_id, apply_step=False, persist=lambda report: None, step_id=0):
+             episode_id, apply_step=False, persist=lambda report: None, step_id=0,
+             memory_prompt=None):
     if parser_mode not in ("legacy", "strict"):
         raise ValueError("Unknown parser mode")
     if apply_step and transport.mode != "live":
         raise ValueError("Fixture responses must not be applied to traffic")
+    if memory_prompt is not None and (transport.mode != 'fixture' or apply_step):
+        raise ValueError('M21-R1 memory prompt integration is fixture-only pending Spark validation')
     if env.spec.id != "intersection-multi-agent-v0":
         raise ValueError("M05 runtime currently supports intersection only")
     if create_memory(env, "off") is not None:
@@ -54,6 +57,9 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
                   environment_steps=0, calls=[], vehicle_identifiers=[
                       {"simulation_id": key, "legacy_label": value} for key, value in names.items()],
                   limitation="Safety formulas/priority unchanged; fixture is not a driving policy")
+    if memory_prompt is not None:
+        report.update(memory_mode='retrieval-only-fixture', prompt_version='M21-R1-'+parser_mode,
+                      memory_queries=[])
 
     def request(stage, prompt, context):
         entry = {"stage": stage, "messages": [{"role": "system", "content": prompt}],
@@ -149,6 +155,10 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
             prompt += '\nOutput Final Answer: "decision": {"<ONE available action>"}'
         prompt += "\nYour simulation vehicle ID: {}. Available actions: {}".format(
             vehicle.id, json.dumps(available[vehicle.id]))
+        if memory_prompt is not None:
+            prompt, memory_receipt = memory_prompt.prepare(scenario, prompt)
+            report['memory_queries'].append(dict(vehicle_id=vehicle.id, **memory_receipt))
+            persist(report)
         raw, entry = request("action", prompt, {"vehicle_id": vehicle.id,
                                                "available_actions": available[vehicle.id]})
 

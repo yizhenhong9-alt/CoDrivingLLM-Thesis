@@ -44,3 +44,7 @@ M20 最新狀態（歷史段落保留）：R5 已在 Spark 通過，89 套件基
 M20-R6：[固定 MiniLM 真向量驗收](./M20-local-memory/R6-minilm-embedding-acceptance/report.md)；e267270 Spark PASS／exit 0，來源 hash、受限 CPU 轉換、兩筆原模板 metadata／top-1／same-process reopen 通過；不代表全面交通語意或 production on 完成。
 
 M20-R7：[跨環境 localhost memory HTTP](./M20-local-memory/R7-memory-http/report.md)；單一 encode→Chroma 服務與 Python 3.8 stdlib client、隔離跨程序驗收已實作，本地替身通過；Spark 手動驗收待執行，正式 memory off／M21／M22 尚未改。
+
+最新回傳：R7 Spark create／reopen PASS、exit 0，兩階段快照相同；證據與範圍見 R7 報告補記。
+
+M21-R1：[原格式 CAV 記憶注入接點](./M21-memory-prompt/R1-reference-injection/report.md)；fixture-only 檢索接點、原呈現文字與完整 token 預算，本地 39 項通過；Spark tokenizer-only 保存 prompt 重播待驗。正式 off／factory on 拒絕維持，未實作 M22 更新。

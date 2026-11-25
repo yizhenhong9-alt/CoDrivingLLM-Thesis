@@ -1,5 +1,14 @@
 # M20-R7：跨環境 loopback memory 服務
 
+## Spark 成功回傳補記（M20-R7-06，2026-11-25）
+
+使用者於聊天回傳驗收 console：status=PASS、client Python 3.8.20，create／reopen 均 PASS，exit 0。
+結果目錄 `/home/nclab/Yizhen/runs/M20-R7-memory-http-sLqgva`；兩階段 snapshot SHA256 均為
+`7d9c74bc37bf48becd61104890ad8c8c3d6f45ab0b8fdf8b238a934a69466ed0`。
+依已提交腳本的檢查可確認 Python 3.8→3.12 HTTP、兩筆測試資料往返、跨服務程序重開及唯讀拒寫通過。
+目前證據是使用者貼回 console，未取得該 run 的 git-commit.txt、acceptance.json 原檔或兩份 service-console；不自行填入未核對的遠端 commit 或宣稱已審閱這些檔案。
+此結果取代下文建立時「Spark 待驗收」狀態；仍不代表全面交通語意、安全改善或 production memory on 完成。
+
 日期：2026-11-25。程式與 Windows stdlib 替身驗證完成；Spark Python 3.8→3.12 真整合待使用者手動執行。正式 memory off、factory on 拒絕狀態與駕駛流程均未修改。
 
 ## 基線與編號

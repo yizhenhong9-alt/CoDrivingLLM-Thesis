@@ -1,0 +1,53 @@
+﻿{
+    "python":  "3.13.13",
+    "platform":  "Windows",
+    "passed":  39,
+    "skipped":  0,
+    "spark_executed":  false,
+    "model_or_tokenizer_loaded":  false,
+    "tests":  [
+                  {
+                      "test":  "check_memory_prompt.py",
+                      "passed":  9,
+                      "exit_code":  0
+                  },
+                  {
+                      "test":  "check_memory_off.py",
+                      "passed":  5,
+                      "exit_code":  0
+                  },
+                  {
+                      "test":  "check_qwen_single_step.py",
+                      "passed":  14,
+                      "exit_code":  0
+                  },
+                  {
+                      "test":  "check_project_entry.py",
+                      "passed":  11,
+                      "exit_code":  0
+                  }
+              ],
+    "source_hashes":  [
+                          {
+                              "file":  "llm_controller/memory_prompt.py",
+                              "sha256":  "55be194dfa094a62b46298ff63ebedc734004b73771299650736c9b307937a15"
+                          },
+                          {
+                              "file":  "llm_controller/qwen_step.py",
+                              "sha256":  "4a2ec5482b38baadb5ddef4c4f1e26e1907a31aaae819bdd14f51cb7bfe17a92"
+                          },
+                          {
+                              "file":  "validation/check_memory_prompt.py",
+                              "sha256":  "b19e27506929b6c20a0ba09af6ecc3e4e05c8fdd201518a5948d8b5e29e28b87"
+                          },
+                          {
+                              "file":  "validation/accept_memory_prompt.py",
+                              "sha256":  "6ef6d731999c1d6dd6c19a8a661b65f03465f132c7a447f8241f8a8f31a9e555"
+                          },
+                          {
+                              "file":  "validation/accept_memory_prompt.sh",
+                              "sha256":  "c2aaebbeb9641f22468ff24a77a846b7a3856e21a8335501be35f539e082d0a7"
+                          }
+                      ],
+    "note":  "Summary of executed commands; no raw console file captured in this phase. Initial unequal-state fixture comparison failed and was corrected; see report."
+}
