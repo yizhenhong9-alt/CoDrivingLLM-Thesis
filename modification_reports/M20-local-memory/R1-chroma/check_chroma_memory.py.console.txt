@@ -1,0 +1,18 @@
+﻿test_backend_failure_releases_owned_lock (__main__.ChromaTests.test_backend_failure_releases_owned_lock) ... ok
+test_duplicate_is_rejected_before_backend_add (__main__.ChromaTests.test_duplicate_is_rejected_before_backend_add) ... ok
+test_empty_small_corpus_and_invalid_inputs (__main__.ChromaTests.test_empty_small_corpus_and_invalid_inputs) ... ok
+test_invalid_query_response_is_rejected (__main__.ChromaTests.test_invalid_query_response_is_rejected) ... ok
+test_lazy_import_python38_and_path_boundary (__main__.ChromaTests.test_lazy_import_python38_and_path_boundary) ... ok
+test_manifest_and_metric_mismatch (__main__.ChromaTests.test_manifest_and_metric_mismatch) ... ok
+test_no_overwrite_and_missing_path (__main__.ChromaTests.test_no_overwrite_and_missing_path) ... ok
+test_readonly_is_adapter_guard (__main__.ChromaTests.test_readonly_is_adapter_guard) ... ok
+test_real_chroma_persistence_with_synthetic_vectors (__main__.ChromaTests.test_real_chroma_persistence_with_synthetic_vectors) ... skipped 'Real Chroma test is manual Spark-only; use --real-chroma'
+test_roundtrip_and_explicit_embeddings (__main__.ChromaTests.test_roundtrip_and_explicit_embeddings) ... ok
+test_sqlite_candidate_parity_for_fixture (__main__.ChromaTests.test_sqlite_candidate_parity_for_fixture) ... ok
+test_text_adapter_uses_local_encoder (__main__.ChromaTests.test_text_adapter_uses_local_encoder) ... ok
+test_writer_lock_and_closed_guard (__main__.ChromaTests.test_writer_lock_and_closed_guard) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.113s
+
+OK (skipped=1)

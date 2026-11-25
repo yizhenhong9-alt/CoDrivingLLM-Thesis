@@ -1,0 +1,33 @@
+﻿{
+    "date":  "2026-11-24",
+    "head":  "a669568cfbe07fef08dbd44d2b353c78bdba027d",
+    "python":  "3.13.13",
+    "test_results":  [
+                         {
+                             "script":  "validation/check_local_memory.py",
+                             "exit_code":  0,
+                             "console":  "check_local_memory.py.console.txt"
+                         },
+                         {
+                             "script":  "validation/check_memory_off.py",
+                             "exit_code":  0,
+                             "console":  "check_memory_off.py.console.txt"
+                         },
+                         {
+                             "script":  "validation/check_vehicle_actions.py",
+                             "exit_code":  0,
+                             "console":  "check_vehicle_actions.py.console.txt"
+                         }
+                     ],
+    "local_memory_passed":  15,
+    "local_memory_skipped":  1,
+    "memory_off_passed":  5,
+    "vehicle_actions_passed":  13,
+    "model_loaded":  false,
+    "spark_executed":  false,
+    "source_sha256":  {
+                          "llm_controller/local_memory.py":  "39992f26c8bc1a54a2d5f17c287d5a9c5aefbb2ac3bee9cb6c346a7d6f12bea7",
+                          "validation/serve_local_embedding.py":  "e159c18b0344cad195b396e7ca95e55b3ea5fbd3860217891bf793d3354d6ad4",
+                          "validation/check_local_memory.py":  "31314808b180c360182fca5a72b7857daf6da5509f0a1a721db861610993c796"
+                      }
+}

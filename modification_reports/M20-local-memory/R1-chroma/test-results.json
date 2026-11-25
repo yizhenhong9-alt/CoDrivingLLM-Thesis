@@ -1,0 +1,38 @@
+﻿{
+    "date":  "2026-11-25",
+    "head":  "a669568cfbe07fef08dbd44d2b353c78bdba027d",
+    "python":  "3.13.13",
+    "test_results":  [
+                         {
+                             "script":  "validation/check_chroma_memory.py",
+                             "exit_code":  0,
+                             "console":  "check_chroma_memory.py.console.txt"
+                         },
+                         {
+                             "script":  "validation/check_local_memory.py",
+                             "exit_code":  0,
+                             "console":  "check_local_memory.py.console.txt"
+                         },
+                         {
+                             "script":  "validation/check_memory_off.py",
+                             "exit_code":  0,
+                             "console":  "check_memory_off.py.console.txt"
+                         },
+                         {
+                             "script":  "validation/check_vehicle_actions.py",
+                             "exit_code":  0,
+                             "console":  "check_vehicle_actions.py.console.txt"
+                         }
+                     ],
+    "passed":  45,
+    "skipped":  2,
+    "actual_chroma_imported":  false,
+    "model_loaded":  false,
+    "spark_executed":  false,
+    "source_sha256":  {
+                          "llm_controller/chroma_memory.py":  "15b8a722b13090c36929093e14d40e9574ab76f5433cb657f59cad4fe66df9d0",
+                          "llm_controller/local_memory.py":  "39992f26c8bc1a54a2d5f17c287d5a9c5aefbb2ac3bee9cb6c346a7d6f12bea7",
+                          "validation/check_chroma_memory.py":  "b9dcf85a37accdb65c6bbc8d20412f9865b4a3083b2a71fbd8138c9ad8dc485e",
+                          "validation/inspect_memory_runtime.py":  "12904ad5460ab68963e3428f411159f881e6933a2cb1003e9a062d035225f79b"
+                      }
+}

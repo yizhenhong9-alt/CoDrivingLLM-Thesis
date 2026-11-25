@@ -22,3 +22,11 @@
 | M16 | 正式入口一回合實測 | [report.md](./M16-one-episode/report.md) | seed 0 跑完 101 步；505/505 strict 通過、CAV 無碰撞，依原條件推定全車到達出口，正常停服 |
 
 原版 agent 保留；後續真實 Qwen 回覆與 Spark 結果補入各報告，不覆蓋歷史證據。未執行項目不預先宣稱通過。
+
+M17：[離線 prompt 一致性審查](./M17-prompt-consistency-audit/report.md)；404 份 action prompt 中 89 份存在無衝突句與通行建議並存，已提出文字修正範圍，未改正式 prompt／控制行為。
+
+M18：[intersection 20 seeds memory off 審查](./M18-intersection-memory-off-20seeds/report.md)；推定全車無碰撞通行 9/20（45%）、CAV 碰撞 7/20、時間上限 4/20；11625/11625 保存 strict 解析成功，seed 17 停服警告保留。
+
+M19：[memory on 原流程審查與實作範圍](./M19-memory-on-audit/report.md)；原流程與後續 M20–M23 分工，未啟用 memory on。
+
+M20：[本地記憶底層第一版](./M20-local-memory/report.md)；最新 [R1 Chroma 補充](./M20-local-memory/R1-chroma/report.md) 改採本地 embedding＋Chroma 方向，SQLite 保留參考；本地替身通過，Spark 與真 embedding 待驗，正式 memory off 未改。
