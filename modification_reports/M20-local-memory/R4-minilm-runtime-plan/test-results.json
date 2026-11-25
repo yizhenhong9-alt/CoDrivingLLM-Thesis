@@ -1,0 +1,14 @@
+﻿{
+    "date":  "2026-11-25",
+    "python":  "3.13.13",
+    "test":  "validation/check_minilm_plan.py",
+    "exit_code":  0,
+    "passed":  6,
+    "spark_executed":  false,
+    "model_loaded":  false,
+    "source_sha256":  {
+                          "validation/plan_minilm_runtime.py":  "2520b2ffb8e6570d9c8fd9acfc4143d4d6b1fa07ddddf1d20d3baf582f891602",
+                          "validation/plan_minilm_runtime.sh":  "0ba4dfd12da84c3b22ea3334fc6a801a7e72e61a3dcf49df8576ed27f4a1e299",
+                          "validation/check_minilm_plan.py":  "c995f96514d53beceabdfec211521da269ea59c2185cd889379330769d692fb1"
+                      }
+}

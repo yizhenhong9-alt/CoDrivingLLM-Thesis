@@ -1,0 +1,11 @@
+﻿test_exact_baseline_and_normalized_names (__main__.PlanTests.test_exact_baseline_and_normalized_names) ... ok
+test_no_ml_imports_and_python38_syntax (__main__.PlanTests.test_no_ml_imports_and_python38_syntax) ... ok
+test_official_cpu_wheel (__main__.PlanTests.test_official_cpu_wheel) ... ok
+test_two_distinct_urls_rejected (__main__.PlanTests.test_two_distinct_urls_rejected) ... ok
+test_wrong_cpu_arch_or_version_rejected (__main__.PlanTests.test_wrong_cpu_arch_or_version_rejected) ... ok
+test_wrong_host_or_missing_hash_rejected (__main__.PlanTests.test_wrong_host_or_missing_hash_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.004s
+
+OK

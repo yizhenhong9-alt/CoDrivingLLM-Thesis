@@ -2,6 +2,18 @@
 
 日期：2026-11-25。狀態：本地替身通過，Spark 完整 Chroma 安裝及真持久化測試待使用者手動執行。HNSW 已由 R1-09 證據確認來源建置與基本人工向量查詢通過；不重做該步。未進入 M21。
 
+## Spark 實測回傳（M20-R3-04，2026-11-25）
+
+上述「待執行」為報告建立時狀態，現已由 [step3 完整 console](../../../../spark相關console/memory%20on前置作業%20step3%20console.txt) 補實測。Spark fast-forward 至 7d198c2dca39e8717317c2e5758ee2250db61f4d，Environment guard: PASS，使用個人 memory-chroma0415-py312（Python 3.12.3）。
+
+- Chroma 0.4.15 安裝成功，新增 75 個套件，沒有重編既有 HNSW。pip check 顯示 Checked 80 packages／All installed packages are compatible。
+- console 列出 pydantic 1.10.27、posthog 3.25.0、onnxruntime 1.32.0、tokenizers 0.23.3、huggingface-hub 2.4.0；numpy 1.26.4 與 chroma-hnswlib 0.7.3 通過腳本前置 guard。
+- 14 項測試全部 ok，無略過；包含原四欄 metadata 原值保留、真 Chroma 新增／查詢、同程序重開，以及另一個 Python 子程序重開後讀回原文／metadata。人工向量只驗證索引及儲存流程，不驗證語意相關性。
+- Ran 14 tests in 1.995s，OK；M20-R3 Chroma acceptance: PASS；exit code 0。
+- 遠端證據目錄 /home/nclab/Yizhen/runs/M20-R3-chroma-ziPNpa，包含 packages-before.txt、packages-after.txt、constraints.txt、安裝與測試 console。後續安裝 embedding 相依前，以這份已通過的 packages-after.txt 固定基線；不可把新增套件解析成功當作原 Chroma 測試仍通過。
+
+結論：完整 Chroma 底層驗收已通過，不再重做 HNSW 編譯或完整安裝。尚缺真 MiniLM 權重／來源核驗、CPU 向量計算、原模板文字相關性驗證及跨環境 memory HTTP 接線；正式 memory off 保持不變，未進入 M21。沒有從本 console 推論實際模型資源占用或新服務埠狀態。
+
 ## 變更與保留方法
 
 - M20-R3-01：從 R2 原方法重播中凍結兩筆 [fixtures.json](../R2-memory-semantics/fixtures.json)：M16 step 0 車 3 的危險尾段、step 35 車 3 的空資訊。包含原 query、page_content、四個 metadata 欄位及原記憶呈現文字。它們是離線測試資料，非真實命中結果、不作正式訓練記憶。

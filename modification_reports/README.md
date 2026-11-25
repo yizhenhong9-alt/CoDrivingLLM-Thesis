@@ -34,3 +34,5 @@ M20：[本地記憶底層第一版](./M20-local-memory/report.md)；最新 [R1 C
 M20-R2：[原版 memory 語意與差異審查](./M20-local-memory/R2-memory-semantics/report.md)；M16 404 筆離線重播，367 筆空資訊、query／存入文字只差前導換行；列出寫入時機、欄位、檢索回傳與 M20 差異，未執行 memory on。
 
 M20-R3：[原格式欄位對照與 Chroma 驗收準備](./M20-local-memory/R3-chroma-acceptance/report.md)；凍結原方法測試案例、加入跨程序重開驗證與 Spark 手動腳本，本地替身通過，真 Chroma 與 MiniLM 待驗。
+
+M20-R4：[MiniLM CPU 相依規劃](./M20-local-memory/R4-minilm-runtime-plan/report.md)；R3 已在 Spark 14/14 通過，現在以完整已驗證版本清單約束新相依，只做 dry-run；MiniLM 尚未下載／載入。
