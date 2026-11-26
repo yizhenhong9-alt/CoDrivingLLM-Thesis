@@ -76,6 +76,8 @@ class IntervalVehicle(LinearVehicle):
                 theta_a_i=getattr(vehicle, 'theta_a_i', None),
                 theta_b_i=getattr(vehicle, 'theta_b_i', None),
                 data=getattr(vehicle, "data", None))
+        if hasattr(vehicle, 'id'):
+            v.id = vehicle.id
         return v
 
     def step(self, dt: float, mode: str = "partial") -> None:

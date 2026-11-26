@@ -71,6 +71,7 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
         persist(report)
         raise OutputValidationError("Original safety-helper labels collided")
     report.update(model=MODEL, mode=transport.mode, parser_mode=parser_mode,
+                  vehicle_label_version="M24-simulation-id",
                   prompt_version="M05-" + parser_mode, memory_mode="off",
                   environment_steps=0, calls=[], vehicle_identifiers=[
                       {"simulation_id": key, "legacy_label": value} for key, value in names.items()],

@@ -197,6 +197,8 @@ class AbstractEnv(gym.Env):
         # set the vehicle id for visualizing
         for i, v in enumerate(self.road.vehicles):
             v.id = i
+        # Episode-local high-water mark: removed IDs must not be reused by spawns.
+        self.road.next_vehicle_id = len(self.road.vehicles)
         obs = self.observation_type.observe()
         # # get action masks
         # if self.config["action_masking"]:

@@ -108,6 +108,8 @@ class Vehicle(object):
         :return: a new vehicle at the same dynamical state
         """
         v = cls(vehicle.road, vehicle.position, vehicle.heading, vehicle.speed)
+        if hasattr(vehicle, 'id'):
+            v.id = vehicle.id
         return v
 
     def act(self, action: Union[dict, str] = None) -> None:
@@ -260,7 +262,9 @@ class Vehicle(object):
         return d
 
     def __str__(self):
-        return "{} #{}: {}".format(self.__class__.__name__, id(self) % 1000, self.position)
+        # IDs are assigned after reset, not from process-specific memory addresses.
+        # Pre-reset construction/history objects have no decision identity yet.
+        return "{} #{}: {}".format(self.__class__.__name__, getattr(self, 'id', 'unassigned'), self.position)
 
     def __repr__(self):
         return self.__str__()

@@ -266,6 +266,9 @@ class IntersectionEnv(AbstractEnv):
                 return
         vehicle.plan_route_to("o" + str(route[1]))
         vehicle.randomize_behavior()
+        if hasattr(self.road, 'next_vehicle_id'):
+            vehicle.id = self.road.next_vehicle_id
+            self.road.next_vehicle_id += 1
         self.road.vehicles.append(vehicle)
         return vehicle
 

@@ -69,6 +69,8 @@ class IDMVehicle(ControlledVehicle):
         v = cls(vehicle.road, vehicle.position, heading=vehicle.heading, speed=vehicle.speed,
                 target_lane_index=vehicle.target_lane_index, target_speed=vehicle.target_speed,
                 route=vehicle.route, timer=getattr(vehicle, 'timer', None))
+        if hasattr(vehicle, 'id'):
+            v.id = vehicle.id
         return v
 
     def act(self, action: Union[dict, str] = None):

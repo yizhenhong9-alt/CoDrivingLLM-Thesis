@@ -75,7 +75,11 @@ def main():
         report['settings']['memory_config'] = str(args.memory_config)
     report["source_sha256"] = {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
-        for path in list((ROOT / "llm_controller").glob("*.py")) + [Path(__file__).resolve()]}
+        for path in list((ROOT / "llm_controller").glob("*.py")) + [Path(__file__).resolve()] +
+        [ROOT / name for name in ('highway_env/vehicle/kinematics.py',
+         'highway_env/vehicle/controller.py', 'highway_env/vehicle/behavior.py',
+         'highway_env/vehicle/uncertainty/prediction.py',
+         'highway_env/envs/common/abstract.py', 'highway_env/envs/intersection_env.py')]}
     git_command = ["git", "-c", "safe.directory=" + ROOT.as_posix()]
     for key, command in (("git_commit", ["rev-parse", "HEAD"]),
                          ("git_status", ["status", "--porcelain=v1"])):
