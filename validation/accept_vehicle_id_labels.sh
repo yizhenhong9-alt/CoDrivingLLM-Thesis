@@ -19,5 +19,6 @@ done
   --fixtures "$diag"/seed-*/*.json --output-dir "$diag/tokens" \
   --output-tokens 256 --context-limit 2048 2>&1 | tee "$diag/token-console.txt"
 # Export this isolated review directory only; never collect the existing DBs.
-tar -czf "$diag/review.tar.gz" --exclude=review.tar.gz --exclude=cache --exclude=matplotlib --exclude=tmp -C "$diag" .
-printf 'Review archive: %s/review.tar.gz\n' "$diag"
+# Keep the archive outside the input tree so creating it cannot change '.'.
+tar -czf "${diag}-review.tar.gz" --exclude=cache --exclude=matplotlib --exclude=tmp -C "$diag" .
+printf 'Review archive: %s-review.tar.gz\n' "$diag"
