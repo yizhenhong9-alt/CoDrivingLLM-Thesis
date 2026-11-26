@@ -83,6 +83,17 @@ class FlowTests(unittest.TestCase):
     def test_fixture_cannot_be_applied(self):
         with self.assertRaises(ValueError):
             self.run_flow(FixtureReplies("strict"), apply=True)
+
+    def test_colliding_labels_preserved_before_rejection(self):
+        with patch.object(Vehicle, '__str__', return_value='MDPVehicle #456: [0 0]'):
+            with self.assertRaisesRegex(OutputValidationError, 'labels collided'):
+                self.run_flow(FixtureReplies('strict'))
+        self.assertEqual(self.steps, [])
+        self.assertNotIn('calls', self.report)
+        collision = self.saved[-1]['legacy_label_collisions'][0]
+        self.assertEqual(collision['legacy_label'], 'MDPVehicle #456')
+        self.assertEqual([v['simulation_id'] for v in collision['vehicles']], [3, 4])
+        self.assertEqual(len({v['python_object_id'] for v in collision['vehicles']}), 2)
         self.assertEqual(self.steps, [])
 
     def test_live_test_double_steps_once_after_validation_saved(self):

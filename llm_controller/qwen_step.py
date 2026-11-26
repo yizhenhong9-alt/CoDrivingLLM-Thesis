@@ -60,7 +60,15 @@ def run_step(env, negotiation, action, transport, report, *, parser_mode,
     mapping = EpisodeVehicleMap(episode_id, env.road.vehicles)
     vehicles = tuple(env.controlled_vehicles)
     names = {mapping.vehicle_id(v): str(v).split(":")[0].strip() for v in env.road.vehicles}
+    report['vehicle_identifiers'] = [
+        {'simulation_id': key, 'legacy_label': value} for key, value in names.items()]
     if len(set(names.values())) != len(names):
+        report['legacy_label_collisions'] = [
+            dict(legacy_label=label, vehicles=[dict(simulation_id=mapping.vehicle_id(v),
+                 python_object_id=id(v), modulo_1000=id(v) % 1000)
+                 for v in env.road.vehicles if names[mapping.vehicle_id(v)] == label])
+            for label in sorted(set(names.values())) if list(names.values()).count(label) > 1]
+        persist(report)
         raise OutputValidationError("Original safety-helper labels collided")
     report.update(model=MODEL, mode=transport.mode, parser_mode=parser_mode,
                   prompt_version="M05-" + parser_mode, memory_mode="off",
