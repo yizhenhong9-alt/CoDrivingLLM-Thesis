@@ -1,0 +1,95 @@
+{
+  "status": "PASS",
+  "off_commit": "21799bdc2abc3b85d1c8562e90827e8287eeaf3d",
+  "on_commit": "add6a861bebebe122fd684ed8578e093d8593103",
+  "unchanged_source_blob_sha256": {
+    "highway_env/vehicle/kinematics.py": "3de7f93f0c0e4e095f9289bff4abfd926f1a3b65ab7c6c125b8bb8377d860805",
+    "highway_env/envs/common/abstract.py": "fcf771972b358c3746918710bc5c68cb7fac4480c72e6037d0b48a64716ca655",
+    "highway_env/envs/intersection_env.py": "e5d8a561a5c39e814041a609292a9feb632f3bdad6e12a37c5c5c6cd578f21df",
+    "llm_controller/llm_agent_action.py": "9a5f5b9ff261e3e8de9c078a89f0e215000ef46a183c81e866799e4b9c87d52a",
+    "llm_controller/llm_agent_negotiation_system.py": "7839a58505eced1bd68670c53acd4fc80be0b907b7540a966eae41687ecfa244",
+    "llm_controller/prompt_llm.py": "40acf139e9f765df6f017dff1bea1c20fb0016dc1945f6717d0f1a98ddff2aaa",
+    "llm_controller/vehicle_actions.py": "6eaa4bcc11b7c578f25f98d7976cd5182df5e1a5f7f68bc0ef5e39fb49c4d642"
+  },
+  "guard_present_in_both": true,
+  "off_seed1_steps_with_unique_labels": 107,
+  "comparisons": {
+    "first_on_attempt": {
+      "initial_cav_state_exact_match": true,
+      "max_position_difference": 0.0,
+      "max_speed_difference": 0,
+      "preserved_labels": [
+        {
+          "simulation_id": 0,
+          "legacy_label": "IDMVehicle #192"
+        },
+        {
+          "simulation_id": 1,
+          "legacy_label": "IDMVehicle #232"
+        },
+        {
+          "simulation_id": 2,
+          "legacy_label": "IDMVehicle #280"
+        },
+        {
+          "simulation_id": 3,
+          "legacy_label": "MDPVehicle #520"
+        },
+        {
+          "simulation_id": 4,
+          "legacy_label": "MDPVehicle #792"
+        },
+        {
+          "simulation_id": 5,
+          "legacy_label": "MDPVehicle #752"
+        },
+        {
+          "simulation_id": 6,
+          "legacy_label": "MDPVehicle #424"
+        }
+      ],
+      "calls": 5,
+      "status": "single_step_complete"
+    },
+    "recovered_on_attempt": {
+      "initial_cav_state_exact_match": true,
+      "max_position_difference": 0.0,
+      "max_speed_difference": 0,
+      "preserved_labels": null,
+      "calls": 0,
+      "status": "failed"
+    }
+  },
+  "off_seed1_initial_labels": [
+    {
+      "simulation_id": 0,
+      "legacy_label": "IDMVehicle #728"
+    },
+    {
+      "simulation_id": 1,
+      "legacy_label": "IDMVehicle #888"
+    },
+    {
+      "simulation_id": 2,
+      "legacy_label": "IDMVehicle #248"
+    },
+    {
+      "simulation_id": 3,
+      "legacy_label": "MDPVehicle #640"
+    },
+    {
+      "simulation_id": 4,
+      "legacy_label": "MDPVehicle #744"
+    },
+    {
+      "simulation_id": 5,
+      "legacy_label": "MDPVehicle #752"
+    },
+    {
+      "simulation_id": 6,
+      "legacy_label": "MDPVehicle #152"
+    }
+  ],
+  "introduction": "65a4d99 Add M01-M06 Qwen parsing, memory-off and offline validation",
+  "limitation": "Initial snapshots cover four CAVs, not all HDVs; colliding labels were not persisted. Allocation causation is not established."
+}
