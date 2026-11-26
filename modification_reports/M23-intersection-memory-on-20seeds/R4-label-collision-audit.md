@@ -1,0 +1,13 @@
+# M23-R4：恢復批次於原車輛標籤唯一性檢查停止
+
+2026-11-26，回傳M23-review-6so9070d及M23-resume-launch-RcQEJx。SHA256SUMS共242檔逐一核對通過（含prior-attempt，不能視為242份新實驗資料）。目前checkout add6a861bebebe122fd684ed8578e093d8593103。
+
+恢復準備成功，原401筆DB未改，新副本回到396筆／seed0 snapshot 80b2410d97db53a97a72e59d893c634ca7f6d2463eb83e63f88175266db9d31c。seed1第二次嘗試在step0、qwen_step.py的文字標籤唯一性檢查停止，底層OutputValidationError: Original safety-helper labels collided。actual_environment_steps=0、calls=[]、session queries/writes/token_checks全部0，final_count396、finalsnapshot與initial相同，session正常關閉。Qwen伺服器有啟動但沒有交通決策呼叫，shutdown exit0／無已知殘留／port_closed／clean_observation=true。
+
+原highway_env/vehicle/kinematics.py的Vehicle.__str__使用class name與id(self)%1000組成標籤。不同物件的Python記憶體識別尾碼可能重複；相同class的車即可能同名。此處collided指文字標籤碰撞，非交通碰撞。既有qwen_step收集全road.vehicles的文字label，重複時拒絕，以免舊安全helper以字串反查到錯車。不是Chroma檢索400，與斷線沒有已知因果證據。
+
+限制：舊程式在guard之後才保存vehicle_identifiers，因此本次沒有保存確切哪兩車的重複label，不能據initial_vehicles四車位置臆測重複者。可能含背景HDV，並不一定是兩台CAV。
+
+沒有刪除唯一性檢查、改安全公式、換seed或用重試挑出不碰撞標籤的一次。解決方向為一致、可追蹤且唯一的車輛label，必須同時涵蓋原helper的字串比對與prompt中的標籤，不可僅改送給LLM的names映射。名稱由記憶體尾碼改成穩定ID會改變prompt文字，須另編號、回歸與註記對既有off基線的可比較性，不能宣稱完全只有memory因素。
+
+原始第一次失敗401筆庫、恢復396筆庫與兩次seed1失敗證據均保留。當前沒有執行新重試或恢復正式批次；不將零步失敗當成交通碰撞、也不計入到達率分母的成功子集。
