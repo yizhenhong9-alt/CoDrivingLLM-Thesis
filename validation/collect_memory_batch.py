@@ -13,15 +13,19 @@ from llm_controller.local_memory import personal_path
 
 def selected_files(source):
     root_names = {'git-commit.txt','memory-config.json','batch-result.json','console.txt','memory.txt','disk.txt',
-                  'recovery.json','preparation-console.txt'}
+                  'recovery.json','preparation-console.txt','retained-seed0.json','git-status.txt',
+                  'acceptance.json','acceptance-exit-code.txt'}
     for p in sorted(source.rglob('*')):
         if not p.is_file():
             continue
         parts = p.relative_to(source).parts
         if parts[0]=='prior-attempt':
             parts=parts[1:]
+        if parts[0]=='retained-seed0':
+            # The pilot has a single-episode layout, map it to the existing whitelist.
+            parts = (('seed-00',)+parts[1:]) if len(parts)>1 and parts[1]=='live' else parts[1:]
         if ((len(parts)==1 and p.name in root_names) or
-            parts == ('service','service-console.txt') or
+            parts in (('service','service-console.txt'), ('service','ready.json')) or
             (len(parts)==2 and parts[0].startswith('seed-') and p.name=='console.txt') or
             (len(parts)==4 and parts[0].startswith('seed-') and parts[1]=='live' and
              p.name in {'result.json','server-console.txt','traffic-console.txt'}) or
@@ -35,9 +39,11 @@ def main():
     parser.add_argument('source',type=Path)
     args=parser.parse_args()
     source=personal_path(args.source)
-    if not source.is_dir() or not source.name.startswith('M23-intersection-memory-on-20seeds-'):
-        raise ValueError('Existing M23 source run required')
-    target=Path(tempfile.mkdtemp(prefix='M23-review-',dir=str(personal_path(Path('/home/nclab/Yizhen/runs')))))
+    if not source.is_dir() or not source.name.startswith(('M23-intersection-memory-on-20seeds-',
+                                                        'M24-intersection-memory-on-20seeds-')):
+        raise ValueError('Existing M23/M24 source run required')
+    target=Path(tempfile.mkdtemp(prefix='M24-review-' if source.name.startswith('M24-') else 'M23-review-',
+                               dir=str(personal_path(Path('/home/nclab/Yizhen/runs')))))
     for path in selected_files(source):
         personal_path(path)
         dest=target/path.relative_to(source)
@@ -47,6 +53,11 @@ def main():
     lines=['{}  ./{}'.format(hashlib.sha256(p.read_bytes()).hexdigest(),p.relative_to(target).as_posix())
            for p in sorted(target.rglob('*')) if p.is_file()]
     (target/'SHA256SUMS').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+    import tarfile
+    archive=target.with_name(target.name+'.tar.gz')
+    with tarfile.open(str(archive),'w:gz') as stream:
+        stream.add(str(target),arcname=target.name)
+    print('Review archive: '+str(archive),flush=True)
     print('Review folder (copy this folder): '+str(target),flush=True)
 
 

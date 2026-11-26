@@ -1,0 +1,88 @@
+{
+  "comparison": "Original local copy read-only; AST equality ignores comments/whitespace; not a paper compliance audit",
+  "files": {
+    "llm_controller/llm_agent_action.py": {
+      "original_sha256": "b6afc436afeff75585ca01c276886a6eca97e2bda1cfb21ace9a4b436cf8cc78",
+      "current_sha256": "41a57beaf075861aa6aea0063086629c35dcea27ad4ebeb216ae107895f4c2bb",
+      "nodes": {
+        "prompt_engineer": {
+          "ast_equal": true,
+          "original_line": 234,
+          "current_line": 234
+        },
+        "memory_update": {
+          "ast_equal": true,
+          "original_line": 125,
+          "current_line": 125
+        },
+        "relative_memory": {
+          "ast_equal": true,
+          "original_line": 115,
+          "current_line": 115
+        },
+        "transfer_negotiation_prompts_to_results": {
+          "ast_equal": true,
+          "original_line": 104,
+          "current_line": 104
+        }
+      }
+    },
+    "llm_controller/llm_agent_negotiation_system.py": {
+      "original_sha256": "987ddcbf4954e8547380eec9534dfc38c9fc3aded36697df5d995677eb71c648",
+      "current_sha256": "d5eff8b1e33161e9f61cfaca36514265295f0d0956ddbbc0e4a68c3ec35abb62",
+      "nodes": {
+        "detect_conflicts": {
+          "ast_equal": true,
+          "original_line": 37,
+          "current_line": 37
+        },
+        "is_conflict": {
+          "ast_equal": true,
+          "original_line": 63,
+          "current_line": 63
+        },
+        "record_route_xy": {
+          "ast_equal": true,
+          "original_line": 126,
+          "current_line": 126
+        },
+        "get_lane_xy": {
+          "ast_equal": true,
+          "original_line": 103,
+          "current_line": 103
+        }
+      }
+    },
+    "llm_controller/prompt_llm.py": {
+      "original_sha256": "ffb5bd52d452cd9e8d9edbab9004902ff854f3c828d712a6888838ff03e0cefc",
+      "current_sha256": "9db3b7a8e861b38c81e5aacf2604544690aedee89e48f1e3e387c6c65789b2ea",
+      "nodes": {
+        "PRE_DEF_PROMPT": {
+          "ast_equal": true,
+          "original_line": 6,
+          "current_line": 6
+        },
+        "cal_ttcp": {
+          "ast_equal": true,
+          "original_line": 602,
+          "current_line": 602
+        },
+        "check_safety_with_conflict_vehicles": {
+          "ast_equal": true,
+          "original_line": 614,
+          "current_line": 614
+        },
+        "generate_comment": {
+          "ast_equal": true,
+          "original_line": 670,
+          "current_line": 670
+        },
+        "format_training_info": {
+          "ast_equal": true,
+          "original_line": 686,
+          "current_line": 686
+        }
+      }
+    }
+  }
+}
