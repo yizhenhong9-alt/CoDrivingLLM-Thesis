@@ -76,3 +76,5 @@ M22-R2 補件完成：manager result已核對、離線audit PASS，設定及sess
 M22-R3：[單seed完整memory-on回合驗證](./M22-original-memory/R3-live-episode/report.md)；全新空庫、seed0、300步／3600秒上限，自然terminal才PASS，跨步滾動記憶驗收已準備，本地19項通過。Spark待手動執行，未開始多seed效果實驗。
 
 M22-R3 最新審查：112檔SHA256及99步完整原檔核對PASS，495真Qwen回覆／396逐車寫入與跨步snapshot一致，19.8模擬秒無CAV碰撞、終止條件推論四車到達，停服乾淨。最大1093＋256=1349 tokens；357筆空衝突、18種stored text，記憶資訊量限制保留；尚無因果效果或多seed結論。
+
+M23：[intersection原版memory on 20seeds](./M23-intersection-memory-on-20seeds/report.md)；使用者授權，seeds0→19全新共享累積庫、每seed300步／3600秒、異常停止不重試；自動整理白名單證據，本地22項通過，Spark待手動執行，不重跑M18 off。
