@@ -138,9 +138,12 @@ class ChromaMemoryStore:
         columns = []
         for key in ('ids', 'documents', 'metadatas', 'distances'):
             column = result.get(key)
-            if not isinstance(column, list) or len(column) != 1 or len(column[0]) != size:
+            if (not isinstance(column, list) or len(column) != 1 or
+                    not isinstance(column[0], list) or not size <= len(column[0]) <= count):
                 raise ValueError('Invalid Chroma query result shape')
             columns.append(column[0])
+        if len({len(column) for column in columns}) != 1:
+            raise ValueError('Invalid Chroma query result shape')
         rows, seen = [], set()
         for memory_id, text, metadata, distance in zip(*columns):
             if not isinstance(memory_id, str) or not memory_id or memory_id in seen:
@@ -155,7 +158,9 @@ class ChromaMemoryStore:
             rows.append(dict(id=memory_id, text=text, metadata=decoded,
                              distance=float(distance), score=max(-1., min(1., 1-distance))))
         # Deterministic order within returned candidates; HNSW boundary ties may differ.
-        return sorted(rows, key=lambda row: (-row['score'], row['id']))
+        # Legacy Chroma can return more than n_results. Validate every returned
+        # row, then enforce the requested cap after the existing stable ordering.
+        return sorted(rows, key=lambda row: (-row['score'], row['id']))[:size]
 
     def count(self):
         self._check()

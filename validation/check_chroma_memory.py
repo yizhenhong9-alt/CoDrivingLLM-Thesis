@@ -225,6 +225,29 @@ class ChromaTests(unittest.TestCase):
                 with patch.object(self.fake.collection, 'query', side_effect=changed), self.assertRaises(ValueError):
                     store.search(unit())
 
+    def test_overreturned_candidates_validated_and_capped(self):
+        with self.store(create=True) as store:
+            for key in ('a', 'b', 'c'):
+                store.add(key, 'text', {'source': {'run': 'synthetic'}}, unit())
+            original = self.fake.collection.query
+            def extra(**kwargs):
+                kwargs['n_results'] = 3
+                return original(**kwargs)
+            with patch.object(self.fake.collection, 'query', side_effect=extra):
+                self.assertEqual([h['id'] for h in store.search(unit(), 2)], ['a', 'b'])
+            def malformed(**kwargs):
+                result = extra(**kwargs)
+                result['distances'][0][-1] = float('nan')
+                return result
+            with patch.object(self.fake.collection, 'query', side_effect=malformed), self.assertRaises(ValueError):
+                store.search(unit(), 2)
+            def misaligned(**kwargs):
+                result = extra(**kwargs)
+                result['documents'][0].pop()
+                return result
+            with patch.object(self.fake.collection, 'query', side_effect=misaligned), self.assertRaises(ValueError):
+                store.search(unit(), 2)
+
     def test_lazy_import_python38_and_path_boundary(self):
         ast.parse((ROOT/'llm_controller/chroma_memory.py').read_text(encoding='utf-8'), feature_version=(3, 8))
         self.assertFalse(any(name in sys.modules for name in ('chromadb', 'langchain', 'openai', 'torch', 'transformers')))
