@@ -78,3 +78,5 @@ M22-R3：[單seed完整memory-on回合驗證](./M22-original-memory/R3-live-epis
 M22-R3 最新審查：112檔SHA256及99步完整原檔核對PASS，495真Qwen回覆／396逐車寫入與跨步snapshot一致，19.8模擬秒無CAV碰撞、終止條件推論四車到達，停服乾淨。最大1093＋256=1349 tokens；357筆空衝突、18種stored text，記憶資訊量限制保留；尚無因果效果或多seed結論。
 
 M23：[intersection原版memory on 20seeds](./M23-intersection-memory-on-20seeds/report.md)；使用者授權，seeds0→19全新共享累積庫、每seed300步／3600秒、異常停止不重試；自動整理白名單證據，本地22項通過，Spark待手動執行，不重跑M18 off。
+
+M23後續：首批seed0通過、seed1檢索HTTP400停止。R1副本探測發現Chroma要2回3觸發shape拒絕，R2修正版Spark19組探測全PASS。已準備 [R3副本恢復與續跑](./M23-intersection-memory-on-20seeds/R3-recovery.md)：原401筆與失敗保留、新副本移除5個已核對部分寫入，精確恢復396筆snapshot，保留seed0、僅續跑1–19；新版本／重試明確記錄，Spark恢復仍待手動執行。

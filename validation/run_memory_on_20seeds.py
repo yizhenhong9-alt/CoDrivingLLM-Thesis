@@ -23,6 +23,7 @@ def require(ok, message):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-dir', required=True, type=Path)
+    parser.add_argument('--recovery-source', type=Path)
     args = parser.parse_args()
     require(sys.platform == 'linux' and platform.machine() == 'aarch64' and sys.version_info[:2] == (3,8) and
             Path(sys.prefix) == Path('/home/nclab/Yizhen/envs/codriving-sim-py38'), 'Existing Spark sim environment required')
@@ -44,20 +45,38 @@ def main():
     report['baseline_contract'] = baseline
     save()
     known = {}
+    recovery = None
+    if args.recovery_source is not None:
+        from validation.recover_memory_batch import load_evidence
+        source=personal_path(args.recovery_source)
+        recovery=json.loads((run/'recovery.json').read_text(encoding='utf-8'))
+        require(recovery['status']=='ready' and recovery['source']==str(source) and recovery['source_unchanged'] is True,
+                'Verified prepared recovery required')
+        old,known,removed,unused=load_evidence(source)
+        report.update(initial_corpus='recovered-seed0-boundary',recovery=recovery,
+                      resumed_seeds=list(range(1,20)))
+        first=dict(old['episodes'][0],retained_from_commit=old['git_commit'],attempt='retained-original-seed0')
+        report['episodes'].append(first)
+        save()
     database, spec = personal_path(run/'experiment-chroma'), manifest(QUERY_SCHEMA)
     client = MemoryHTTPClient(spec, 18082)
     try:
-        with memory_service(run/'service', database, spec, 18082, create=True, qwen_tokenizer=True):
-            require(client.status()['count'] == 0, 'Fresh corpus must be empty')
+        with memory_service(run/'service', database, spec, 18082, create=recovery is None,
+                            writable=recovery is not None, qwen_tokenizer=True):
+            initial=client.status()
+            require(initial['count']==len(known),'Initial corpus count differs from evidence')
+            if recovery is not None:
+                require(initial['snapshot_sha256']==recovery['restored_snapshot'],'Recovered snapshot mismatch')
             config = dict(format='m22-original-v1', manifest=spec, port=18082, timeout=30,
                 store_path_sha256=text_hash(database.as_posix()), context_limit=2048, output_tokens=256, test_only=False)
             cfg = run/'memory-config.json'
             cfg.write_text(canonical(config)+'\n', encoding='utf-8')
             previous = client.status()['snapshot_sha256']
-            for seed in report['seeds']:
+            for seed in (report['seeds'] if recovery is None else report['resumed_seeds']):
                 phase = run/('seed-{:02d}'.format(seed))
                 phase.mkdir()
                 row = dict(seed=seed, status='running', initial_count=len(known), initial_snapshot_sha256=previous)
+                row['attempt']='retry-after-retrieval-fix' if recovery is not None and seed==1 else 'first-attempt'
                 report['episodes'].append(row)
                 report['status'] = 'running'
                 save()

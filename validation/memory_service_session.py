@@ -26,7 +26,7 @@ def offline_env(folder):
 
 
 @contextmanager
-def memory_service(folder, database, expected, port, create=False, qwen_tokenizer=False):
+def memory_service(folder, database, expected, port, create=False, qwen_tokenizer=False, writable=False):
     folder = personal_path(folder)
     folder.mkdir()
     command = ['/home/nclab/Yizhen/envs/memory-chroma0415-py312/bin/python',
@@ -35,6 +35,8 @@ def memory_service(folder, database, expected, port, create=False, qwen_tokenize
                '--port', str(port)]
     if create:
         command.append('--create')
+    elif writable:
+        command.append('--writable')
     if qwen_tokenizer:
         command.append('--qwen-tokenizer')
     with (folder/'service-console.txt').open('x', encoding='utf-8') as output:
@@ -48,7 +50,7 @@ def memory_service(folder, database, expected, port, create=False, qwen_tokenize
                     raise TimeoutError('Owned memory child readiness timeout')
                 time.sleep(0.2)
             ready = json.loads((folder/'ready.json').read_text())
-            if ready != dict(manifest=expected, port=port, writable=create):
+            if ready != dict(manifest=expected, port=port, writable=create or writable):
                 raise ValueError('Owned memory ready identity mismatch')
             yield
         finally:

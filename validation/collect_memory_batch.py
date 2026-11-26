@@ -12,11 +12,14 @@ from llm_controller.local_memory import personal_path
 
 
 def selected_files(source):
-    root_names = {'git-commit.txt','memory-config.json','batch-result.json','console.txt','memory.txt','disk.txt'}
+    root_names = {'git-commit.txt','memory-config.json','batch-result.json','console.txt','memory.txt','disk.txt',
+                  'recovery.json','preparation-console.txt'}
     for p in sorted(source.rglob('*')):
         if not p.is_file():
             continue
         parts = p.relative_to(source).parts
+        if parts[0]=='prior-attempt':
+            parts=parts[1:]
         if ((len(parts)==1 and p.name in root_names) or
             parts == ('service','service-console.txt') or
             (len(parts)==2 and parts[0].startswith('seed-') and p.name=='console.txt') or
