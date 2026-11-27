@@ -14,7 +14,8 @@ from llm_controller.local_memory import personal_path
 def selected_files(source):
     root_names = {'git-commit.txt','memory-config.json','batch-result.json','console.txt','memory.txt','disk.txt',
                   'recovery.json','preparation-console.txt','retained-seed0.json','git-status.txt',
-                  'acceptance.json','acceptance-exit-code.txt'}
+                  'acceptance.json','acceptance-exit-code.txt','seed3-recovery.json',
+                  'retry-started.json','retry-result.json'}
     for p in sorted(source.rglob('*')):
         if not p.is_file():
             continue

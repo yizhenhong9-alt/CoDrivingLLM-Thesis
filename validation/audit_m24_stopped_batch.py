@@ -18,11 +18,11 @@ def require(ok, reason):
         raise ValueError(reason)
 
 
-def audit(folder):
+def audit(folder, *, verify_export=True):
     folder = folder.resolve()
     read = lambda p: json.loads(p.read_text(encoding='utf-8-sig'))
     checked = 0
-    for line in (folder/'SHA256SUMS').read_text().splitlines():
+    for line in ((folder/'SHA256SUMS').read_text().splitlines() if verify_export else []):
         digest, name = line.split('  ./', 1)
         file = (folder/name).resolve()
         file.relative_to(folder)
