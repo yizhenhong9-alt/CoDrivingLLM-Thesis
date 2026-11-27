@@ -1,3 +1,4 @@
+from highway_env.vehicle.labels import copy_vehicle_label
 from typing import List, Tuple, Union
 
 import numpy as np
@@ -56,6 +57,7 @@ class ControlledVehicle(Vehicle):
                 route=vehicle.route)
         if hasattr(vehicle, 'id'):
             v.id = vehicle.id
+        copy_vehicle_label(vehicle, v)
         return v
 
     def plan_route_to(self, destination: str) -> "ControlledVehicle":

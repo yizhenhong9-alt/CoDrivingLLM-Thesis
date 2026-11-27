@@ -1,3 +1,4 @@
+from highway_env.vehicle.labels import vehicle_label, copy_vehicle_label
 from typing import Union, TYPE_CHECKING, Optional
 import numpy as np
 import pandas as pd
@@ -110,6 +111,7 @@ class Vehicle(object):
         v = cls(vehicle.road, vehicle.position, vehicle.heading, vehicle.speed)
         if hasattr(vehicle, 'id'):
             v.id = vehicle.id
+        copy_vehicle_label(vehicle, v)
         return v
 
     def act(self, action: Union[dict, str] = None) -> None:
@@ -262,9 +264,7 @@ class Vehicle(object):
         return d
 
     def __str__(self):
-        # IDs are assigned after reset, not from process-specific memory addresses.
-        # Pre-reset construction/history objects have no decision identity yet.
-        return "{} #{}: {}".format(self.__class__.__name__, getattr(self, 'id', 'unassigned'), self.position)
+        return "{} #{}: {}".format(self.__class__.__name__, vehicle_label(self), self.position)
 
     def __repr__(self):
         return self.__str__()

@@ -1,3 +1,4 @@
+from highway_env.vehicle.labels import vehicle_label
 from typing import Dict, Tuple
 
 from gym.envs.registration import register
@@ -269,6 +270,7 @@ class IntersectionEnv(AbstractEnv):
         if hasattr(self.road, 'next_vehicle_id'):
             vehicle.id = self.road.next_vehicle_id
             self.road.next_vehicle_id += 1
+            vehicle_label(vehicle)
         self.road.vehicles.append(vehicle)
         return vehicle
 

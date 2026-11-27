@@ -1,3 +1,4 @@
+from highway_env.vehicle.labels import vehicle_label
 import copy
 import os
 from typing import List, Tuple, Optional, Callable
@@ -197,6 +198,7 @@ class AbstractEnv(gym.Env):
         # set the vehicle id for visualizing
         for i, v in enumerate(self.road.vehicles):
             v.id = i
+            vehicle_label(v)
         # Episode-local high-water mark: removed IDs must not be reused by spawns.
         self.road.next_vehicle_id = len(self.road.vehicles)
         obs = self.observation_type.observe()

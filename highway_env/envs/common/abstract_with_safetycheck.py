@@ -1,3 +1,4 @@
+from highway_env.vehicle.labels import vehicle_label
 import copy
 from typing import Optional, Callable
 import gym
@@ -197,6 +198,7 @@ class AbstractEnv(gym.Env):
         # set the vehicle id for visualizing
         for i, v in enumerate(self.road.vehicles):
             v.id = i
+            vehicle_label(v)
         obs = self.observation_type.observe()
         # # get action masks
         # if self.config["action_masking"]:

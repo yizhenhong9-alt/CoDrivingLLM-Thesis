@@ -1,3 +1,4 @@
+from highway_env.vehicle.labels import copy_vehicle_label
 import copy
 from typing import List, Tuple, Callable, Union, TYPE_CHECKING
 import numpy as np
@@ -78,6 +79,7 @@ class IntervalVehicle(LinearVehicle):
                 data=getattr(vehicle, "data", None))
         if hasattr(vehicle, 'id'):
             v.id = vehicle.id
+        copy_vehicle_label(vehicle, v)
         return v
 
     def step(self, dt: float, mode: str = "partial") -> None:

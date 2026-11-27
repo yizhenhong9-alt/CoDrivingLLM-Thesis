@@ -1,0 +1,49 @@
+M25: stable unique modulo-1000 display labels (2026-11-27)
+
+Authorized scope: implement legacy remainder candidates with collision avoidance.
+No Spark run, no model/embedding download, no DB change or experiment retry.
+Original author checkout untouched. Existing M23 R4 deletion is excluded.
+
+Implementation:
+- highway_env/vehicle/labels.py owns a road-local set of reservations.
+- Candidate = id(vehicle) % 1000. On collision scan candidate+1, wrapping at 1000.
+- Persist display_id on the object. All vehicle classes share the namespace.
+- Never release reservations during the road/episode lifetime. Exhaustion errors.
+- Reset allocates in road vehicle order. Accepted post-reset intersection spawns
+  allocate after proximity rejection, before append. Other paths allocate lazily
+  at first string conversion. No random calls or physical state changes.
+- Vehicle.__str__/repr keep the original class/#number/position syntax.
+- Four create_from paths preserve source display_id, including unrendered sources;
+  deepcopy naturally preserves the label and the road reservation set.
+- Internal simulation IDs/action IDs/strict JSON/Pairs remain unchanged. Mapping
+  associates simulation IDs to display names. All original str/regex helpers
+  consequently see the same name. The collision guard remains unchanged.
+- Step reports use vehicle_label_version=M25-modulo1000-unique.
+
+Comparison restrictions:
+M25 changes text versus M24. This is not evidence of a solution to omitted pairs.
+No prompt instruction/example, parser, memory retrieval/write logic, safety math,
+threshold, priority, signed distance or speed behavior was changed.
+Legacy address remainders remain process dependent. New aliases do not make
+prompts reproducible across processes. A fallback can occupy a later vehicle's
+natural candidate; allocation is stable in first-allocation order.
+Existing M24 acceptance/continuation/retry audits remain pinned to M24 and must
+not be relaxed or used to continue old mutable corpora with this version.
+All old baselines and failed-attempt data are preserved. New experiment design
+and new matched off/on baselines require separate review before a formal batch.
+
+Local validation (stdlib, real methods extracted through AST; no simulator/ML):
+7 label lifecycle and integration tests; 15 single-step flow tests;
+7 output-schema tests; 13 action identity tests; 3 memory-live-step tests;
+11 M24 retry tests and 11 M24 continuation tests. Total 67 passing tests.
+These validate wiring/identity, not a real Qwen driving episode on Spark.
+Forced candidate 624 tests cross-class collisions, stable IDs, full strict
+negotiation-to-original-helper-to-action fixture integration. Additional cases
+cover deepcopy/create_from, no collision, wraparound, exhaustion and late spawns.
+Python 3.8 grammar validation and git diff --check also performed.
+
+Optional next manual Spark check (not executed):
+bash validation/accept_unique_vehicle_labels.sh
+Runs fixture seeds 0,1,3 and local tokenizer only; zero env steps, no Qwen or
+memory service. Isolated review output under /home/nclab/Yizhen/runs/M25-*.
+Does not start seed3 retry or formal seeds4-19.
