@@ -1,0 +1,31 @@
+M25 seed0 retention and seeds1-19 continuation (2026-11-28)
+Source: /home/nclab/Yizhen/runs/M25-memory-on-seed0-9lGes4
+Reviewed source commit: e34628d48992ab7ca49c48508bdd4649f0a8ff23
+99 completed steps, 495 strict live calls, no CAV collision, agents_dones all true.
+396 verified original-memory writes from empty; snapshot:
+faa12ad6edce7001d45ee4f5b00004ce9adafe46b7a91bcf49282687a9ba90f4
+114 exact source evidence files pinned in seed0-source-contract.json.
+
+Preparation: prepare_m25_memory_continuation.sh -> retain_m25_seed0.py.
+Fresh directory and disjoint copy only; never opens original Chroma. Physical
+inventory verified before open; logical count/snapshot/IDs/text/metadata checked
+on copy including vector snapshot. No metadata rewrite or re-embedding.
+Original inventory verified after close and again before batch startup.
+No automatic lock removal. Failure preserves partial preparation files.
+
+Continuation: resume_m25_memory_on.sh EXACT_PREPARED_DIRECTORY.
+Dedicated runner requires reviewed M25 receipt, unchanged decision/service
+sources since source commit, clean checkout, and exclusive batch claim.
+New corpus is verified at 396 before seed1. One sequential pass through1-19,
+max300 steps / wall3600 each using existing service managers. Fail-stop, no
+retry or subsequent seed after a failure. CAV collision is a valid outcome.
+Seed0 remains test_only=true; seeds1-19 use false. Retained provenance is
+explicit, not relabeled. Seed0 + nineteen new episodes, no rerun of seed0.
+Original M24 runner, audits, corpora and failed attempts are not reused.
+Collector supports M25 prefix and excludes Chroma, caches and model files.
+
+11 continuation tests PASS (stdlib stores/process doubles). Real exported
+seed0 validated through new exact evidence loader: 396 unique records PASS.
+M24 continuation and memory batch collector regression tests also PASS.
+Local checks do not substitute for actual Spark copy/reopen verification.
+No Spark execution or service interference by the assistant.

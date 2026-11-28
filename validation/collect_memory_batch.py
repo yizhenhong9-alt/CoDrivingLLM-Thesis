@@ -15,7 +15,7 @@ def selected_files(source):
     root_names = {'git-commit.txt','memory-config.json','batch-result.json','console.txt','memory.txt','disk.txt',
                   'recovery.json','preparation-console.txt','retained-seed0.json','git-status.txt',
                   'acceptance.json','acceptance-exit-code.txt','seed3-recovery.json',
-                  'retry-started.json','retry-result.json'}
+                  'retry-started.json','retry-result.json','batch-started.json'}
     for p in sorted(source.rglob('*')):
         if not p.is_file():
             continue
@@ -41,9 +41,10 @@ def main():
     args=parser.parse_args()
     source=personal_path(args.source)
     if not source.is_dir() or not source.name.startswith(('M23-intersection-memory-on-20seeds-',
-                                                        'M24-intersection-memory-on-20seeds-')):
-        raise ValueError('Existing M23/M24 source run required')
-    target=Path(tempfile.mkdtemp(prefix='M24-review-' if source.name.startswith('M24-') else 'M23-review-',
+                                                        'M24-intersection-memory-on-20seeds-',
+                                                        'M25-intersection-memory-on-20seeds-')):
+        raise ValueError('Existing M23/M24/M25 source run required')
+    target=Path(tempfile.mkdtemp(prefix=source.name.split('-')[0]+'-review-',
                                dir=str(personal_path(Path('/home/nclab/Yizhen/runs')))))
     for path in selected_files(source):
         personal_path(path)
